@@ -17,14 +17,15 @@ export default function AdminSettings() {
 
   // Profile Settings
   const [profile, setProfile] = useState({
-    name: 'Admin User',
-    email: 'admin@ecohealth.com',
-    phone: '+1-555-0100',
-    role: 'Super Admin',
-    avatar: '',
-    bio: 'System Administrator',
-    department: 'IT & Operations',
-    location: 'San Francisco, CA'
+name: 'Ritesh Kumar',
+email: 'ritesh.kumar@aju.edu.in',
+phone: '+91-98765-43210',
+role: 'Administrator',
+avatar: '', 
+bio: 'Managing and monitoring all AI-driven platforms with a focus on innovation and security.',
+department: 'AI & Data Analytics',
+location: 'Jamshedpur, India'
+
   });
 
   // Security Settings
