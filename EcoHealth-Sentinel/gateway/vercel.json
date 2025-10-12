@@ -11,5 +11,9 @@
       "src": "/(.*)",
       "dest": "/gateway.js"
     }
-  ]
+  ],
+  "env": {
+    "FASTAPI_URL": "https://backend1-nu-one.vercel.app",
+    "NODEJS_URL": "https://backend-lyart-pi.vercel.app"
+  }
 }
