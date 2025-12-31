@@ -26,7 +26,8 @@ import {
   BarChart3,
   Activity,
   Database,
-  Lock
+  Lock,
+  ExternalLink
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './landing-page.css';
@@ -146,15 +147,15 @@ function LegalModal({ isOpen, onClose, title, content }) {
   if (!isOpen) return null;
 
   return (
-    <div 
-      className="popup-overlay" 
+    <div
+      className="popup-overlay"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="legal-modal-title"
     >
-      <div 
-        className="popup-card-large legal-modal" 
+      <div
+        className="popup-card-large legal-modal"
         onClick={(e) => e.stopPropagation()}
         style={{ maxHeight: '80vh', overflowY: 'auto' }}
       >
@@ -165,7 +166,7 @@ function LegalModal({ isOpen, onClose, title, content }) {
         >
           <X className="w-6 h-6" />
         </button>
-        
+
         <div className="popup-content">
           <h3 id="legal-modal-title" className="popup-title">{title}</h3>
           <div className="legal-content">{content}</div>
@@ -187,12 +188,12 @@ export default function Landing() {
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activeSolution, setActiveSolution] = useState(null);
-  
+
   // Legal Modals State
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfService, setShowTermsOfService] = useState(false);
   const [showCookiePolicy, setShowCookiePolicy] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const heroRef = useRef(null);
@@ -266,10 +267,10 @@ export default function Landing() {
       <div className="legal-text">
         <h4>Privacy Policy</h4>
         <p><strong>Last Updated:</strong> October 12, 2025</p>
-        
+
         <h5>1. Information We Collect</h5>
         <p>We collect information you provide directly to us, including name, email address, phone number, and any other information you choose to provide through our contact forms or services.</p>
-        
+
         <h5>2. How We Use Your Information</h5>
         <ul>
           <li>To provide, maintain, and improve our services</li>
@@ -277,26 +278,26 @@ export default function Landing() {
           <li>To monitor and analyze trends, usage, and activities</li>
           <li>To detect, prevent, and address technical issues</li>
         </ul>
-        
+
         <h5>3. Data Security</h5>
         <p>We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction.</p>
-        
+
         <h5>4. Your Rights</h5>
         <p>You have the right to access, update, or delete your personal information. Contact us at riteshkumar90359@gmail.com for any privacy-related requests.</p>
-        
+
         <h5>5. Contact Us</h5>
         <p>For questions about this Privacy Policy, contact us at riteshkumar90359@gmail.com or +91 6206269895.</p>
       </div>
     ),
-    
+
     termsOfService: (
       <div className="legal-text">
         <h4>Terms of Service</h4>
         <p><strong>Last Updated:</strong> October 12, 2025</p>
-        
+
         <h5>1. Acceptance of Terms</h5>
         <p>By accessing and using EcoHealth Sentinel's services, you accept and agree to be bound by these Terms of Service.</p>
-        
+
         <h5>2. Use of Services</h5>
         <p>You agree to use our services only for lawful purposes and in accordance with these Terms. You must not:</p>
         <ul>
@@ -305,26 +306,26 @@ export default function Landing() {
           <li>Transmit any harmful or malicious code</li>
           <li>Attempt to gain unauthorized access to our systems</li>
         </ul>
-        
+
         <h5>3. Intellectual Property</h5>
         <p>All content, features, and functionality of our services are owned by EcoHealth Sentinel and protected by international copyright, trademark, and other intellectual property laws.</p>
-        
+
         <h5>4. Limitation of Liability</h5>
         <p>EcoHealth Sentinel shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of our services.</p>
-        
+
         <h5>5. Changes to Terms</h5>
         <p>We reserve the right to modify these terms at any time. Continued use of our services constitutes acceptance of modified terms.</p>
       </div>
     ),
-    
+
     cookiePolicy: (
       <div className="legal-text">
         <h4>Cookie Policy</h4>
         <p><strong>Last Updated:</strong> October 12, 2025</p>
-        
+
         <h5>1. What Are Cookies</h5>
         <p>Cookies are small text files stored on your device when you visit our website. They help us provide you with a better experience and understand how you use our services.</p>
-        
+
         <h5>2. Types of Cookies We Use</h5>
         <ul>
           <li><strong>Essential Cookies:</strong> Required for the website to function properly</li>
@@ -332,13 +333,13 @@ export default function Landing() {
           <li><strong>Preference Cookies:</strong> Remember your settings and preferences</li>
           <li><strong>Marketing Cookies:</strong> Track your browsing habits to deliver relevant advertisements</li>
         </ul>
-        
+
         <h5>3. Managing Cookies</h5>
         <p>You can control and/or delete cookies through your browser settings. However, disabling cookies may affect the functionality of our website.</p>
-        
+
         <h5>4. Third-Party Cookies</h5>
         <p>We may use third-party services like Google Analytics that place cookies on your device. These third parties have their own privacy policies.</p>
-        
+
         <h5>5. Contact</h5>
         <p>For questions about our use of cookies, contact us at riteshkumar90359@gmail.com.</p>
       </div>
@@ -437,17 +438,10 @@ export default function Landing() {
   const team = [
     {
       name: 'Ritesh Kumar',
-      role: 'Software Engineer | AI & ML Enthusiast',
+      role: 'Founder & Software Engineer',
       image: '🧑‍💻',
       linkedin: 'https://www.linkedin.com/in/ritesh-kumar-b3a654253',
-      bio: 'B.Tech CSE (AI & ML) student | Experienced in React, SQL | Passionate about AI, ML, and full-stack development'
-    },
-    {
-      name: 'Devanshu',
-      role: 'Frontend Developer | Tech Enthusiast',
-      image: '🧑‍💻',
-      linkedin: 'https://www.linkedin.com/in/ruchi-kumari-0b7b64295',
-      bio: 'Passionate about exploring new technologies | Skilled in Python, Java, HTML, CSS | Member of GDG on Campus AJU'
+      bio: 'B.Tech CSE (AI & ML) student | Passionate about building AI-powered solutions for social impact and sustainable development.'
     }
   ];
 
@@ -631,16 +625,16 @@ export default function Landing() {
           <div className="about-text">
             <h3>Our Mission</h3>
             <p>
-              EcoHealth Sentinel was founded with a singular vision: to harness the power of artificial 
-              intelligence for the betterment of agriculture, healthcare, and environmental conservation. 
+              EcoHealth Sentinel was founded with a singular vision: to harness the power of artificial
+              intelligence for the betterment of agriculture, healthcare, and environmental conservation.
               We believe technology should serve humanity and our planet.
             </p>
             <p>
-              By combining cutting-edge AI with deep domain expertise, we create solutions that are not 
-              just innovative, but truly impactful. From helping farmers optimize their yields to enabling 
+              By combining cutting-edge AI with deep domain expertise, we create solutions that are not
+              just innovative, but truly impactful. From helping farmers optimize their yields to enabling
               early disease detection in remote areas, our work touches lives every day.
             </p>
-            
+
             <div className="about-values">
               <div className="value-item">
                 <CheckCircle className="w-6 h-6" style={{ color: '#22c55e' }} />
@@ -737,8 +731,8 @@ export default function Landing() {
               <p className="goal-description">{goal.description}</p>
               <div className="goal-progress">
                 <div className="progress-bar-container">
-                  <div 
-                    className="progress-bar-fill" 
+                  <div
+                    className="progress-bar-fill"
                     style={{ width: `${goal.progress}%` }}
                   ></div>
                 </div>
@@ -790,7 +784,9 @@ export default function Landing() {
         <div className="team-grid">
           {team.map((member, idx) => (
             <div key={idx} className="team-card">
-              <div className="team-avatar">{member.image}</div>
+              <div className="team-avatar">
+                {member.image}
+              </div>
               <h3 className="team-name">{member.name}</h3>
               <p className="team-role">{member.role}</p>
               <p className="team-bio">{member.bio}</p>
@@ -823,17 +819,17 @@ export default function Landing() {
               </div>
             </div>
             <div className="contact-item">
-              <Phone className="w-6 h-6" />
+              <Linkedin className="w-6 h-6" />
               <div>
-                <h4>Phone</h4>
-                <p>+91 6206269895</p>
+                <h4>LinkedIn</h4>
+                <p><a href="https://www.linkedin.com/in/ritesh-kumar-b3a654253" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>ritesh-kumar-b3a654253</a></p>
               </div>
             </div>
             <div className="contact-item">
-              <MapPin className="w-6 h-6" />
+              <Github className="w-6 h-6" />
               <div>
-                <h4>Address</h4>
-                <p>Jamshedpur, Jharkhand, India 832108</p>
+                <h4>GitHub</h4>
+                <p><a href="https://github.com/ritesh-kumar-tech" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>ritesh-kumar-tech</a></p>
               </div>
             </div>
           </div>
@@ -889,7 +885,7 @@ export default function Landing() {
               © 2025 EcoHealth Sentinel. All rights reserved.
             </p>
           </div>
-          
+
           <div className="footer-section">
             <h4>Quick Links</h4>
             <a href="#" onClick={(e) => { e.preventDefault(); scrollToSection(aboutRef); }}>About Us</a>
@@ -897,7 +893,7 @@ export default function Landing() {
             <a href="#" onClick={(e) => { e.preventDefault(); scrollToSection(goalsRef); }}>Goals</a>
             <a href="#" onClick={(e) => { e.preventDefault(); scrollToSection(teamRef); }}>Team</a>
           </div>
-          
+
           <div className="footer-section">
             <h4>Legal</h4>
             <a href="#" onClick={(e) => { e.preventDefault(); setShowPrivacyPolicy(true); }}>
@@ -910,31 +906,22 @@ export default function Landing() {
               Cookie Policy
             </a>
           </div>
-          
+
           <div className="footer-section">
             <h4>Connect With Us</h4>
             <div className="social-links">
-              <a 
-                href="https://www.linkedin.com/in/ritesh-kumar-b3a654253" 
-                target="_blank" 
+              <a
+                href="https://www.linkedin.com/in/ritesh-kumar-b3a654253"
+                target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Visit our LinkedIn profile"
                 className="social-icon"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a 
-                href="https://twitter.com/ecohealth_sentinel" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                aria-label="Visit our Twitter profile"
-                className="social-icon"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a 
-                href="https://github.com/ritesh-kumar-tech" 
-                target="_blank" 
+              <a
+                href="https://github.com/ritesh-kumar-tech"
+                target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Visit our GitHub profile"
                 className="social-icon"
@@ -944,9 +931,6 @@ export default function Landing() {
             </div>
             <p style={{ fontSize: '0.85rem', marginTop: '15px' }}>
               Email: riteshkumar90359@gmail.com
-            </p>
-            <p style={{ fontSize: '0.85rem' }}>
-              Phone: +91 6206269895
             </p>
           </div>
         </div>
@@ -988,15 +972,15 @@ export default function Landing() {
 
       {/* Solution Details Modal */}
       {activeSolution && (
-        <div 
-          className="popup-overlay" 
+        <div
+          className="popup-overlay"
           onClick={closeModal}
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"
         >
-          <div 
-            className="popup-card-large" 
+          <div
+            className="popup-card-large"
             onClick={(e) => e.stopPropagation()}
             role="document"
           >
@@ -1011,21 +995,21 @@ export default function Landing() {
             >
               <X className="w-6 h-6" />
             </button>
-            
+
             <div className={`popup-header bg-gradient-to-br ${activeSolution.color}`}>
               <div className="popup-icon-large">{activeSolution.icon}</div>
             </div>
-            
+
             <div className="popup-content">
               <h3 id="modal-title" className="popup-title">
                 {activeSolution.title}
               </h3>
               <p className="popup-domain">{activeSolution.domain}</p>
-              
+
               <p className="popup-full-description">
                 {activeSolution.fullDescription}
               </p>
-              
+
               <div className="popup-features">
                 <h4>Key Features</h4>
                 <ul>
@@ -1037,35 +1021,35 @@ export default function Landing() {
                   ))}
                 </ul>
               </div>
-              
+
               <div className="popup-impact">
                 <TrendingUp className="w-5 h-5" />
                 <strong>Impact:</strong> {activeSolution.impact}
               </div>
-              
+
               <div className="popup-stats-large">{activeSolution.stats}</div>
             </div>
-          </div> 
+          </div>
         </div>
       )}
 
       {/* Legal Modals */}
-      <LegalModal 
-        isOpen={showPrivacyPolicy} 
+      <LegalModal
+        isOpen={showPrivacyPolicy}
         onClose={() => setShowPrivacyPolicy(false)}
         title="Privacy Policy"
         content={legalContent.privacyPolicy}
       />
 
-      <LegalModal 
-        isOpen={showTermsOfService} 
+      <LegalModal
+        isOpen={showTermsOfService}
         onClose={() => setShowTermsOfService(false)}
         title="Terms of Service"
         content={legalContent.termsOfService}
       />
 
-      <LegalModal 
-        isOpen={showCookiePolicy} 
+      <LegalModal
+        isOpen={showCookiePolicy}
         onClose={() => setShowCookiePolicy(false)}
         title="Cookie Policy"
         content={legalContent.cookiePolicy}

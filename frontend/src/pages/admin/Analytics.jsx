@@ -4,7 +4,7 @@ import { TrendingUp, Activity, Zap, Target, RefreshCw, Download, Users, Sparkles
 
 export default function Analytics() {
   // Backend API Configuration (commented for now)
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
   // State Management with comprehensive multi-domain data
   const [metrics, setMetrics] = useState({
@@ -78,12 +78,12 @@ export default function Analytics() {
     { model: 'Disease Detection', accuracy: 96, speed: 92, reliability: 98, domain: 'Healthcare' },
     { model: 'Patient Risk Assessment', accuracy: 94, speed: 88, reliability: 96, domain: 'Healthcare' },
     { model: 'Medical Image Analysis', accuracy: 97, speed: 85, reliability: 97, domain: 'Healthcare' },
-    
+
     // Agriculture Models
     { model: 'Crop Disease Prediction', accuracy: 93, speed: 90, reliability: 94, domain: 'Agriculture' },
     { model: 'Yield Optimization', accuracy: 91, speed: 94, reliability: 92, domain: 'Agriculture' },
     { model: 'Pest Detection', accuracy: 90, speed: 93, reliability: 91, domain: 'Agriculture' },
-    
+
     // Environment Models
     { model: 'Climate Prediction', accuracy: 92, speed: 87, reliability: 93, domain: 'Environment' },
     { model: 'Pollution Monitoring', accuracy: 89, speed: 91, reliability: 90, domain: 'Environment' },
@@ -205,7 +205,7 @@ export default function Analytics() {
         ...aiModelPerformance.map(m => [m.model, m.domain, `${m.accuracy}%`, `${m.speed}%`, `${m.reliability}%`])
       ];
 
-      const csvContent = csvData.map(row => 
+      const csvContent = csvData.map(row =>
         row.map(cell => String(cell).includes(',') ? `"${cell}"` : cell).join(',')
       ).join('\n');
 
@@ -876,8 +876,8 @@ export default function Analytics() {
               </div>
             </div>
             <div className="header-actions">
-              <select 
-                value={dateRange} 
+              <select
+                value={dateRange}
                 onChange={(e) => setDateRange(e.target.value)}
                 className="filter-select"
               >
@@ -886,19 +886,19 @@ export default function Analytics() {
                 <option value="30days">Last 30 Days</option>
                 <option value="90days">Last 90 Days</option>
               </select>
-              
+
               <button className="action-button" onClick={handleExportCSV}>
                 <Download className="w-5 h-5" />
                 Export CSV
               </button>
-              
+
               <button className="action-button" onClick={handleExportPDF}>
                 <Download className="w-5 h-5" />
                 Export PDF
               </button>
-              
-              <button 
-                className="action-button primary" 
+
+              <button
+                className="action-button primary"
                 onClick={fetchAnalyticsData}
                 disabled={isLoading}
               >
@@ -969,18 +969,18 @@ export default function Analytics() {
         </div>
 
         {/* Domain-wise Metrics */}
-        <h2 style={{fontSize: '2rem', fontWeight: '900', color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
+        <h2 style={{ fontSize: '2rem', fontWeight: '900', color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Globe size={32} />
           Domain-wise Performance
         </h2>
         <div className="domain-metrics-grid">
           {/* Healthcare Domain */}
           <div className="domain-card">
-            <div className="domain-header" style={{borderColor: '#ef4444'}}>
-              <div className="domain-icon" style={{background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.25))'}}>
+            <div className="domain-header" style={{ borderColor: '#ef4444' }}>
+              <div className="domain-icon" style={{ background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.25))' }}>
                 <Heart className="w-8 h-8 text-red-500" strokeWidth={2.5} />
               </div>
-              <h3 className="domain-title" style={{color: '#ef4444'}}>Healthcare</h3>
+              <h3 className="domain-title" style={{ color: '#ef4444' }}>Healthcare</h3>
             </div>
             <div className="domain-stat">
               <span className="domain-stat-label">Deployments</span>
@@ -988,7 +988,7 @@ export default function Analytics() {
             </div>
             <div className="domain-stat">
               <span className="domain-stat-label">Accuracy</span>
-              <span className="domain-stat-value" style={{color: '#10b981'}}>{domainMetrics.healthcare.accuracy}%</span>
+              <span className="domain-stat-value" style={{ color: '#10b981' }}>{domainMetrics.healthcare.accuracy}%</span>
             </div>
             <div className="domain-stat">
               <span className="domain-stat-label">Lives Impacted</span>
@@ -998,7 +998,7 @@ export default function Analytics() {
               <span className="domain-stat-label">Cost Savings</span>
               <span className="domain-stat-value">${domainMetrics.healthcare.costSavings}M</span>
             </div>
-            <div className="domain-stat" style={{borderBottom: 'none'}}>
+            <div className="domain-stat" style={{ borderBottom: 'none' }}>
               <span className="domain-stat-label">Active Users</span>
               <span className="domain-stat-value">{domainMetrics.healthcare.users.toLocaleString()}</span>
             </div>
@@ -1006,11 +1006,11 @@ export default function Analytics() {
 
           {/* Agriculture Domain */}
           <div className="domain-card">
-            <div className="domain-header" style={{borderColor: '#10b981'}}>
-              <div className="domain-icon" style={{background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.25))'}}>
+            <div className="domain-header" style={{ borderColor: '#10b981' }}>
+              <div className="domain-icon" style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.25))' }}>
                 <Sprout className="w-8 h-8 text-green-500" strokeWidth={2.5} />
               </div>
-              <h3 className="domain-title" style={{color: '#10b981'}}>Agriculture</h3>
+              <h3 className="domain-title" style={{ color: '#10b981' }}>Agriculture</h3>
             </div>
             <div className="domain-stat">
               <span className="domain-stat-label">Deployments</span>
@@ -1018,7 +1018,7 @@ export default function Analytics() {
             </div>
             <div className="domain-stat">
               <span className="domain-stat-label">Accuracy</span>
-              <span className="domain-stat-value" style={{color: '#10b981'}}>{domainMetrics.agriculture.accuracy}%</span>
+              <span className="domain-stat-value" style={{ color: '#10b981' }}>{domainMetrics.agriculture.accuracy}%</span>
             </div>
             <div className="domain-stat">
               <span className="domain-stat-label">Lives Impacted</span>
@@ -1028,7 +1028,7 @@ export default function Analytics() {
               <span className="domain-stat-label">Cost Savings</span>
               <span className="domain-stat-value">${domainMetrics.agriculture.costSavings}M</span>
             </div>
-            <div className="domain-stat" style={{borderBottom: 'none'}}>
+            <div className="domain-stat" style={{ borderBottom: 'none' }}>
               <span className="domain-stat-label">Active Users</span>
               <span className="domain-stat-value">{domainMetrics.agriculture.users.toLocaleString()}</span>
             </div>
@@ -1036,11 +1036,11 @@ export default function Analytics() {
 
           {/* Environment Domain */}
           <div className="domain-card">
-            <div className="domain-header" style={{borderColor: '#14b8a6'}}>
-              <div className="domain-icon" style={{background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(20, 184, 166, 0.25))'}}>
+            <div className="domain-header" style={{ borderColor: '#14b8a6' }}>
+              <div className="domain-icon" style={{ background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(20, 184, 166, 0.25))' }}>
                 <Leaf className="w-8 h-8 text-teal-500" strokeWidth={2.5} />
               </div>
-              <h3 className="domain-title" style={{color: '#14b8a6'}}>Environment</h3>
+              <h3 className="domain-title" style={{ color: '#14b8a6' }}>Environment</h3>
             </div>
             <div className="domain-stat">
               <span className="domain-stat-label">Deployments</span>
@@ -1048,7 +1048,7 @@ export default function Analytics() {
             </div>
             <div className="domain-stat">
               <span className="domain-stat-label">Accuracy</span>
-              <span className="domain-stat-value" style={{color: '#10b981'}}>{domainMetrics.environment.accuracy}%</span>
+              <span className="domain-stat-value" style={{ color: '#10b981' }}>{domainMetrics.environment.accuracy}%</span>
             </div>
             <div className="domain-stat">
               <span className="domain-stat-label">Lives Impacted</span>
@@ -1058,7 +1058,7 @@ export default function Analytics() {
               <span className="domain-stat-label">Cost Savings</span>
               <span className="domain-stat-value">${domainMetrics.environment.costSavings}M</span>
             </div>
-            <div className="domain-stat" style={{borderBottom: 'none'}}>
+            <div className="domain-stat" style={{ borderBottom: 'none' }}>
               <span className="domain-stat-label">Active Users</span>
               <span className="domain-stat-value">{domainMetrics.environment.users.toLocaleString()}</span>
             </div>
@@ -1090,8 +1090,8 @@ export default function Analytics() {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ 
-                  backgroundColor: '#ffffff', 
+                <Tooltip contentStyle={{
+                  backgroundColor: '#ffffff',
                   border: '2px solid #e2e8f0',
                   borderRadius: '12px',
                   boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
@@ -1111,23 +1111,23 @@ export default function Analytics() {
               <AreaChart data={timelineData}>
                 <defs>
                   <linearGradient id="healthcareGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1} />
                   </linearGradient>
                   <linearGradient id="agricultureGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
                   </linearGradient>
                   <linearGradient id="environmentGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#14b8a6" stopOpacity={0.1}/>
+                    <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#14b8a6" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="month" stroke="#64748b" style={{ fontSize: '13px', fontWeight: '700' }} />
                 <YAxis stroke="#64748b" style={{ fontSize: '13px', fontWeight: '700' }} />
-                <Tooltip contentStyle={{ 
-                  backgroundColor: '#ffffff', 
+                <Tooltip contentStyle={{
+                  backgroundColor: '#ffffff',
                   border: '2px solid #e2e8f0',
                   borderRadius: '12px',
                   boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
@@ -1152,8 +1152,8 @@ export default function Analytics() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="category" stroke="#64748b" angle={-15} textAnchor="end" height={100} style={{ fontSize: '11px', fontWeight: '700' }} />
                 <YAxis stroke="#64748b" style={{ fontSize: '13px', fontWeight: '700' }} />
-                <Tooltip contentStyle={{ 
-                  backgroundColor: '#ffffff', 
+                <Tooltip contentStyle={{
+                  backgroundColor: '#ffffff',
                   border: '2px solid #e2e8f0',
                   borderRadius: '12px',
                   boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
@@ -1181,8 +1181,8 @@ export default function Analytics() {
                 <Radar name="Efficiency" dataKey="efficiency" stroke="#10b981" fill="#10b981" fillOpacity={0.3} strokeWidth={3} />
                 <Radar name="Impact" dataKey="impact" stroke="#14b8a6" fill="#14b8a6" fillOpacity={0.3} strokeWidth={3} />
                 <Legend wrapperStyle={{ fontSize: '13px', fontWeight: '700' }} />
-                <Tooltip contentStyle={{ 
-                  backgroundColor: '#ffffff', 
+                <Tooltip contentStyle={{
+                  backgroundColor: '#ffffff',
                   border: '2px solid #e2e8f0',
                   borderRadius: '12px',
                   fontWeight: 'bold'
@@ -1193,10 +1193,10 @@ export default function Analytics() {
         </div>
 
         {/* AI Model Performance */}
-        <h2 style={{fontSize: '2rem', fontWeight: '900', color: '#1e293b', marginBottom: '1.5rem', marginTop: '2rem'}}>
+        <h2 style={{ fontSize: '2rem', fontWeight: '900', color: '#1e293b', marginBottom: '1.5rem', marginTop: '2rem' }}>
           🤖 AI Model Performance - All Domains
         </h2>
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem'}}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
           {aiModelPerformance.map((model, idx) => {
             const domainColors = {
               Healthcare: { bg: 'rgba(239, 68, 68, 0.1)', border: '#ef4444' },
@@ -1204,7 +1204,7 @@ export default function Analytics() {
               Environment: { bg: 'rgba(20, 184, 166, 0.1)', border: '#14b8a6' }
             };
             const colors = domainColors[model.domain];
-            
+
             return (
               <div key={idx} style={{
                 background: '#ffffff',
@@ -1214,16 +1214,16 @@ export default function Analytics() {
                 transition: 'all 0.3s ease',
                 cursor: 'pointer'
               }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-6px)';
-                e.currentTarget.style.boxShadow = `0 12px 30px ${colors.border}40`;
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem'}}>
-                  <h3 style={{fontSize: '1.125rem', fontWeight: '800', color: '#1e293b', margin: 0}}>{model.model}</h3>
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'translateY(-6px)';
+                  e.currentTarget.style.boxShadow = `0 12px 30px ${colors.border}40`;
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>{model.model}</h3>
                   <span style={{
                     padding: '0.375rem 0.875rem',
                     background: colors.bg,
@@ -1233,35 +1233,35 @@ export default function Analytics() {
                     fontWeight: '700'
                   }}>{model.domain}</span>
                 </div>
-                
-                <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div>
-                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem'}}>
-                      <span style={{fontSize: '0.875rem', color: '#64748b', fontWeight: '700'}}>Accuracy</span>
-                      <strong style={{color: '#1e293b'}}>{model.accuracy}%</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: '700' }}>Accuracy</span>
+                      <strong style={{ color: '#1e293b' }}>{model.accuracy}%</strong>
                     </div>
-                    <div style={{width: '100%', height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden'}}>
-                      <div style={{width: `${model.accuracy}%`, height: '100%', background: `linear-gradient(90deg, ${colors.border}, ${colors.border}dd)`, borderRadius: '5px', transition: 'width 1s ease'}}></div>
+                    <div style={{ width: '100%', height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
+                      <div style={{ width: `${model.accuracy}%`, height: '100%', background: `linear-gradient(90deg, ${colors.border}, ${colors.border}dd)`, borderRadius: '5px', transition: 'width 1s ease' }}></div>
                     </div>
                   </div>
-                  
+
                   <div>
-                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem'}}>
-                      <span style={{fontSize: '0.875rem', color: '#64748b', fontWeight: '700'}}>Speed</span>
-                      <strong style={{color: '#1e293b'}}>{model.speed}%</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: '700' }}>Speed</span>
+                      <strong style={{ color: '#1e293b' }}>{model.speed}%</strong>
                     </div>
-                    <div style={{width: '100%', height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden'}}>
-                      <div style={{width: `${model.speed}%`, height: '100%', background: '#10b981', borderRadius: '5px', transition: 'width 1s ease'}}></div>
+                    <div style={{ width: '100%', height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
+                      <div style={{ width: `${model.speed}%`, height: '100%', background: '#10b981', borderRadius: '5px', transition: 'width 1s ease' }}></div>
                     </div>
                   </div>
-                  
+
                   <div>
-                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem'}}>
-                      <span style={{fontSize: '0.875rem', color: '#64748b', fontWeight: '700'}}>Reliability</span>
-                      <strong style={{color: '#1e293b'}}>{model.reliability}%</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: '700' }}>Reliability</span>
+                      <strong style={{ color: '#1e293b' }}>{model.reliability}%</strong>
                     </div>
-                    <div style={{width: '100%', height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden'}}>
-                      <div style={{width: `${model.reliability}%`, height: '100%', background: '#8b5cf6', borderRadius: '5px', transition: 'width 1s ease'}}></div>
+                    <div style={{ width: '100%', height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
+                      <div style={{ width: `${model.reliability}%`, height: '100%', background: '#8b5cf6', borderRadius: '5px', transition: 'width 1s ease' }}></div>
                     </div>
                   </div>
                 </div>

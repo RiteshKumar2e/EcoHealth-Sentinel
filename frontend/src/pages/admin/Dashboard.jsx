@@ -45,7 +45,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
 
   // Backend API Configuration
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
   // Real-time Data States from MongoDB
   const [systemMetrics, setSystemMetrics] = useState({
