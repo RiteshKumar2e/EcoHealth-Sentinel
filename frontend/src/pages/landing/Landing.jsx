@@ -27,7 +27,8 @@ import {
   Activity,
   Database,
   Lock,
-  ExternalLink
+  ExternalLink,
+  Terminal
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './landing-page.css';
@@ -201,7 +202,8 @@ export default function Landing() {
   const solutionsRef = useRef(null);
   const goalsRef = useRef(null);
   const teamRef = useRef(null);
-  const contactRef = useRef(null);
+  const footerRef = useRef(null);
+
 
   // Scroll animation
   useEffect(() => {
@@ -426,22 +428,17 @@ export default function Landing() {
       title: 'Environmental Protection',
       description: 'Monitor and preserve 500+ ecosystems globally',
       progress: 82
-    },
-    {
-      icon: <Award />,
-      title: 'Research Excellence',
-      description: 'Publish 100+ research papers on sustainable AI',
-      progress: 45
     }
   ];
 
   const team = [
     {
       name: 'Ritesh Kumar',
-      role: 'Founder & Software Engineer',
-      image: '🧑‍💻',
+      role: 'SOFTWARE ENGINEER | AI & ML ENTHUSIAST',
+      image: '👨‍💻',
       linkedin: 'https://www.linkedin.com/in/ritesh-kumar-b3a654253',
-      bio: 'B.Tech CSE (AI & ML) student | Passionate about building AI-powered solutions for social impact and sustainable development.'
+      github: 'https://github.com/RiteshKumar2e',
+      bio: 'B.Tech CSE (AI & ML) student | Experienced in React, SQL | Passionate about AI, ML, and full-stack development.'
     }
   ];
 
@@ -512,7 +509,7 @@ export default function Landing() {
           <button onClick={() => scrollToSection(solutionsRef)}>Solutions</button>
           <button onClick={() => scrollToSection(goalsRef)}>Goals</button>
           <button onClick={() => scrollToSection(teamRef)}>Team</button>
-          <button onClick={() => scrollToSection(contactRef)}>Contact</button>
+          <button onClick={() => scrollToSection(footerRef)}>Contact</button>
         </nav>
 
         <div className="auth-buttons">
@@ -593,10 +590,6 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="scroll-indicator" onClick={() => scrollToSection(aboutRef)}>
-          <ChevronDown className="w-6 h-6" />
-          <div className="scroll-line"></div>
-        </div>
       </section>
 
       {/* Stats Section */}
@@ -682,9 +675,9 @@ export default function Landing() {
 
       {/* Solutions Section */}
       <section ref={solutionsRef} className="solutions-section">
-        <div className="section-header">
-          <h2 className="section-title">Our Solutions</h2>
-          <p className="section-subtitle">
+        <div className="section-header solutions-header">
+          <h2 className="section-title solutions-main-title">Our <span>Solutions</span></h2>
+          <p className="section-subtitle solutions-main-subtitle">
             Comprehensive AI applications designed to solve real-world challenges
           </p>
         </div>
@@ -716,9 +709,9 @@ export default function Landing() {
 
       {/* Goals Section */}
       <section ref={goalsRef} className="goals-section">
-        <div className="section-header">
-          <h2 className="section-title">Our Goals</h2>
-          <p className="section-subtitle">
+        <div className="section-header goals-header">
+          <h2 className="section-title goals-main-title">Our <span>Goals</span></h2>
+          <p className="section-subtitle goals-main-subtitle">
             Ambitious targets driving our mission forward
           </p>
         </div>
@@ -743,41 +736,14 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="testimonials-section">
-        <div className="section-header">
-          <h2 className="section-title">What People Say</h2>
-          <p className="section-subtitle">
-            Real stories from real users making real impact
-          </p>
-        </div>
 
-        <div className="testimonials-grid">
-          {testimonials.map((testimonial, idx) => (
-            <div key={idx} className="testimonial-card">
-              <div className="testimonial-rating">
-                {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Star key={i} className="w-5 h-5" style={{ fill: '#f59e0b', color: '#f59e0b' }} />
-                ))}
-              </div>
-              <p className="testimonial-text">"{testimonial.text}"</p>
-              <div className="testimonial-author">
-                <div>
-                  <h4>{testimonial.name}</h4>
-                  <p>{testimonial.role}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* Team Section */}
       <section ref={teamRef} className="team-section">
-        <div className="section-header">
-          <h2 className="section-title">About Team</h2>
-          <p className="section-subtitle">
-            Brilliant minds working together to change the world
+        <div className="section-header team-header">
+          <h2 className="section-title team-main-title">The <span>Architect</span></h2>
+          <p className="section-subtitle team-main-subtitle">
+            Pioneering the intersection of Full-Stack and AI intelligence.
           </p>
         </div>
 
@@ -791,8 +757,11 @@ export default function Landing() {
               <p className="team-role">{member.role}</p>
               <p className="team-bio">{member.bio}</p>
               <div className="team-social">
-                <a href={member.linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${member.name}'s LinkedIn profile`}>
-                  <Linkedin className="w-5 h-5" />
+                <a href={member.linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${member.name}'s LinkedIn profile`} className="linkedin-icon">
+                  <Linkedin className="w-6 h-6" />
+                </a>
+                <a href={member.github} target="_blank" rel="noopener noreferrer" aria-label={`${member.name}'s GitHub profile`} className="github-icon">
+                  <Github className="w-6 h-6" />
                 </a>
               </div>
             </div>
@@ -800,88 +769,14 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section ref={contactRef} className="contact-section">
-        <div className="section-header">
-          <h2 className="section-title">Get In Touch</h2>
-          <p className="section-subtitle">
-            Have questions? We'd love to hear from you
-          </p>
-        </div>
 
-        <div className="contact-content">
-          <div className="contact-info">
-            <div className="contact-item">
-              <Mail className="w-6 h-6" />
-              <div>
-                <h4>Email</h4>
-                <p>riteshkumar90359@gmail.com</p>
-              </div>
-            </div>
-            <div className="contact-item">
-              <Linkedin className="w-6 h-6" />
-              <div>
-                <h4>LinkedIn</h4>
-                <p><a href="https://www.linkedin.com/in/ritesh-kumar-b3a654253" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>ritesh-kumar-b3a654253</a></p>
-              </div>
-            </div>
-            <div className="contact-item">
-              <Github className="w-6 h-6" />
-              <div>
-                <h4>GitHub</h4>
-                <p><a href="https://github.com/ritesh-kumar-tech" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>ritesh-kumar-tech</a></p>
-              </div>
-            </div>
-          </div>
 
-          <form
-            className="contact-form"
-            action="https://formspree.io/f/mqadrblr"
-            method="POST"
-          >
-            <input
-              type="text"
-              name="name"
-              placeholder="Your Name"
-              className="form-input"
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Your Email"
-              className="form-input"
-              required
-            />
-            <input
-              type="text"
-              name="subject"
-              placeholder="Subject"
-              className="form-input"
-            />
-            <textarea
-              name="message"
-              placeholder="Your Message"
-              rows="5"
-              className="form-input"
-              required
-            ></textarea>
-
-            <button type="submit" className="btn-primary">
-              Send Message
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </form>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
+      <footer ref={footerRef} className="footer">
         <div className="footer-content">
-          <div className="footer-section">
+          <div className="footer-section brand-section">
             <EcoHealthLogo />
-            <p>AI-powered solutions for a sustainable future</p>
-            <p style={{ fontSize: '0.85rem', marginTop: '10px', opacity: 0.7 }}>
+            <p className="footer-tagline">AI-powered solutions for a sustainable future</p>
+            <p className="footer-copyright">
               © 2025 EcoHealth Sentinel. All rights reserved.
             </p>
           </div>
@@ -911,127 +806,137 @@ export default function Landing() {
             <h4>Connect With Us</h4>
             <div className="social-links">
               <a
+                href="https://github.com/RiteshKumar2e"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Visit our GitHub profile"
+                className="social-icon"
+              >
+                <Github className="w-6 h-6" />
+              </a>
+              <a
                 href="https://www.linkedin.com/in/ritesh-kumar-b3a654253"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Visit our LinkedIn profile"
                 className="social-icon"
               >
-                <Linkedin className="w-5 h-5" />
+                <Linkedin className="w-6 h-6" />
               </a>
               <a
-                href="https://github.com/ritesh-kumar-tech"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Visit our GitHub profile"
+                href="mailto:riteshkumar90359@gmail.com"
+                aria-label="Send us an email"
                 className="social-icon"
               >
-                <Github className="w-5 h-5" />
+                <Mail className="w-6 h-6" />
               </a>
             </div>
-            <p style={{ fontSize: '0.85rem', marginTop: '15px' }}>
-              Email: riteshkumar90359@gmail.com
-            </p>
           </div>
         </div>
       </footer>
 
       {/* Scroll to Top Button */}
-      {showScrollTop && (
-        <button className="scroll-to-top" onClick={scrollToTop}>
-          <ArrowUp className="w-6 h-6" />
-        </button>
-      )}
+      {
+        showScrollTop && (
+          <button className="scroll-to-top" onClick={scrollToTop}>
+            <ArrowUp className="w-6 h-6" />
+          </button>
+        )
+      }
 
       {/* Sign In Popup */}
-      {showSignInPopup && (
-        <div className="popup-overlay">
-          <div className="popup-card">
-            <button className="popup-close" onClick={() => setShowSignInPopup(false)}>
-              <X className="w-5 h-5" />
-            </button>
-            <h3>Sign In Required</h3>
-            <p>To explore our advanced AI solutions, please sign in first.</p>
-            <div className="popup-actions">
-              <button
-                className="btn-primary"
-                onClick={() => navigate('/auth/login')}
-              >
-                Sign In
+      {
+        showSignInPopup && (
+          <div className="popup-overlay">
+            <div className="popup-card">
+              <button className="popup-close" onClick={() => setShowSignInPopup(false)}>
+                <X className="w-5 h-5" />
               </button>
-              <button
-                className="btn-secondary"
-                onClick={() => setShowSignInPopup(false)}
-              >
-                Cancel
-              </button>
+              <h3>Sign In Required</h3>
+              <p>To explore our advanced AI solutions, please sign in first.</p>
+              <div className="popup-actions">
+                <button
+                  className="btn-primary"
+                  onClick={() => navigate('/auth/login')}
+                >
+                  Sign In
+                </button>
+                <button
+                  className="btn-secondary"
+                  onClick={() => setShowSignInPopup(false)}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Solution Details Modal */}
-      {activeSolution && (
-        <div
-          className="popup-overlay"
-          onClick={closeModal}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-title"
-        >
+      {
+        activeSolution && (
           <div
-            className="popup-card-large"
-            onClick={(e) => e.stopPropagation()}
-            role="document"
+            className="popup-overlay"
+            onClick={closeModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
           >
-            <button
-              className="popup-close"
-              onClick={(e) => {
-                e.stopPropagation();
-                closeModal();
-              }}
-              aria-label="Close modal"
-              type="button"
+            <div
+              className="popup-card-large"
+              onClick={(e) => e.stopPropagation()}
+              role="document"
             >
-              <X className="w-6 h-6" />
-            </button>
+              <button
+                className="popup-close"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeModal();
+                }}
+                aria-label="Close modal"
+                type="button"
+              >
+                <X className="w-6 h-6" />
+              </button>
 
-            <div className={`popup-header bg-gradient-to-br ${activeSolution.color}`}>
-              <div className="popup-icon-large">{activeSolution.icon}</div>
-            </div>
-
-            <div className="popup-content">
-              <h3 id="modal-title" className="popup-title">
-                {activeSolution.title}
-              </h3>
-              <p className="popup-domain">{activeSolution.domain}</p>
-
-              <p className="popup-full-description">
-                {activeSolution.fullDescription}
-              </p>
-
-              <div className="popup-features">
-                <h4>Key Features</h4>
-                <ul>
-                  {activeSolution.features.map((feature, idx) => (
-                    <li key={idx}>
-                      <CheckCircle className="w-5 h-5" style={{ color: '#22c55e' }} />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+              <div className={`popup-header bg-gradient-to-br ${activeSolution.color}`}>
+                <div className="popup-icon-large">{activeSolution.icon}</div>
               </div>
 
-              <div className="popup-impact">
-                <TrendingUp className="w-5 h-5" />
-                <strong>Impact:</strong> {activeSolution.impact}
-              </div>
+              <div className="popup-content">
+                <h3 id="modal-title" className="popup-title">
+                  {activeSolution.title}
+                </h3>
+                <p className="popup-domain">{activeSolution.domain}</p>
 
-              <div className="popup-stats-large">{activeSolution.stats}</div>
+                <p className="popup-full-description">
+                  {activeSolution.fullDescription}
+                </p>
+
+                <div className="popup-features">
+                  <h4>Key Features</h4>
+                  <ul>
+                    {activeSolution.features.map((feature, idx) => (
+                      <li key={idx}>
+                        <CheckCircle className="w-5 h-5" style={{ color: '#22c55e' }} />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="popup-impact">
+                  <TrendingUp className="w-5 h-5" />
+                  <strong>Impact:</strong> {activeSolution.impact}
+                </div>
+
+                <div className="popup-stats-large">{activeSolution.stats}</div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Legal Modals */}
       <LegalModal
