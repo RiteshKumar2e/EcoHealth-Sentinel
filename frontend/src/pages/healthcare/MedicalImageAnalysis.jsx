@@ -14,17 +14,9 @@ import {
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, MeshWobbleMaterial } from "@react-three/drei";
 import { motion } from "framer-motion";
+import './MedicalImageAnalysis.css';
 
-/*
-  Required packages:
-    npm install lucide-react framer-motion @react-three/fiber @react-three/drei
-
-  Backend endpoints used (example):
-    GET  /api/analyses  -> { recentAnalyses: [...] }
-    GET  /api/stats     -> { stats: [...] }
-    POST /api/upload    -> multipart/form-data => { analysis: { findings, confidence, ... } }
-    POST /api/chat      -> { message } => { reply }
-*/
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 export default function MedicalImageAnalysis() {
   // UI state
@@ -106,14 +98,14 @@ export default function MedicalImageAnalysis() {
   }, []);
 
   // helper for priority badges
-  const getPriorityColor = (priority) => {
+  const getPriorityClass = (priority) => {
     switch (priority) {
       case "high":
-        return "#ef4444";
+        return "badge-high";
       case "medium":
-        return "#f59e0b";
+        return "badge-medium";
       default:
-        return "#10b981";
+        return "badge-normal";
     }
   };
 
@@ -151,7 +143,7 @@ export default function MedicalImageAnalysis() {
       fetch("/api/analyses")
         .then((r) => r.json())
         .then((d) => d?.recentAnalyses && setRecentAnalyses(d.recentAnalyses))
-        .catch(() => {});
+        .catch(() => { });
     } catch (err) {
       console.error(err);
       setAnalysisResult({ findings: "Upload failed. See console.", confidence: 0 });
@@ -199,78 +191,11 @@ export default function MedicalImageAnalysis() {
     }, 80);
   };
 
-  // Inline styles (centralized objects to keep JSX readable)
-  const styles = {
-    page: {
-      minHeight: "100vh",
-      background: "linear-gradient(135deg,#e6f0ff 0%, #f6e8ff 50%, #ffeef6 100%)",
-      padding: 24,
-      fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
-      color: "#111827",
-    },
-    container: {
-      maxWidth: 1200,
-      margin: "0 auto",
-      position: "relative",
-    },
-    headerCard: {
-      background: "rgba(255,255,255,0.95)",
-      borderRadius: 20,
-      padding: 28,
-      boxShadow: "0 20px 40px rgba(16,24,40,0.12)",
-      marginBottom: 18,
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      border: "1px solid rgba(0,0,0,0.04)",
-    },
-    title: { fontSize: 32, fontWeight: 800, margin: 0, color: "#0f172a", lineHeight: 1.05 },
-    subtitle: { margin: 0, color: "#374151", marginTop: 6 },
-    statsGrid: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 18 },
-    statCard: { background: "#fff", borderRadius: 12, padding: 18, boxShadow: "0 6px 18px rgba(15,23,42,0.06)", border: "1px solid rgba(0,0,0,0.03)" },
-    mainGrid: { display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, marginBottom: 18 },
-    uploadCard: { background: "#fff", borderRadius: 12, padding: 18, boxShadow: "0 6px 20px rgba(15,23,42,0.06)", border: "1px solid rgba(0,0,0,0.04)" },
-    scanGrid: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 12 },
-    scanBtn: (active) => ({
-      padding: 12,
-      borderRadius: 10,
-      border: `2px solid ${active ? "#7c3aed" : "#e6e7eb"}`,
-      background: active ? "linear-gradient(90deg,#f3e8ff, #ffffff)" : "#fff",
-      cursor: "pointer",
-      textAlign: "center",
-      transition: "all 180ms ease",
-      boxShadow: active ? "inset 0 1px 0 rgba(255,255,255,0.6)" : "none",
-    }),
-    uploadBox: { border: "2px dashed #d1d5db", borderRadius: 12, padding: 28, textAlign: "center", marginBottom: 12 },
-    btnPrimary: (enabled) => ({
-      padding: "10px 18px",
-      borderRadius: 10,
-      background: enabled ? "linear-gradient(90deg,#7c3aed,#2563eb)" : "#e6e7eb",
-      color: enabled ? "#fff" : "#9ca3af",
-      border: "none",
-      cursor: enabled ? "pointer" : "not-allowed",
-      fontWeight: 700,
-    }),
-    progressBox: { background: "#eef2ff", borderLeft: "4px solid #6366f1", padding: 12, borderRadius: 8 },
-    analysisBox: { background: "#ecfdf5", borderLeft: "4px solid #10b981", padding: 12, borderRadius: 8 },
-    capabilitiesCard: { background: "#fff", borderRadius: 12, padding: 18, boxShadow: "0 6px 20px rgba(15,23,42,0.06)", border: "1px solid rgba(0,0,0,0.04)" },
-    capabilitiesItem: { borderRadius: 10, padding: 12, marginBottom: 10, background: "linear-gradient(90deg,#faf5ff,#f0f9ff)", border: "1px solid rgba(124,58,237,0.06)" },
-    recentCard: { background: "#fff", borderRadius: 12, padding: 18, boxShadow: "0 6px 20px rgba(15,23,42,0.06)", border: "1px solid rgba(0,0,0,0.04)", marginBottom: 18 },
-    recentItem: { borderRadius: 10, padding: 12, background: "linear-gradient(90deg,#f8fafc,#f1f5f9)", border: "1px solid rgba(0,0,0,0.03)" },
-    securityCard: { borderRadius: 12, padding: 18, background: "linear-gradient(90deg,#111827,#374151)", color: "#fff" },
-    threeDContainer: { position: "absolute", inset: 0, zIndex: -1, opacity: 0.12, pointerEvents: "none" },
-    gridResponsive: { display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 12 },
-    chatBox: { display: "flex", flexDirection: "column", height: 420 },
-    chatList: { flex: 1, overflowY: "auto", padding: 8, display: "flex", flexDirection: "column", gap: 8 },
-    chatInputRow: { display: "flex", gap: 8, marginTop: 8 },
-    priorityBadge: (color) => ({ padding: "4px 8px", borderRadius: 999, color: "#fff", background: color, fontWeight: 700, fontSize: 12 }),
-  };
-
   return (
-    <div style={styles.page}>
-      <div style={styles.container}>
+    <div className="mia-page">
+      <div className="mia-container">
         {/* subtle 3D background */}
-        <div style={styles.threeDContainer}>
+        <div className="three-d-container">
           <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
             <ambientLight intensity={0.65} />
             <directionalLight position={[3, 2, 5]} intensity={0.9} />
@@ -287,18 +212,18 @@ export default function MedicalImageAnalysis() {
         </div>
 
         {/* Header */}
-        <div style={styles.headerCard}>
+        <div className="mia-header">
           <div>
-            <h1 style={styles.title}>AI Medical Image Analysis</h1>
-            <p style={styles.subtitle}>Advanced deep learning for diagnostic imaging support</p>
+            <h1 className="mia-title">AI Medical Image Analysis</h1>
+            <p className="mia-subtitle">Advanced deep learning for diagnostic imaging support</p>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Brain style={{ width: 60, height: 60, color: "#7c3aed", opacity: 0.95 }} />
+          <div className="mia-header-right">
+            <Brain className="header-icon" />
           </div>
         </div>
 
         {/* Stats */}
-        <div style={styles.statsGrid}>
+        <div className="statsGrid">
           {stats.map((s, i) => {
             const Icon = s.icon || ImageIcon;
             return (
@@ -307,13 +232,13 @@ export default function MedicalImageAnalysis() {
                 initial={{ y: 12, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: i * 0.06 }}
-                style={styles.statCard}
+                className="stat-card"
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <Icon style={{ width: 28, height: 28, color: s.color || "#374151" }} />
+                <div className="stat-content">
+                  <Icon className="stat-icon stat-icon-dynamic" style={{ '--color': s.color || "#374151" }} />
                   <div>
-                    <div style={{ fontSize: 12, color: "#6b7280" }}>{s.label}</div>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: s.color || "#111827" }}>{s.value}</div>
+                    <div className="stat-label">{s.label}</div>
+                    <div className="stat-value stat-value-dynamic" style={{ '--color': s.color || "#111827" }}>{s.value}</div>
                   </div>
                 </div>
               </motion.div>
@@ -322,13 +247,13 @@ export default function MedicalImageAnalysis() {
         </div>
 
         {/* main area: upload + capabilities/chat */}
-        <div style={styles.mainGrid}>
+        <div className="mia-main-grid">
           {/* Upload & results */}
-          <div style={styles.uploadCard}>
-            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#0f172a", marginBottom: 12 }}>Upload Medical Image</h2>
+          <div className="upload-card">
+            <h2 className="card-title">Upload Medical Image</h2>
 
             {/* scan selection */}
-            <div style={styles.scanGrid}>
+            <div className="scan-grid">
               {scanTypes.map((t) => {
                 const Icon = t.icon;
                 const active = selectedScan === t.id;
@@ -336,31 +261,31 @@ export default function MedicalImageAnalysis() {
                   <button
                     key={t.id}
                     onClick={() => setSelectedScan(t.id)}
-                    style={styles.scanBtn(active)}
+                    className={`scan-btn ${active ? 'active' : ''}`}
                     aria-pressed={active}
                   >
-                    <Icon style={{ width: 20, height: 20, color: t.color, display: "block", margin: "0 auto 8px" }} />
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{t.name}</div>
+                    <Icon className="scan-icon scan-icon-dynamic" style={{ '--color': t.color }} />
+                    <div className="scan-label">{t.name}</div>
                   </button>
                 );
               })}
             </div>
 
             {/* upload box */}
-            <div style={styles.uploadBox}>
-              <Upload style={{ width: 56, height: 56, color: "#9ca3af", display: "block", margin: "0 auto 12px" }} />
-              <div style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 6 }}>
+            <div className="upload-box">
+              <Upload className="upload-icon" />
+              <div className="upload-text-main">
                 {selectedScan ? `Upload ${scanTypes.find((s) => s.id === selectedScan).name}` : "Select scan type first"}
               </div>
-              <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 12 }}>Drag & drop or click to browse</div>
+              <div className="upload-text-sub">Drag & drop or click to browse</div>
 
-              <input ref={fileRef} type="file" accept="image/*,application/dicom" style={{ display: "none" }} onChange={onFileChange} />
+              <input ref={fileRef} type="file" accept="image/*,application/dicom" className="hidden" onChange={onFileChange} />
 
-              <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
+              <div className="upload-actions">
                 <button
                   onClick={() => fileRef.current && fileRef.current.click()}
                   disabled={!selectedScan || isAnalyzing}
-                  style={styles.btnPrimary(Boolean(selectedScan && !isAnalyzing))}
+                  className={`btn-primary ${selectedScan && !isAnalyzing ? 'enabled' : ''}`}
                 >
                   {isAnalyzing ? "Analyzing..." : "Choose file"}
                 </button>
@@ -376,14 +301,7 @@ export default function MedicalImageAnalysis() {
                       setAnalysisResult({ findings: "Demo: no abnormalities detected", confidence: 92 });
                     }, 1400);
                   }}
-                  style={{
-                    padding: "10px 14px",
-                    borderRadius: 10,
-                    border: "1px solid #e6e7eb",
-                    background: "#fff",
-                    cursor: "pointer",
-                    fontWeight: 700,
-                  }}
+                  className="btn-demo"
                 >
                   Demo
                 </button>
@@ -391,36 +309,36 @@ export default function MedicalImageAnalysis() {
             </div>
 
             {/* progress or result */}
-            <div style={{ display: "grid", gap: 12 }}>
+            <div className="analysis-progress-grid">
               {isAnalyzing && (
-                <div style={styles.progressBox}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <Clock style={{ width: 18, height: 18, color: "#4f46e5" }} />
+                <div className="progress-box">
+                  <div className="progress-header">
+                    <Clock className="progress-icon" />
                     <div>
-                      <div style={{ fontWeight: 700, color: "#1e293b" }}>AI Analysis in Progress</div>
-                      <div style={{ fontSize: 13, color: "#4f46e5" }}>Processing image with deep learning models...</div>
+                      <div className="progress-title">AI Analysis in Progress</div>
+                      <div className="progress-subtitle">Processing image with deep learning models...</div>
                     </div>
                   </div>
-                  <div style={{ marginTop: 10, height: 8, background: "#e6eefc", borderRadius: 999 }}>
-                    <div style={{ width: "64%", height: "100%", background: "#4f46e5", borderRadius: 999, transition: "width 600ms ease" }} />
+                  <div className="progress-bar-bg">
+                    <div className="progress-bar-fill" style={{ '--width': "64%" }} />
                   </div>
                 </div>
               )}
 
               {analysisResult && !isAnalyzing && (
-                <div style={styles.analysisBox}>
-                  <div style={{ display: "flex", gap: 12 }}>
-                    <CheckCircle style={{ width: 18, height: 18, color: "#10b981" }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 800, color: "#065f46" }}>Analysis Complete</div>
-                      <div style={{ color: "#065f46", fontSize: 13, marginTop: 6 }}>
+                <div className="analysis-box">
+                  <div className="analysis-header">
+                    <CheckCircle className="analysis-icon" />
+                    <div className="analysis-header-right">
+                      <div className="analysis-title">Analysis Complete</div>
+                      <div className="analysis-confidence">
                         AI Confidence: <strong>{analysisResult.confidence ?? "—"}%</strong>
                       </div>
-                      <div style={{ marginTop: 10, background: "#fff", padding: 10, borderRadius: 8, border: "1px solid rgba(16,185,129,0.08)" }}>
-                        <div style={{ fontSize: 14, color: "#065f46" }}>
+                      <div className="findings-box">
+                        <div className="findings-text">
                           <strong>Findings:</strong> {analysisResult.findings}
                         </div>
-                        <div style={{ fontSize: 12, color: "#475569", marginTop: 8 }}>⚠️ AI provides decision support only. Final diagnosis requires physician review.</div>
+                        <div className="findings-disclaimer">⚠️ AI provides decision support only. Final diagnosis requires physician review.</div>
                       </div>
                     </div>
                   </div>
@@ -430,71 +348,57 @@ export default function MedicalImageAnalysis() {
           </div>
 
           {/* Right column: chat + capabilities */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className="right-column">
             {/* Chat assistant */}
-            <div style={{ ...styles.capabilitiesCard, display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Assistant</h3>
-                <div style={{ fontSize: 12, color: "#6b7280" }}>AI-powered chat</div>
+            <div className="capabilities-card">
+              <div className="section-header">
+                <h3 className="section-title">Assistant</h3>
+                <div className="section-sub">AI-powered chat</div>
               </div>
 
-              <div style={styles.chatBox}>
-                <div ref={chatRef} style={styles.chatList}>
+              <div className="chat-box">
+                <div ref={chatRef} className="chatList">
                   {chatMessages.map((m) => (
                     <div
                       key={m.id}
-                      style={{
-                        alignSelf: m.from === "user" ? "flex-end" : "flex-start",
-                        background: m.from === "user" ? "linear-gradient(90deg,#7c3aed,#2563eb)" : "#f3f4f6",
-                        color: m.from === "user" ? "#fff" : "#111827",
-                        padding: 10,
-                        borderRadius: 10,
-                        maxWidth: "86%",
-                        fontSize: 14,
-                      }}
+                      className={`chat-msg ${m.from === 'user' ? 'chat-msg-user' : 'chat-msg-bot'}`}
                     >
                       {m.text}
                     </div>
                   ))}
                 </div>
 
-                <div style={styles.chatInputRow}>
+                <div className="chat-input-row">
                   <input
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && sendChat()}
                     placeholder="Ask the assistant (e.g. 'Show high priority cases')"
-                    style={{
-                      flex: 1,
-                      padding: "10px 12px",
-                      borderRadius: 10,
-                      border: "1px solid #e6e7eb",
-                      outline: "none",
-                    }}
+                    className="chat-input"
                   />
-                  <button onClick={sendChat} style={{ padding: "10px 12px", borderRadius: 10, background: "#111827", color: "#fff", border: "none", display: "flex", alignItems: "center", gap: 8 }}>
-                    <Send style={{ width: 16, height: 16, color: "#fff" }} /> Send
+                  <button onClick={sendChat} className="chat-send-btn">
+                    <Send className="chat-send-icon" /> Send
                   </button>
                 </div>
               </div>
 
               {/* Capabilities condensed */}
               <div>
-                <h4 style={{ margin: "8px 0 6px 0", fontSize: 14, fontWeight: 800 }}>AI Capabilities</h4>
-                <div style={{ display: "grid", gap: 8 }}>
+                <h4 className="capabilities-header-text">AI Capabilities</h4>
+                <div className="capabilities-list">
                   {[
                     { title: "Fracture Detection", accuracy: 96, description: "Detects bone fractures in X-ray/CT" },
                     { title: "Tumor Recognition", accuracy: 92, description: "Finds potential tumors in MRI/CT" },
                     { title: "Pneumonia Detection", accuracy: 94, description: "Chest X-ray pneumonia indicators" },
                   ].map((c, idx) => (
-                    <div key={idx} style={styles.capabilitiesItem}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <div style={{ fontWeight: 800 }}>{c.title}</div>
-                        <div style={{ fontWeight: 800, color: "#6d28d9" }}>{c.accuracy}%</div>
+                    <div key={idx} className="capabilities-item">
+                      <div className="capability-header">
+                        <div className="capability-title">{c.title}</div>
+                        <div className="capability-score">{c.accuracy}%</div>
                       </div>
-                      <div style={{ fontSize: 12, color: "#475569", marginTop: 6 }}>{c.description}</div>
-                      <div style={{ marginTop: 8, height: 8, background: "#eef2ff", borderRadius: 999 }}>
-                        <div style={{ width: `${c.accuracy}%`, height: "100%", borderRadius: 999, background: "linear-gradient(90deg,#7c3aed,#2563eb)" }} />
+                      <div className="capability-desc">{c.description}</div>
+                      <div className="capability-bar-bg">
+                        <div className="capability-bar-fill" style={{ '--width': `${c.accuracy}%` }} />
                       </div>
                     </div>
                   ))}
@@ -503,22 +407,22 @@ export default function MedicalImageAnalysis() {
             </div>
 
             {/* Recent analyses */}
-            <div style={styles.recentCard}>
-              <h3 style={{ margin: "0 0 10px 0", fontSize: 18, fontWeight: 800 }}>Recent Analyses</h3>
-              <div style={{ display: "grid", gap: 10 }}>
+            <div className="recent-card">
+              <h3 className="recent-title">Recent Analyses</h3>
+              <div className="recent-list">
                 {recentAnalyses.map((r) => (
-                  <div key={r.id} style={styles.recentItem}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div key={r.id} className="recent-item">
+                    <div className="recent-header">
                       <div>
-                        <div style={{ fontWeight: 800 }}>{r.type}</div>
-                        <div style={{ fontSize: 13, color: "#6b7280" }}>Patient: {r.patientId}</div>
+                        <div className="recent-type">{r.type}</div>
+                        <div className="recent-patient">Patient: {r.patientId}</div>
                       </div>
-                      <div style={styles.priorityBadge(getPriorityColor(r.priority))}>{(r.priority || "normal").toUpperCase()}</div>
+                      <div className={`priority-badge ${getPriorityClass(r.priority)}`}>{(r.priority || "normal").toUpperCase()}</div>
                     </div>
-                    <div style={{ marginTop: 8, color: "#374151" }}>{r.findings}</div>
-                    <div style={{ marginTop: 10, display: "flex", justifyContent: "space-between", color: "#6b7280", fontSize: 13 }}>
+                    <div className="recent-findings">{r.findings}</div>
+                    <div className="recent-footer">
                       <div>{r.date}</div>
-                      <div style={{ fontWeight: 700 }}>Confidence: {r.confidence}%</div>
+                      <div className="recent-confidence">Confidence: {r.confidence}%</div>
                     </div>
                   </div>
                 ))}
@@ -526,26 +430,26 @@ export default function MedicalImageAnalysis() {
             </div>
 
             {/* Security & compliance */}
-            <div style={styles.securityCard}>
-              <div style={{ display: "flex", gap: 12 }}>
-                <Shield style={{ width: 28, height: 28, color: "#fff" }} />
+            <div className="security-card">
+              <div className="security-content">
+                <Shield className="security-icon" />
                 <div>
-                  <div style={{ fontWeight: 900, fontSize: 16 }}>Medical Data Security & Compliance</div>
-                  <div style={{ marginTop: 8, color: "#e6e6e6", fontSize: 13 }}>
+                  <div className="security-title">Medical Data Security & Compliance</div>
+                  <div className="security-text">
                     Our AI system adheres to HIPAA and international healthcare data protection standards. Images are encrypted in transit & at rest.
                   </div>
-                  <div style={{ display: "flex", gap: 8, marginTop: 12, fontSize: 13 }}>
-                    <div style={{ background: "rgba(255,255,255,0.06)", padding: 8, borderRadius: 8 }}>
-                      <div style={{ fontWeight: 800 }}>🔒 HIPAA Compliant</div>
-                      <div style={{ color: "#d1d5db" }}>Privacy-first</div>
+                  <div className="security-badges">
+                    <div className="security-badge">
+                      <div className="badge-title">🔒 HIPAA Compliant</div>
+                      <div className="badge-sub">Privacy-first</div>
                     </div>
-                    <div style={{ background: "rgba(255,255,255,0.06)", padding: 8, borderRadius: 8 }}>
-                      <div style={{ fontWeight: 800 }}>🛡️ E2E Encryption</div>
-                      <div style={{ color: "#d1d5db" }}>256-bit AES</div>
+                    <div className="security-badge">
+                      <div className="badge-title">🛡️ E2E Encryption</div>
+                      <div className="badge-sub">256-bit AES</div>
                     </div>
-                    <div style={{ background: "rgba(255,255,255,0.06)", padding: 8, borderRadius: 8 }}>
-                      <div style={{ fontWeight: 800 }}>👨‍⚕️ Physician Oversight</div>
-                      <div style={{ color: "#d1d5db" }}>Doctor validation required</div>
+                    <div className="security-badge">
+                      <div className="badge-title">👨‍⚕️ Physician Oversight</div>
+                      <div className="badge-sub">Doctor validation required</div>
                     </div>
                   </div>
                 </div>
@@ -555,7 +459,7 @@ export default function MedicalImageAnalysis() {
         </div>
 
         {/* Footer spacing */}
-        <div style={{ height: 24 }} />
+        <div className="footer-spacing" />
       </div>
     </div>
   );

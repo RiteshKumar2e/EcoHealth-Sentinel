@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  AlertTriangle, Activity, TrendingUp, Users, Clock, 
+import {
+  AlertTriangle, Activity, TrendingUp, Users, Clock,
   MapPin, Zap, Shield, MessageSquare, Send, X, Download,
   RefreshCw, Filter, Bell, ChevronDown
 } from 'lucide-react';
-import { 
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, 
-  CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
-  AreaChart, Area, PieChart, Pie, Cell, RadarChart, 
+import {
+  LineChart, Line, BarChart, Bar, XAxis, YAxis,
+  CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  AreaChart, Area, PieChart, Pie, Cell, RadarChart,
   Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ScatterChart, Scatter, ComposedChart
 } from 'recharts';
-const API_BASE_URL = 'http://localhost:3001/api';
-const WS_URL = 'ws://localhost:3001';
+import './EmergencyPrediction.css';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:5000';
 
 const EmergencyPrediction = () => {
   const [predictions, setPredictions] = useState([]);
@@ -39,783 +41,6 @@ const EmergencyPrediction = () => {
   // Chart Colors
   const COLORS = ['#1976D2', '#D32F2F', '#388E3C', '#F57C00', '#7B1FA2', '#00897B', '#C62828'];
 
-  // Complete Styles
-  const styles = {
-    dashboard: {
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 25%, #E8EAF6 50%, #E0F2F1 75%, #F1F8E9 100%)',
-      backgroundSize: '400% 400%',
-      animation: 'gradientShift 15s ease infinite',
-      padding: '2rem',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    },
-    container: {
-      maxWidth: '1400px',
-      margin: '0 auto',
-    },
-    glassCard: {
-      background: 'rgba(255, 255, 255, 0.85)',
-      backdropFilter: 'blur(20px)',
-      borderRadius: '20px',
-      border: '1px solid rgba(0, 0, 0, 0.08)',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-      padding: '2rem',
-      transition: 'all 0.3s ease',
-    },
-    headerCard: {
-      marginBottom: '2rem',
-      background: 'rgba(255, 255, 255, 0.95)',
-    },
-    headerContent: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      flexWrap: 'wrap',
-      gap: '2rem',
-      marginBottom: '1.5rem',
-    },
-    headerLeft: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '1.5rem',
-    },
-    icon3d: {
-      width: '60px',
-      height: '60px',
-      background: 'linear-gradient(135deg, #1976D2, #1565C0)',
-      borderRadius: '50%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 10px 30px rgba(25, 118, 210, 0.3)',
-    },
-    gradientText: {
-      fontSize: '2.5rem',
-      fontWeight: '800',
-      background: 'linear-gradient(135deg, #1976D2, #0D47A1)',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      marginBottom: '0.5rem',
-    },
-    subtitle: {
-      color: '#546E7A',
-      fontSize: '1.1rem',
-    },
-    headerRight: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '1rem',
-      flexWrap: 'wrap',
-    },
-    toolbarButton: {
-      padding: '0.75rem',
-      background: 'white',
-      border: '1px solid #E0E0E0',
-      borderRadius: '12px',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    connectionStatus: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem',
-      padding: '0.5rem 1rem',
-      background: 'rgba(76, 175, 80, 0.1)',
-      borderRadius: '50px',
-      color: '#2E7D32',
-      border: '1px solid rgba(76, 175, 80, 0.2)',
-    },
-    statusDot: {
-      width: '10px',
-      height: '10px',
-      borderRadius: '50%',
-      background: '#4CAF50',
-      boxShadow: '0 0 20px #4CAF50',
-    },
-    timeframeButtons: {
-      display: 'flex',
-      gap: '0.5rem',
-    },
-    timeframeBtn: {
-      padding: '0.75rem 1.5rem',
-      border: '2px solid #E0E0E0',
-      background: '#FAFAFA',
-      color: '#424242',
-      borderRadius: '12px',
-      fontWeight: '600',
-      cursor: 'pointer',
-    },
-    timeframeBtnActive: {
-      background: 'linear-gradient(135deg, #1976D2, #1565C0)',
-      borderColor: 'transparent',
-      boxShadow: '0 5px 20px rgba(25, 118, 210, 0.3)',
-      color: 'white',
-    },
-    featureBadges: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '0.75rem',
-    },
-    badge: {
-      padding: '0.5rem 1rem',
-      background: 'linear-gradient(135deg, #E3F2FD, #BBDEFB)',
-      borderRadius: '50px',
-      color: '#1565C0',
-      fontSize: '0.9rem',
-      fontWeight: '600',
-      border: '1px solid rgba(25, 118, 210, 0.2)',
-    },
-    filterSection: {
-      display: 'flex',
-      gap: '1rem',
-      marginBottom: '2rem',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-    },
-    filterButton: {
-      padding: '0.75rem 1.5rem',
-      background: 'white',
-      border: '2px solid #E0E0E0',
-      borderRadius: '12px',
-      cursor: 'pointer',
-      fontSize: '0.9rem',
-      fontWeight: '600',
-      color: '#424242',
-    },
-    filterButtonActive: {
-      background: 'linear-gradient(135deg, #1976D2, #1565C0)',
-      borderColor: 'transparent',
-      color: 'white',
-    },
-    metricsGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-      gap: '1.5rem',
-      marginBottom: '2rem',
-    },
-    metricCard: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '1.5rem',
-      cursor: 'pointer',
-      background: 'white',
-      position: 'relative',
-    },
-    metricIcon: {
-      width: '48px',
-      height: '48px',
-    },
-    metricContent: {
-      flex: 1,
-    },
-    metricLabel: {
-      color: '#757575',
-      fontSize: '0.9rem',
-      marginBottom: '0.5rem',
-      fontWeight: '500',
-    },
-    metricValue: {
-      fontSize: '2.5rem',
-      fontWeight: '800',
-      lineHeight: 1,
-    },
-    metricDetail: {
-      color: '#9E9E9E',
-      fontSize: '0.85rem',
-      marginTop: '0.25rem',
-    },
-    metricTrend: {
-      position: 'absolute',
-      top: '1rem',
-      right: '1rem',
-      padding: '0.25rem 0.5rem',
-      borderRadius: '6px',
-      fontSize: '0.75rem',
-      fontWeight: '600',
-    },
-    trendUp: {
-      background: '#E8F5E9',
-      color: '#2E7D32',
-    },
-    trendDown: {
-      background: '#FFEBEE',
-      color: '#C62828',
-    },
-    sectionTitle: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      fontSize: '2rem',
-      fontWeight: '700',
-      color: '#212121',
-      marginBottom: '1.5rem',
-    },
-    sectionTitleLeft: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem',
-    },
-    sectionIcon: {
-      width: '32px',
-      height: '32px',
-    },
-    sectionActions: {
-      display: 'flex',
-      gap: '0.5rem',
-      alignItems: 'center',
-    },
-    iconButton: {
-      width: '40px',
-      height: '40px',
-      borderRadius: '10px',
-      border: '2px solid #E0E0E0',
-      background: 'white',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    dropdownContainer: {
-      position: 'relative',
-    },
-    dropdownButton: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem',
-      padding: '0.75rem 1.25rem',
-      background: 'white',
-      border: '2px solid #1976D2',
-      borderRadius: '12px',
-      color: '#1976D2',
-      fontSize: '0.95rem',
-      fontWeight: '600',
-      cursor: 'pointer',
-    },
-    dropdownMenu: {
-      position: 'absolute',
-      top: 'calc(100% + 0.5rem)',
-      right: 0,
-      background: 'white',
-      borderRadius: '12px',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
-      border: '1px solid #E0E0E0',
-      minWidth: '200px',
-      zIndex: 1000,
-      overflow: 'hidden',
-    },
-    dropdownItem: {
-      padding: '0.875rem 1.25rem',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      fontSize: '0.95rem',
-      fontWeight: '500',
-      color: '#424242',
-      borderBottom: '1px solid #F5F5F5',
-    },
-    dropdownItemActive: {
-      background: '#E3F2FD',
-      color: '#1976D2',
-      fontWeight: '600',
-    },
-    predictionsGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
-      gap: '1.5rem',
-      marginBottom: '2rem',
-    },
-    predictionCard: {
-      position: 'relative',
-      background: 'white',
-      cursor: 'pointer',
-    },
-    predictionCardHigh: {
-      borderLeft: '4px solid #D32F2F',
-      boxShadow: '0 8px 32px rgba(211, 47, 47, 0.15)',
-    },
-    predictionCardMedium: {
-      borderLeft: '4px solid #F57C00',
-      boxShadow: '0 8px 32px rgba(245, 124, 0, 0.15)',
-    },
-    predictionCardLow: {
-      borderLeft: '4px solid #388E3C',
-      boxShadow: '0 8px 32px rgba(56, 142, 60, 0.15)',
-    },
-    predictionCardSelected: {
-      transform: 'scale(1.02)',
-      boxShadow: '0 15px 50px rgba(25, 118, 210, 0.3)',
-    },
-    predictionHeader: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      marginBottom: '1.5rem',
-    },
-    predictionTitle: {
-      fontSize: '1.5rem',
-      fontWeight: '700',
-      color: '#212121',
-      marginBottom: '0.75rem',
-    },
-    predictionBadges: {
-      display: 'flex',
-      gap: '0.5rem',
-      flexWrap: 'wrap',
-    },
-    riskBadge: {
-      padding: '0.4rem 0.8rem',
-      borderRadius: '50px',
-      fontSize: '0.85rem',
-      fontWeight: '600',
-    },
-    riskBadgeHigh: {
-      background: '#FFEBEE',
-      color: '#C62828',
-      border: '1px solid #FFCDD2',
-    },
-    riskBadgeMedium: {
-      background: '#FFF3E0',
-      color: '#E65100',
-      border: '1px solid #FFE0B2',
-    },
-    riskBadgeLow: {
-      background: '#E8F5E9',
-      color: '#2E7D32',
-      border: '1px solid #C8E6C9',
-    },
-    confidenceBadge: {
-      background: '#F5F5F5',
-      color: '#424242',
-      border: '1px solid #E0E0E0',
-    },
-    probabilityDisplay: {
-      flexShrink: 0,
-    },
-    probabilityCircle: {
-      width: '100px',
-      height: '100px',
-      position: 'relative',
-    },
-    probabilityText: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      fontSize: '1.5rem',
-      fontWeight: '800',
-      color: '#212121',
-    },
-    predictionDetails: {
-      display: 'grid',
-      gap: '1rem',
-      marginBottom: '1.5rem',
-    },
-    detailItem: {
-      display: 'flex',
-      alignItems: 'flex-start',
-      gap: '0.75rem',
-    },
-    detailIcon: {
-      width: '20px',
-      height: '20px',
-      color: '#757575',
-      flexShrink: 0,
-      marginTop: '2px',
-    },
-    detailLabel: {
-      color: '#757575',
-      fontSize: '0.85rem',
-      marginBottom: '0.25rem',
-      fontWeight: '500',
-    },
-    detailValue: {
-      color: '#212121',
-      fontWeight: '600',
-    },
-    factorsSection: {
-      marginBottom: '1.5rem',
-    },
-    factorsLabel: {
-      color: '#424242',
-      fontSize: '0.9rem',
-      fontWeight: '600',
-      marginBottom: '0.75rem',
-    },
-    factorsTags: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '0.5rem',
-    },
-    factorTag: {
-      padding: '0.4rem 0.8rem',
-      background: '#F5F5F5',
-      borderRadius: '50px',
-      color: '#424242',
-      fontSize: '0.85rem',
-      border: '1px solid #E0E0E0',
-    },
-    actionBox: {
-      padding: '1rem',
-      background: '#E3F2FD',
-      borderRadius: '12px',
-      border: '1px solid #90CAF9',
-    },
-    actionLabel: {
-      color: '#1565C0',
-      fontWeight: '600',
-      fontSize: '0.9rem',
-      marginBottom: '0.5rem',
-    },
-    actionText: {
-      color: '#1976D2',
-      fontSize: '0.95rem',
-    },
-    actionButtons: {
-      display: 'flex',
-      gap: '0.5rem',
-      marginTop: '1rem',
-    },
-    actionButton: {
-      padding: '0.5rem 1rem',
-      background: 'white',
-      border: '2px solid #1976D2',
-      borderRadius: '8px',
-      color: '#1976D2',
-      fontSize: '0.85rem',
-      fontWeight: '600',
-      cursor: 'pointer',
-    },
-    chartCard: {
-      marginBottom: '2rem',
-      background: 'white',
-    },
-    alertBox: {
-      marginTop: '1.5rem',
-      padding: '1rem',
-      background: '#FFF3E0',
-      borderRadius: '12px',
-      color: '#E65100',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem',
-      border: '1px solid #FFE0B2',
-    },
-    alertBoxWarning: {
-      background: '#FFF9C4',
-      borderColor: '#FFF59D',
-      color: '#F57F17',
-    },
-    alertIcon: {
-      width: '20px',
-      height: '20px',
-      flexShrink: 0,
-    },
-    chartsGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))',
-      gap: '2rem',
-      marginBottom: '2rem',
-    },
-    resourceList: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1.5rem',
-      marginBottom: '1.5rem',
-    },
-    resourceItem: {
-      position: 'relative',
-    },
-    resourceHeader: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '0.75rem',
-    },
-    resourceName: {
-      color: '#212121',
-      fontWeight: '600',
-    },
-    resourceValues: {
-      display: 'flex',
-      gap: '1rem',
-      fontSize: '0.85rem',
-    },
-    currentValue: {
-      color: '#1976D2',
-      fontWeight: '600',
-    },
-    predictedValue: {
-      color: '#D32F2F',
-      fontWeight: '600',
-    },
-    resourceBar: {
-      position: 'relative',
-      width: '100%',
-      height: '20px',
-      background: '#F5F5F5',
-      borderRadius: '10px',
-      overflow: 'hidden',
-      border: '1px solid #E0E0E0',
-    },
-    barCurrent: {
-      position: 'absolute',
-      height: '100%',
-      background: 'linear-gradient(90deg, #1976D2, #42A5F5)',
-      borderRadius: '10px',
-      boxShadow: '0 0 10px rgba(25, 118, 210, 0.3)',
-      transition: 'width 1s ease',
-    },
-    barPredicted: {
-      position: 'absolute',
-      height: '100%',
-      background: 'linear-gradient(90deg, #D32F2F, #EF5350)',
-      borderRadius: '10px',
-      opacity: 0.3,
-      transition: 'width 1s ease',
-    },
-    alertIndicator: {
-      position: 'absolute',
-      right: '10px',
-      top: '50%',
-      transform: 'translateY(-50%)',
-    },
-    alertIconSmall: {
-      width: '14px',
-      height: '14px',
-      color: '#D32F2F',
-    },
-    performanceCard: {
-      marginBottom: '2rem',
-      background: 'white',
-    },
-    performanceGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-      gap: '1.5rem',
-      marginBottom: '2rem',
-    },
-    performanceStat: {
-      padding: '2rem',
-      borderRadius: '16px',
-      textAlign: 'center',
-      border: '2px solid #E0E0E0',
-    },
-    performanceStatGreen: {
-      background: 'linear-gradient(135deg, #E8F5E9, #F1F8E9)',
-      border: '2px solid #C8E6C9',
-    },
-    performanceStatBlue: {
-      background: 'linear-gradient(135deg, #E3F2FD, #E1F5FE)',
-      border: '2px solid #90CAF9',
-    },
-    performanceStatPurple: {
-      background: 'linear-gradient(135deg, #F3E5F5, #EDE7F6)',
-      border: '2px solid #CE93D8',
-    },
-    performanceStatOrange: {
-      background: 'linear-gradient(135deg, #FFF3E0, #FFE0B2)',
-      border: '2px solid #FFCC80',
-    },
-    statLabel: {
-      color: '#757575',
-      fontSize: '0.9rem',
-      marginBottom: '0.75rem',
-      fontWeight: '500',
-    },
-    statValue: {
-      fontSize: '2.5rem',
-      fontWeight: '800',
-      color: '#212121',
-      marginBottom: '0.5rem',
-    },
-    statDetail: {
-      color: '#9E9E9E',
-      fontSize: '0.85rem',
-    },
-    modelInfo: {
-      padding: '1.5rem',
-      background: '#F5F5F5',
-      borderRadius: '12px',
-      color: '#424242',
-      border: '1px solid #E0E0E0',
-    },
-    notificationPanel: {
-      position: 'fixed',
-      top: '2rem',
-      right: '2rem',
-      width: '350px',
-      maxHeight: '400px',
-      overflowY: 'auto',
-      zIndex: 1001,
-    },
-    notificationItem: {
-      padding: '1rem',
-      background: 'white',
-      borderRadius: '12px',
-      marginBottom: '0.5rem',
-      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
-      borderLeft: '4px solid #1976D2',
-    },
-chatbotContainer: {
-  position: 'fixed',
-  bottom: '2rem',
-  right: '2rem',
-  width: '500px',        // increased width
-  maxHeight: '600px',    // max height
-  height: '700px',       // default height
-  display: 'flex',
-  flexDirection: 'column',
-  zIndex: 1000,
-  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
-  background: 'white',
-  borderRadius: '1rem',  // optional: rounded corners for better UI
-  overflow: 'hidden',    // ensures content fits inside
-},
-
-    chatbotHeader: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '1.5rem',
-      borderBottom: '1px solid #E0E0E0',
-      background: 'linear-gradient(135deg, #1976D2, #1565C0)',
-    },
-    chatbotTitle: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem',
-      color: 'white',
-      fontWeight: '600',
-      fontSize: '1.1rem',
-    },
-    chatbotIcon: {
-      width: '24px',
-      height: '24px',
-    },
-    chatbotClose: {
-      background: 'rgba(255, 255, 255, 0.2)',
-      border: 'none',
-      width: '32px',
-      height: '32px',
-      borderRadius: '50%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      cursor: 'pointer',
-      color: 'white',
-    },
-    chatbotMessages: {
-      flex: 1,
-      overflowY: 'auto',
-      padding: '1.5rem',
-      maxHeight: '400px',
-      background: '#FAFAFA',
-    },
-    messageUser: {
-      marginBottom: '1rem',
-      padding: '1rem',
-      borderRadius: '12px',
-      maxWidth: '80%',
-      background: 'linear-gradient(135deg, #1976D2, #1565C0)',
-      color: 'white',
-      marginLeft: 'auto',
-      borderBottomRightRadius: '4px',
-      boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
-    },
-    messageBot: {
-      marginBottom: '1rem',
-      padding: '1rem',
-      borderRadius: '12px',
-      maxWidth: '80%',
-      background: 'white',
-      color: '#212121',
-      marginRight: 'auto',
-      borderBottomLeftRadius: '4px',
-      border: '1px solid #E0E0E0',
-      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-    },
-    messageTime: {
-      display: 'block',
-      fontSize: '0.75rem',
-      opacity: 0.7,
-      marginTop: '0.5rem',
-    },
-    typingIndicator: {
-      display: 'flex',
-      gap: '0.5rem',
-      padding: '1rem',
-      background: 'white',
-      borderRadius: '12px',
-      width: 'fit-content',
-      border: '1px solid #E0E0E0',
-    },
-    typingDot: {
-      width: '8px',
-      height: '8px',
-      background: '#1976D2',
-      borderRadius: '50%',
-      animation: 'typing 1.4s infinite',
-    },
-    chatbotInput: {
-      display: 'flex',
-      gap: '0.75rem',
-      padding: '1.5rem',
-      borderTop: '1px solid #E0E0E0',
-      background: 'white',
-    },
-    chatInput: {
-      flex: 1,
-      padding: '0.75rem 1rem',
-      background: '#F5F5F5',
-      border: '1px solid #E0E0E0',
-      borderRadius: '12px',
-      color: '#212121',
-      fontSize: '1rem',
-      outline: 'none',
-    },
-    chatSendBtn: {
-      width: '48px',
-      height: '48px',
-      background: 'linear-gradient(135deg, #1976D2, #1565C0)',
-      border: 'none',
-      borderRadius: '12px',
-      color: 'white',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
-    },
-    chatbotToggle: {
-      position: 'fixed',
-      bottom: '2rem',
-      right: '2rem',
-      width: '64px',
-      height: '64px',
-      background: 'linear-gradient(135deg, #1976D2, #1565C0)',
-      border: 'none',
-      borderRadius: '50%',
-      color: 'white',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 10px 30px rgba(25, 118, 210, 0.3)',
-      zIndex: 999,
-    },
-    notificationDot: {
-      position: 'absolute',
-      top: '8px',
-      right: '8px',
-      width: '12px',
-      height: '12px',
-      background: '#F44336',
-      borderRadius: '50%',
-      boxShadow: '0 0 15px #F44336',
-    },
-  };
-
   // Chart type options
   const chartTypes = [
     { value: 'area', label: 'Area Chart', icon: '📊' },
@@ -836,102 +61,174 @@ chatbotContainer: {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Actual API Fetch Function with Fallback to Simulation
+  const fetchData = useCallback(async (endpoint, options = {}) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/emergency${endpoint}`, {
+        method: options.method || 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers
+        },
+        body: options.body ? JSON.stringify(options.body) : null
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        return { ok: true, data: result.data || result };
+      }
+    } catch (error) {
+      console.warn(`API call to ${endpoint} failed, using simulated data:`, error);
+    }
+    return { ok: false };
+  }, []);
+
+  // WebSocket Connection
+  useEffect(() => {
+    const connectWS = () => {
+      try {
+        const ws = new WebSocket(WS_URL);
+        wsRef.current = ws;
+
+        ws.onopen = () => {
+          console.log('Emergency system connected to WebSocket');
+          setWsConnected(true);
+          addNotification('System Online', 'Connected to real-time emergency feed', 'success');
+        };
+
+        ws.onmessage = (event) => {
+          const message = JSON.parse(event.data);
+          if (message.type === 'metrics_update') {
+            setEmergencyMetrics(message.data);
+          } else if (message.type === 'new_prediction') {
+            setPredictions(prev => [message.data, ...prev].slice(0, 10));
+            addNotification('New AI Prediction', message.data.type, 'warning');
+          }
+        };
+
+        ws.onclose = () => {
+          console.log('Emergency system disconnected');
+          setWsConnected(false);
+          // Reconnect after 5 seconds
+          setTimeout(connectWS, 5000);
+        };
+
+        ws.onerror = () => {
+          setWsConnected(false);
+        };
+      } catch (error) {
+        console.error('WebSocket connection error:', error);
+      }
+    };
+
+    connectWS();
+    return () => wsRef.current?.close();
+  }, []);
+
   // Real-time data updates
   useEffect(() => {
     if (autoRefresh) {
       const interval = setInterval(() => {
-        updateEmergencyData();
+        if (!wsConnected) updateEmergencyData();
       }, refreshInterval);
       return () => clearInterval(interval);
     }
-  }, [autoRefresh, refreshInterval]);
+  }, [autoRefresh, refreshInterval, wsConnected]);
 
-  useEffect(() => {
-    runEmergencyPredictions();
-    initializeHistoricalData();
-  }, [selectedTimeframe]);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
-
-  const updateEmergencyData = () => {
-    setEmergencyMetrics(prev => ({
-      currentLoad: Math.max(10, Math.min(50, (prev.currentLoad || 23) + Math.floor(Math.random() * 7) - 3)),
-      predictedPeak: Math.max(30, Math.min(60, (prev.predictedPeak || 45) + Math.floor(Math.random() * 5) - 2)),
-      avgResponseTime: Math.max(5, Math.min(15, parseFloat(((prev.avgResponseTime || 8.5) + (Math.random() * 2 - 1)).toFixed(1)))),
-      bedAvailability: Math.max(50, Math.min(95, (prev.bedAvailability || 76) + Math.floor(Math.random() * 5) - 2))
-    }));
-  };
-
-  const initializeHistoricalData = () => {
-    const data = [];
-    for (let i = 0; i < 24; i++) {
-      data.push({
-        hour: `${i.toString().padStart(2, '0')}:00`,
-        actual: Math.floor(Math.random() * 30) + 10,
-        predicted: Math.floor(Math.random() * 30) + 12,
-        capacity: 50,
-        x: i,
-        y: Math.floor(Math.random() * 30) + 10,
-      });
+  const updateEmergencyData = async () => {
+    const result = await fetchData('/metrics');
+    if (result.ok && result.data) {
+      setEmergencyMetrics(result.data);
+    } else {
+      // Simulation fallback
+      setEmergencyMetrics(prev => ({
+        currentLoad: Math.max(10, Math.min(50, (prev.currentLoad || 23) + Math.floor(Math.random() * 7) - 3)),
+        predictedPeak: Math.max(30, Math.min(60, (prev.predictedPeak || 45) + Math.floor(Math.random() * 5) - 2)),
+        avgResponseTime: Math.max(5, Math.min(15, parseFloat(((prev.avgResponseTime || 8.5) + (Math.random() * 2 - 1)).toFixed(1)))),
+        bedAvailability: Math.max(50, Math.min(95, (prev.bedAvailability || 76) + Math.floor(Math.random() * 5) - 2))
+      }));
     }
-    setHistoricalData(data);
   };
 
-  const runEmergencyPredictions = () => {
-    const aiPredictions = [
-      {
-        id: 1,
-        type: 'Cardiac Emergency',
-        riskLevel: 'High',
-        probability: Math.floor(Math.random() * 20) + 70,
-        timeframe: '4-6 hours',
-        factors: ['Chest pain pattern', 'Age demographics', 'Historical data', 'Weather conditions'],
-        recommendedAction: 'Increase cardiology staff by 2, prepare cath lab',
-        confidence: 92,
-        affectedArea: 'Downtown District',
-        estimatedCases: '8-12 patients'
-      },
-      {
-        id: 2,
-        type: 'Respiratory Distress',
-        riskLevel: 'Medium',
-        probability: Math.floor(Math.random() * 20) + 55,
-        timeframe: '6-12 hours',
-        factors: ['Air quality index', 'Seasonal patterns', 'COVID-19 trends'],
-        recommendedAction: 'Stock respiratory supplies, alert pulmonology team',
-        confidence: 87,
-        affectedArea: 'Industrial Zone',
-        estimatedCases: '12-18 patients'
-      },
-      {
-        id: 3,
-        type: 'Trauma Cases',
-        riskLevel: 'Medium',
-        probability: Math.floor(Math.random() * 20) + 50,
-        timeframe: '12-24 hours',
-        factors: ['Traffic patterns', 'Weekend activity', 'Sports events'],
-        recommendedAction: 'Ensure trauma bay readiness, orthopedic on-call',
-        confidence: 84,
-        affectedArea: 'Highway Corridor',
-        estimatedCases: '5-8 patients'
-      },
-      {
-        id: 4,
-        type: 'Stroke Cases',
-        riskLevel: 'Low',
-        probability: Math.floor(Math.random() * 20) + 35,
-        timeframe: '24-48 hours',
-        factors: ['Temperature changes', 'Senior population distribution'],
-        recommendedAction: 'Maintain standard stroke protocol readiness',
-        confidence: 79,
-        affectedArea: 'Residential Areas',
-        estimatedCases: '3-5 patients'
+  const initializeHistoricalData = async () => {
+    const result = await fetchData('/historical');
+    if (result.ok && result.data) {
+      setHistoricalData(result.data);
+    } else {
+      const data = [];
+      for (let i = 0; i < 24; i++) {
+        data.push({
+          hour: `${i.toString().padStart(2, '0')}:00`,
+          actual: Math.floor(Math.random() * 30) + 10,
+          predicted: Math.floor(Math.random() * 30) + 12,
+          capacity: 50,
+          x: i,
+          y: Math.floor(Math.random() * 30) + 10,
+        });
       }
-    ];
+      setHistoricalData(data);
+    }
+  };
 
-    setPredictions(aiPredictions);
+  const runEmergencyPredictions = async () => {
+    const result = await fetchData('/predictions');
+    if (result.ok && result.data) {
+      setPredictions(result.data);
+    } else {
+      const aiPredictions = [
+        {
+          id: 1,
+          type: 'Cardiac Emergency',
+          riskLevel: 'High',
+          probability: Math.floor(Math.random() * 20) + 70,
+          timeframe: '4-6 hours',
+          factors: ['Chest pain pattern', 'Age demographics', 'Historical data', 'Weather conditions'],
+          recommendedAction: 'Increase cardiology staff by 2, prepare cath lab',
+          confidence: 92,
+          affectedArea: 'Downtown District',
+          estimatedCases: '8-12 patients'
+        },
+        {
+          id: 2,
+          type: 'Respiratory Distress',
+          riskLevel: 'Medium',
+          probability: Math.floor(Math.random() * 20) + 55,
+          timeframe: '6-12 hours',
+          factors: ['Air quality index', 'Seasonal patterns', 'COVID-19 trends'],
+          recommendedAction: 'Stock respiratory supplies, alert pulmonology team',
+          confidence: 87,
+          affectedArea: 'Industrial Zone',
+          estimatedCases: '12-18 patients'
+        },
+        {
+          id: 3,
+          type: 'Trauma Cases',
+          riskLevel: 'Medium',
+          probability: Math.floor(Math.random() * 20) + 50,
+          timeframe: '12-24 hours',
+          factors: ['Traffic patterns', 'Weekend activity', 'Sports events'],
+          recommendedAction: 'Ensure trauma bay readiness, orthopedic on-call',
+          confidence: 84,
+          affectedArea: 'Highway Corridor',
+          estimatedCases: '5-8 patients'
+        },
+        {
+          id: 4,
+          type: 'Stroke Cases',
+          riskLevel: 'Low',
+          probability: Math.floor(Math.random() * 20) + 35,
+          timeframe: '24-48 hours',
+          factors: ['Temperature changes', 'Senior population distribution'],
+          recommendedAction: 'Maintain standard stroke protocol readiness',
+          confidence: 79,
+          affectedArea: 'Residential Areas',
+          estimatedCases: '3-5 patients'
+        }
+      ];
+
+      setPredictions(aiPredictions);
+    }
+
     if (!emergencyMetrics.currentLoad) {
       setEmergencyMetrics({
         currentLoad: 23,
@@ -975,7 +272,7 @@ chatbotContainer: {
         `High-risk cardiac emergencies are predicted with ${predictions[0]?.probability}% probability. Recommend increasing cardiology staff.`,
         `All resource utilization metrics are being monitored. Current system performance is optimal.`
       ];
-      
+
       const botMessage = {
         id: Date.now(),
         text: responses[Math.floor(Math.random() * responses.length)],
@@ -1009,36 +306,22 @@ chatbotContainer: {
     addNotification('Data Refreshed', 'All predictions and metrics updated', 'info');
   };
 
-  const filteredPredictions = predictions.filter(p => 
+  const filteredPredictions = predictions.filter(p =>
     filterRisk === 'all' || p.riskLevel.toLowerCase() === filterRisk
   );
 
-  const getRiskStyle = (level) => {
-    switch(level) {
-      case 'High': return styles.predictionCardHigh;
-      case 'Medium': return styles.predictionCardMedium;
-      case 'Low': return styles.predictionCardLow;
-      default: return {};
+  const getRiskClass = (level) => {
+    switch (level) {
+      case 'High': return 'high';
+      case 'Medium': return 'medium';
+      case 'Low': return 'low';
+      default: return '';
     }
   };
 
-  const getRiskBadgeStyle = (level) => {
-    switch(level) {
-      case 'High': return styles.riskBadgeHigh;
-      case 'Medium': return styles.riskBadgeMedium;
-      case 'Low': return styles.riskBadgeLow;
-      default: return {};
-    }
-  };
-
-  const getPerformanceStatStyle = (index) => {
-    const statStyles = [
-      styles.performanceStatGreen,
-      styles.performanceStatBlue,
-      styles.performanceStatPurple,
-      styles.performanceStatOrange
-    ];
-    return statStyles[index % 4];
+  const getPerformanceStatClass = (index) => {
+    const classes = ['green', 'blue', 'purple', 'orange'];
+    return classes[index % 4];
   };
 
   const emergencyTrendData = historicalData.length > 0 ? historicalData : [
@@ -1090,22 +373,22 @@ chatbotContainer: {
       data: emergencyTrendData,
     };
 
-    switch(mainChartType) {
+    switch (mainChartType) {
       case 'area':
         return (
           <AreaChart {...commonProps}>
             <defs>
               <linearGradient id="colorCapacity" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#9E9E9E" stopOpacity={0.2}/>
-                <stop offset="95%" stopColor="#9E9E9E" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#9E9E9E" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#9E9E9E" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#1976D2" stopOpacity={0.6}/>
-                <stop offset="95%" stopColor="#1976D2" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#1976D2" stopOpacity={0.6} />
+                <stop offset="95%" stopColor="#1976D2" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#D32F2F" stopOpacity={0.6}/>
-                <stop offset="95%" stopColor="#D32F2F" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#D32F2F" stopOpacity={0.6} />
+                <stop offset="95%" stopColor="#D32F2F" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
@@ -1118,7 +401,7 @@ chatbotContainer: {
             <Area type="monotone" dataKey="predicted" stroke="#D32F2F" fill="url(#colorPredicted)" strokeDasharray="5 5" name="AI Predicted" />
           </AreaChart>
         );
-      
+
       case 'line':
         return (
           <LineChart {...commonProps}>
@@ -1132,7 +415,7 @@ chatbotContainer: {
             <Line type="monotone" dataKey="predicted" stroke="#D32F2F" strokeWidth={3} strokeDasharray="5 5" name="AI Predicted" />
           </LineChart>
         );
-      
+
       case 'bar':
         return (
           <BarChart {...commonProps}>
@@ -1146,7 +429,7 @@ chatbotContainer: {
             <Bar dataKey="predicted" fill="#D32F2F" name="AI Predicted" radius={[8, 8, 0, 0]} />
           </BarChart>
         );
-      
+
       case 'composed':
         return (
           <ComposedChart {...commonProps}>
@@ -1160,7 +443,7 @@ chatbotContainer: {
             <Line type="monotone" dataKey="predicted" stroke="#D32F2F" strokeWidth={3} name="AI Predicted" />
           </ComposedChart>
         );
-      
+
       case 'scatter':
         return (
           <ScatterChart {...commonProps}>
@@ -1170,37 +453,22 @@ chatbotContainer: {
             <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ background: 'white', border: '1px solid #E0E0E0', borderRadius: '8px' }} />
             <Legend />
             <Scatter name="Actual Load" data={emergencyTrendData} fill="#1976D2" />
-            <Scatter name="Predicted Load" data={emergencyTrendData.map(d => ({...d, y: d.predicted}))} fill="#D32F2F" />
+            <Scatter name="Predicted Load" data={emergencyTrendData.map(d => ({ ...d, y: d.predicted }))} fill="#D32F2F" />
           </ScatterChart>
         );
-      
+
       default:
         return null;
     }
   };
 
   return (
-    <div style={styles.dashboard}>
-      <style>{`
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        @keyframes typing {
-          0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-          30% { opacity: 1; transform: translateY(-10px); }
-        }
-        input::placeholder {
-          color: #9E9E9E;
-        }
-      `}</style>
-
+    <div className="emergency-dashboard">
       {/* Notifications Panel */}
       <AnimatePresence>
         {notifications.length > 0 && (
           <motion.div
-            style={styles.notificationPanel}
+            className="emergency-notification-panel"
             initial={{ x: 400, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 400, opacity: 0 }}
@@ -1208,7 +476,7 @@ chatbotContainer: {
             {notifications.map(notif => (
               <motion.div
                 key={notif.id}
-                style={styles.notificationItem}
+                className="emergency-notification-item"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
@@ -1241,39 +509,39 @@ chatbotContainer: {
         )}
       </AnimatePresence>
 
-      <div style={styles.container}>
+      <div className="emergency-container">
         {/* Header */}
-        <motion.div 
-          style={{...styles.glassCard, ...styles.headerCard}}
+        <motion.div
+          className="emergency-glass-card emergency-header-card"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div style={styles.headerContent}>
-            <div style={styles.headerLeft}>
-              <motion.div 
-                style={styles.icon3d}
-                animate={{ 
+          <div className="emergency-header-content">
+            <div className="emergency-header-left">
+              <motion.div
+                className="emergency-icon-3d"
+                animate={{
                   rotateY: [0, 360],
                   scale: [1, 1.1, 1]
                 }}
-                transition={{ 
+                transition={{
                   duration: 4,
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
               >
-                <AlertTriangle style={{width: '32px', height: '32px', color: 'white'}} />
+                <AlertTriangle style={{ width: '32px', height: '32px', color: 'white' }} />
               </motion.div>
               <div>
-                <h1 style={styles.gradientText}>Emergency Prediction System</h1>
-                <p style={styles.subtitle}>AI-powered forecasting for emergency department optimization</p>
+                <h1 className="emergency-gradient-text">Emergency Prediction System</h1>
+                <p className="emergency-subtitle">AI-powered forecasting for emergency department optimization</p>
               </div>
             </div>
-            <div style={styles.headerRight}>
-              <div style={styles.connectionStatus}>
-                <motion.div 
-                  style={styles.statusDot}
+            <div className="emergency-header-right">
+              <div className="emergency-connection-status">
+                <motion.div
+                  className="emergency-status-dot"
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
@@ -1282,7 +550,7 @@ chatbotContainer: {
 
               <motion.button
                 onClick={handleRefresh}
-                style={styles.toolbarButton}
+                className="emergency-toolbar-button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 title="Refresh Data"
@@ -1292,7 +560,7 @@ chatbotContainer: {
 
               <motion.button
                 onClick={handleExportData}
-                style={styles.toolbarButton}
+                className="emergency-toolbar-button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 title="Export Data"
@@ -1300,15 +568,12 @@ chatbotContainer: {
                 <Download style={{ width: '20px', height: '20px', color: '#424242' }} />
               </motion.button>
 
-              <div style={styles.timeframeButtons}>
+              <div className="emergency-timeframe-buttons">
                 {['24h', '48h', '7d'].map((timeframe) => (
                   <motion.button
                     key={timeframe}
                     onClick={() => setSelectedTimeframe(timeframe)}
-                    style={{
-                      ...styles.timeframeBtn,
-                      ...(selectedTimeframe === timeframe ? styles.timeframeBtnActive : {})
-                    }}
+                    className={`emergency-timeframe-btn ${selectedTimeframe === timeframe ? 'active' : ''}`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -1318,12 +583,12 @@ chatbotContainer: {
               </div>
             </div>
           </div>
-          
-          <div style={styles.featureBadges}>
+
+          <div className="emergency-feature-badges">
             {['Real-Time Forecasting', 'Resource Optimization', 'Risk Assessment', 'Pattern Recognition'].map((feature, index) => (
-              <motion.span 
+              <motion.span
                 key={feature}
-                style={styles.badge}
+                className="emergency-badge"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -1336,7 +601,7 @@ chatbotContainer: {
 
         {/* Filter Section */}
         <motion.div
-          style={styles.filterSection}
+          className="emergency-filter-section"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -1347,10 +612,7 @@ chatbotContainer: {
             <motion.button
               key={risk}
               onClick={() => setFilterRisk(risk)}
-              style={{
-                ...styles.filterButton,
-                ...(filterRisk === risk ? styles.filterButtonActive : {})
-              }}
+              className={`emergency-filter-button ${filterRisk === risk ? 'active' : ''}`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -1360,7 +622,7 @@ chatbotContainer: {
         </motion.div>
 
         {/* Metrics Cards */}
-        <div style={styles.metricsGrid}>
+        <div className="emergency-metrics-grid">
           {[
             { icon: Users, label: 'Current Load', value: emergencyMetrics.currentLoad, unit: '', color: '#1976D2', detail: 'Patients in ED', trend: 'up' },
             { icon: TrendingUp, label: 'Predicted Peak', value: emergencyMetrics.predictedPeak, unit: '', color: '#D32F2F', detail: 'Next 12 hours', trend: 'up' },
@@ -1369,17 +631,14 @@ chatbotContainer: {
           ].map((metric, index) => (
             <motion.div
               key={metric.label}
-              style={{...styles.glassCard, ...styles.metricCard}}
+              className="emergency-glass-card emergency-metric-card"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ scale: 1.05 }}
             >
               <motion.div
-                style={{
-                  ...styles.metricTrend,
-                  ...(metric.trend === 'up' ? styles.trendUp : styles.trendDown)
-                }}
+                className={`emergency-metric-trend ${metric.trend === 'up' ? 'emergency-trend-up' : 'emergency-trend-down'}`}
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
@@ -1387,30 +646,31 @@ chatbotContainer: {
               </motion.div>
               <div>
                 <motion.div
-                  animate={{ 
+                  animate={{
                     rotate: [0, 10, -10, 0],
                     scale: [1, 1.1, 1]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 3,
                     repeat: Infinity,
                     repeatDelay: 1
                   }}
                 >
-                  <metric.icon style={{...styles.metricIcon, color: metric.color}} />
+                  <metric.icon className="emergency-metric-icon" style={{ color: metric.color }} />
                 </motion.div>
               </div>
-              <div style={styles.metricContent}>
-                <p style={styles.metricLabel}>{metric.label}</p>
-                <motion.p 
-                  style={{...styles.metricValue, color: metric.color}}
+              <div className="emergency-metric-content">
+                <p className="emergency-metric-label">{metric.label}</p>
+                <motion.p
+                  className="emergency-metric-value"
+                  style={{ color: metric.color }}
                   key={metric.value}
                   initial={{ scale: 1.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                 >
                   {metric.value}{metric.unit}
                 </motion.p>
-                <p style={styles.metricDetail}>{metric.detail}</p>
+                <p className="emergency-metric-detail">{metric.detail}</p>
               </div>
             </motion.div>
           ))}
@@ -1418,15 +678,15 @@ chatbotContainer: {
 
         {/* AI Predictions */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-          <div style={styles.sectionTitle}>
-            <div style={styles.sectionTitleLeft}>
-              <Zap style={{...styles.sectionIcon, color: '#F57C00'}} />
+          <div className="emergency-section-title">
+            <div className="emergency-section-title-left">
+              <Zap className="emergency-section-icon" style={{ color: '#F57C00' }} />
               <span>AI Emergency Predictions</span>
             </div>
-            <div style={styles.sectionActions}>
+            <div className="emergency-section-actions">
               <motion.button
                 onClick={handleRefresh}
-                style={styles.iconButton}
+                className="emergency-icon-button"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -1434,42 +694,37 @@ chatbotContainer: {
               </motion.button>
             </div>
           </div>
-          <div style={styles.predictionsGrid}>
+          <div className="emergency-predictions-grid">
             {filteredPredictions.map((prediction, index) => (
               <motion.div
                 key={prediction.id}
-                style={{
-                  ...styles.glassCard, 
-                  ...styles.predictionCard,
-                  ...getRiskStyle(prediction.riskLevel),
-                  ...(selectedPrediction === prediction.id ? styles.predictionCardSelected : {})
-                }}
+                className={`emergency-glass-card emergency-prediction-card ${getRiskClass(prediction.riskLevel)} ${selectedPrediction === prediction.id ? 'selected' : ''}`}
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.15 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={() => setSelectedPrediction(selectedPrediction === prediction.id ? null : prediction.id)}
               >
-                <div style={styles.predictionHeader}>
+                <div className="emergency-prediction-header">
                   <div>
-                    <h3 style={styles.predictionTitle}>{prediction.type}</h3>
-                    <div style={styles.predictionBadges}>
-                      <span style={{...styles.riskBadge, ...getRiskBadgeStyle(prediction.riskLevel)}}>
+                    <h3 className="emergency-prediction-title">{prediction.type}</h3>
+                    <div className="emergency-prediction-badges">
+                      <span className={`emergency-risk-badge ${getRiskClass(prediction.riskLevel)}`}>
                         {prediction.riskLevel} Risk
                       </span>
-                      <span style={{...styles.riskBadge, ...styles.confidenceBadge}}>
+                      <span className="emergency-risk-badge emergency-confidence-badge">
                         Confidence: {prediction.confidence}%
                       </span>
                     </div>
                   </div>
-                  <div style={styles.probabilityDisplay}>
-                    <motion.div 
-                      style={styles.probabilityCircle}
+                  <div className="emergency-probability-display">
+                    <motion.div
+                      className="emergency-probability-circle"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: index * 0.15 + 0.3, type: 'spring' }}
                     >
-                      <svg viewBox="0 0 100 100" style={{width: '100%', height: '100%'}}>
+                      <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
                         <circle cx="50" cy="50" r="45" fill="none" stroke="#E0E0E0" strokeWidth="8" />
                         <motion.circle
                           cx="50"
@@ -1486,42 +741,42 @@ chatbotContainer: {
                           transform="rotate(-90 50 50)"
                         />
                       </svg>
-                      <span style={styles.probabilityText}>{prediction.probability}%</span>
+                      <span className="emergency-probability-text">{prediction.probability}%</span>
                     </motion.div>
                   </div>
                 </div>
 
-                <div style={styles.predictionDetails}>
-                  <div style={styles.detailItem}>
-                    <Clock style={styles.detailIcon} />
+                <div className="emergency-prediction-details">
+                  <div className="emergency-detail-item">
+                    <Clock className="emergency-detail-icon" />
                     <div>
-                      <p style={styles.detailLabel}>Timeframe</p>
-                      <p style={styles.detailValue}>{prediction.timeframe}</p>
+                      <p className="emergency-detail-label">Timeframe</p>
+                      <p className="emergency-detail-value">{prediction.timeframe}</p>
                     </div>
                   </div>
-                  <div style={styles.detailItem}>
-                    <MapPin style={styles.detailIcon} />
+                  <div className="emergency-detail-item">
+                    <MapPin className="emergency-detail-icon" />
                     <div>
-                      <p style={styles.detailLabel}>Affected Area</p>
-                      <p style={styles.detailValue}>{prediction.affectedArea}</p>
+                      <p className="emergency-detail-label">Affected Area</p>
+                      <p className="emergency-detail-value">{prediction.affectedArea}</p>
                     </div>
                   </div>
-                  <div style={styles.detailItem}>
-                    <Users style={styles.detailIcon} />
+                  <div className="emergency-detail-item">
+                    <Users className="emergency-detail-icon" />
                     <div>
-                      <p style={styles.detailLabel}>Estimated Cases</p>
-                      <p style={styles.detailValue}>{prediction.estimatedCases}</p>
+                      <p className="emergency-detail-label">Estimated Cases</p>
+                      <p className="emergency-detail-value">{prediction.estimatedCases}</p>
                     </div>
                   </div>
                 </div>
 
-                <div style={styles.factorsSection}>
-                  <p style={styles.factorsLabel}>Key Factors</p>
-                  <div style={styles.factorsTags}>
+                <div className="emergency-factors-section">
+                  <p className="emergency-factors-label">Key Factors</p>
+                  <div className="emergency-factors-tags">
                     {prediction.factors.map((factor, idx) => (
-                      <motion.span 
+                      <motion.span
                         key={idx}
-                        style={styles.factorTag}
+                        className="emergency-factor-tag"
                         initial={{ opacity: 0, scale: 0 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.15 + 0.1 * idx }}
@@ -1532,12 +787,12 @@ chatbotContainer: {
                   </div>
                 </div>
 
-                <div style={styles.actionBox}>
-                  <p style={styles.actionLabel}>Recommended Action:</p>
-                  <p style={styles.actionText}>{prediction.recommendedAction}</p>
-                  <div style={styles.actionButtons}>
+                <div className="emergency-action-box">
+                  <p className="emergency-action-label">Recommended Action:</p>
+                  <p className="emergency-action-text">{prediction.recommendedAction}</p>
+                  <div className="emergency-action-buttons">
                     <motion.button
-                      style={styles.actionButton}
+                      className="emergency-action-button"
                       whileHover={{ background: '#1976D2', color: 'white' }}
                       whileTap={{ scale: 0.95 }}
                       onClick={(e) => {
@@ -1548,7 +803,7 @@ chatbotContainer: {
                       Execute
                     </motion.button>
                     <motion.button
-                      style={styles.actionButton}
+                      className="emergency-action-button"
                       whileHover={{ background: '#1976D2', color: 'white' }}
                       whileTap={{ scale: 0.95 }}
                       onClick={(e) => {
@@ -1566,21 +821,21 @@ chatbotContainer: {
         </motion.div>
 
         {/* Main Chart with Dropdown */}
-        <motion.div 
-          style={{...styles.glassCard, ...styles.chartCard}}
+        <motion.div
+          className="emergency-glass-card emergency-chart-card"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div style={styles.sectionTitle}>
-            <div style={styles.sectionTitleLeft}>
+          <div className="emergency-section-title">
+            <div className="emergency-section-title-left">
               <span>Emergency Department Load Forecast</span>
             </div>
-            <div style={styles.sectionActions} ref={dropdownRef}>
-              <div style={styles.dropdownContainer}>
+            <div className="emergency-section-actions" ref={dropdownRef}>
+              <div className="emergency-dropdown-container">
                 <motion.button
                   onClick={() => setShowChartDropdown(!showChartDropdown)}
-                  style={styles.dropdownButton}
+                  className="emergency-dropdown-button"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -1588,11 +843,11 @@ chatbotContainer: {
                   <span>{chartTypes.find(ct => ct.value === mainChartType)?.label}</span>
                   <ChevronDown style={{ width: '16px', height: '16px' }} />
                 </motion.button>
-                
+
                 <AnimatePresence>
                   {showChartDropdown && (
                     <motion.div
-                      style={styles.dropdownMenu}
+                      className="emergency-dropdown-menu"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -1601,10 +856,7 @@ chatbotContainer: {
                       {chartTypes.map((type) => (
                         <motion.div
                           key={type.value}
-                          style={{
-                            ...styles.dropdownItem,
-                            ...(mainChartType === type.value ? styles.dropdownItemActive : {})
-                          }}
+                          className={`emergency-dropdown-item ${mainChartType === type.value ? 'active' : ''}`}
                           onClick={() => {
                             setMainChartType(type.value);
                             setShowChartDropdown(false);
@@ -1624,22 +876,22 @@ chatbotContainer: {
           <ResponsiveContainer width="100%" height={350}>
             {renderMainChart()}
           </ResponsiveContainer>
-          <div style={styles.alertBox}>
-            <AlertTriangle style={styles.alertIcon} />
+          <div className="emergency-alert-box">
+            <AlertTriangle className="emergency-alert-icon" />
             <span><strong>Peak Alert:</strong> AI predicts capacity threshold (90%) will be reached at 18:00. Recommend staff augmentation.</span>
           </div>
         </motion.div>
 
         {/* Additional Charts Grid */}
-        <div style={styles.chartsGrid}>
+        <div className="emergency-charts-grid">
           {/* Pie Chart */}
-          <motion.div 
-            style={{...styles.glassCard, ...styles.chartCard}}
+          <motion.div
+            className="emergency-glass-card emergency-chart-card"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.7 }}
           >
-            <h2 style={{...styles.sectionTitleLeft, marginBottom: '1.5rem'}}>
+            <h2 className="emergency-section-title-left" style={{ marginBottom: '1.5rem' }}>
               Emergency Distribution (Pie Chart)
             </h2>
             <ResponsiveContainer width="100%" height={300}>
@@ -1649,7 +901,7 @@ chatbotContainer: {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
@@ -1665,13 +917,13 @@ chatbotContainer: {
           </motion.div>
 
           {/* Radar Chart */}
-          <motion.div 
-            style={{...styles.glassCard, ...styles.chartCard}}
+          <motion.div
+            className="emergency-glass-card emergency-chart-card"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.7 }}
           >
-            <h2 style={{...styles.sectionTitleLeft, marginBottom: '1.5rem'}}>
+            <h2 className="emergency-section-title-left" style={{ marginBottom: '1.5rem' }}>
               Risk Assessment (Radar Chart)
             </h2>
             <ResponsiveContainer width="100%" height={300}>
@@ -1688,13 +940,13 @@ chatbotContainer: {
           </motion.div>
 
           {/* Bar Chart */}
-          <motion.div 
-            style={{...styles.glassCard, ...styles.chartCard}}
+          <motion.div
+            className="emergency-glass-card emergency-chart-card"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.8 }}
           >
-            <h2 style={{...styles.sectionTitleLeft, marginBottom: '1.5rem'}}>
+            <h2 className="emergency-section-title-left" style={{ marginBottom: '1.5rem' }}>
               Category Distribution (Bar Chart)
             </h2>
             <ResponsiveContainer width="100%" height={300}>
@@ -1711,78 +963,80 @@ chatbotContainer: {
           </motion.div>
 
           {/* Resource Utilization */}
-          <motion.div 
-            style={{...styles.glassCard, ...styles.chartCard}}
+          <motion.div
+            className="emergency-glass-card emergency-chart-card"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.8 }}
           >
-            <h2 style={{...styles.sectionTitleLeft, marginBottom: '1.5rem'}}>
+            <h2 className="emergency-section-title-left" style={{ marginBottom: '1.5rem' }}>
               Resource Utilization Forecast
             </h2>
-            <div style={styles.resourceList}>
+            <div className="emergency-resource-list">
               {resourceData.map((resource, index) => (
-                <motion.div 
+                <motion.div
                   key={index}
-                  style={styles.resourceItem}
+                  className="emergency-resource-item"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.8 + index * 0.1 }}
                 >
-                  <div style={styles.resourceHeader}>
-                    <span style={styles.resourceName}>{resource.resource}</span>
-                    <div style={styles.resourceValues}>
-                      <span style={styles.currentValue}>Now: {resource.current}%</span>
-                      <span style={styles.predictedValue}>Predicted: {resource.predicted}%</span>
+                  <div className="emergency-resource-header">
+                    <span className="emergency-resource-name">{resource.resource}</span>
+                    <div className="emergency-resource-values">
+                      <span className="emergency-current-value">Now: {resource.current}%</span>
+                      <span className="emergency-predicted-value">Predicted: {resource.predicted}%</span>
                     </div>
                   </div>
-                  <div style={styles.resourceBar}>
+                  <div className="emergency-resource-bar">
                     <motion.div
-                      style={{...styles.barCurrent, width: `${resource.current}%`}}
+                      className="emergency-bar-current"
+                      style={{ width: `${resource.current}%` }}
                       initial={{ width: 0 }}
                       animate={{ width: `${resource.current}%` }}
                       transition={{ duration: 1, delay: 0.8 + index * 0.1 }}
                     />
                     <motion.div
-                      style={{...styles.barPredicted, width: `${resource.predicted}%`}}
+                      className="emergency-bar-predicted"
+                      style={{ width: `${resource.predicted}%` }}
                       initial={{ width: 0 }}
                       animate={{ width: `${resource.predicted}%` }}
                       transition={{ duration: 1, delay: 1 + index * 0.1 }}
                     />
                     {resource.predicted > 85 && (
                       <motion.div
-                        style={styles.alertIndicator}
+                        className="emergency-alert-indicator"
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 1.5 + index * 0.1 }}
                       >
-                        <AlertTriangle style={styles.alertIconSmall} />
+                        <AlertTriangle className="emergency-alert-icon-small" />
                       </motion.div>
                     )}
                   </div>
                 </motion.div>
               ))}
             </div>
-            <div style={{...styles.alertBox, ...styles.alertBoxWarning}}>
+            <div className="emergency-alert-box warning">
               <p>⚠️ <strong>Resource Alert:</strong> ICU beds and nursing staff predicted to exceed 85% utilization.</p>
             </div>
           </motion.div>
         </div>
 
         {/* Performance */}
-        <motion.div 
-          style={{...styles.glassCard, ...styles.performanceCard}}
+        <motion.div
+          className="emergency-glass-card emergency-performance-card"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
         >
-          <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem'}}>
-            <Shield style={{...styles.sectionIcon, color: '#388E3C'}} />
-            <h2 style={{fontSize: '2rem', fontWeight: '700', color: '#212121'}}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+            <Shield className="emergency-section-icon" style={{ color: '#388E3C' }} />
+            <h2 style={{ fontSize: '2rem', fontWeight: '700', color: '#212121' }}>
               AI Model Performance & Accuracy
             </h2>
           </div>
-          <div style={styles.performanceGrid}>
+          <div className="emergency-performance-grid">
             {[
               { label: 'Overall Accuracy', value: '91.3%', detail: 'Last 30 days' },
               { label: 'Peak Prediction', value: '88.7%', detail: '±15 min accuracy' },
@@ -1791,26 +1045,26 @@ chatbotContainer: {
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
-                style={{...styles.performanceStat, ...getPerformanceStatStyle(index)}}
+                className={`emergency-performance-stat ${getPerformanceStatClass(index)}`}
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.9 + index * 0.1, type: 'spring' }}
                 whileHover={{ scale: 1.05 }}
               >
-                <p style={styles.statLabel}>{stat.label}</p>
-                <motion.p 
-                  style={styles.statValue}
+                <p className="emergency-stat-label">{stat.label}</p>
+                <motion.p
+                  className="emergency-stat-value"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 1 + index * 0.1 }}
                 >
                   {stat.value}
                 </motion.p>
-                <p style={styles.statDetail}>{stat.detail}</p>
+                <p className="emergency-stat-detail">{stat.detail}</p>
               </motion.div>
             ))}
           </div>
-          <div style={styles.modelInfo}>
+          <div className="emergency-model-info">
             <p><strong>Model Training:</strong> Continuously learning from 500K+ historical emergency cases, weather patterns, traffic data, demographic trends, and seasonal variations. Last updated: 2 hours ago.</p>
           </div>
         </motion.div>
@@ -1819,20 +1073,20 @@ chatbotContainer: {
       {/* Chatbot */}
       <AnimatePresence>
         {chatOpen && (
-          <motion.div 
-            style={styles.chatbotContainer}
+          <motion.div
+            className="emergency-chatbot-container"
             initial={{ opacity: 0, scale: 0.8, y: 100 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 100 }}
             transition={{ type: 'spring', damping: 25 }}
           >
-            <div style={styles.chatbotHeader}>
-              <div style={styles.chatbotTitle}>
-                <MessageSquare style={styles.chatbotIcon} />
+            <div className="emergency-chatbot-header">
+              <div className="emergency-chatbot-title">
+                <MessageSquare className="emergency-chatbot-icon" />
                 <span>AI Emergency Assistant</span>
               </div>
-              <motion.button 
-                style={styles.chatbotClose}
+              <motion.button
+                className="emergency-chatbot-close"
                 onClick={() => setChatOpen(false)}
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
@@ -1840,8 +1094,8 @@ chatbotContainer: {
                 <X />
               </motion.button>
             </div>
-            
-            <div style={styles.chatbotMessages}>
+
+            <div className="emergency-chatbot-messages">
               {chatMessages.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '2rem', color: '#757575' }}>
                   <MessageSquare style={{ width: '48px', height: '48px', margin: '0 auto 1rem', color: '#BDBDBD' }} />
@@ -1852,45 +1106,45 @@ chatbotContainer: {
                 {chatMessages.map((message) => (
                   <motion.div
                     key={message.id}
-                    style={message.sender === 'user' ? styles.messageUser : styles.messageBot}
+                    className={message.sender === 'user' ? "emergency-message-user" : "emergency-message-bot"}
                     initial={{ opacity: 0, x: message.sender === 'user' ? 20 : -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0 }}
                   >
-                    <p style={{margin: 0, lineHeight: 1.5}}>{message.text}</p>
-                    <span style={styles.messageTime}>
+                    <p style={{ margin: 0, lineHeight: 1.5 }}>{message.text}</p>
+                    <span className="emergency-message-time">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </motion.div>
                 ))}
               </AnimatePresence>
-              
+
               {isTyping && (
-                <motion.div 
-                  style={styles.typingIndicator}
+                <motion.div
+                  className="emergency-typing-dc"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  <span style={styles.typingDot}></span>
-                  <span style={{...styles.typingDot, animationDelay: '0.2s'}}></span>
-                  <span style={{...styles.typingDot, animationDelay: '0.4s'}}></span>
+                  <span className="emergency-typing-dot"></span>
+                  <span className="emergency-typing-dot" style={{ animationDelay: '0.2s' }}></span>
+                  <span className="emergency-typing-dot" style={{ animationDelay: '0.4s' }}></span>
                 </motion.div>
               )}
               <div ref={chatEndRef} />
             </div>
 
-            <div style={styles.chatbotInput}>
+            <div className="emergency-chatbot-input">
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Ask about predictions, resources..."
-                style={styles.chatInput}
+                className="emergency-chat-input-field"
               />
-              <motion.button 
+              <motion.button
                 onClick={handleSendMessage}
-                style={styles.chatSendBtn}
+                className="emergency-chat-send-btn"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 disabled={!inputMessage.trim()}
@@ -1904,16 +1158,16 @@ chatbotContainer: {
 
       {!chatOpen && (
         <motion.button
-          style={styles.chatbotToggle}
+          className="emergency-chatbot-toggle"
           onClick={() => setChatOpen(true)}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <MessageSquare style={{width: '28px', height: '28px'}} />
-          <motion.span 
-            style={styles.notificationDot}
+          <MessageSquare style={{ width: '28px', height: '28px' }} />
+          <motion.span
+            className="emergency-notification-dot"
             animate={{ scale: [1, 1.3, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           />

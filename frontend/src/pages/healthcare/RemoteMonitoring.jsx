@@ -11,6 +11,10 @@ import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar
 } from 'recharts';
+import './RemoteMonitoring.css';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:5000';
 
 export default function RemoteMonitoring() {
   const [patients, setPatients] = useState([]);
@@ -26,7 +30,7 @@ export default function RemoteMonitoring() {
   const [isChatbotTyping, setIsChatbotTyping] = useState(false);
   const [activeCall, setActiveCall] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-  
+
   const wsRef = useRef(null);
   const chatbotWsRef = useRef(null);
 
@@ -179,7 +183,7 @@ export default function RemoteMonitoring() {
 
   const connectWebSocket = () => {
     try {
-      const ws = new WebSocket('ws://localhost:8080/patients');
+      const ws = new WebSocket(`${WS_URL}/patients`);
       ws.onopen = () => {
         console.log('Connected to patient monitoring system');
         setIsConnected(true);
@@ -203,7 +207,7 @@ export default function RemoteMonitoring() {
 
   const connectChatbotWebSocket = () => {
     try {
-      const chatWs = new WebSocket('ws://localhost:8080/chatbot');
+      const chatWs = new WebSocket(`${WS_URL}/chatbot`);
       chatWs.onopen = () => console.log('AI Assistant connected');
       chatWs.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -272,7 +276,7 @@ export default function RemoteMonitoring() {
           endTime: new Date(Date.now() + 3600000).toISOString()
         })
       });
-      
+
       const data = await response.json();
       navigator.clipboard.writeText(data.meetLink);
       alert(`✅ Video Consultation Link Created\n\nLink: ${data.meetLink}\n\nThe link has been copied to your clipboard. Share it with ${patientName}.`);
@@ -329,42 +333,42 @@ export default function RemoteMonitoring() {
 
   const getVitalConfig = (label) => {
     const configs = {
-      'Heart Rate': { 
-        icon: Heart, 
-        color: '#EF4444', 
-        bgColor: '#FEF2F2', 
+      'Heart Rate': {
+        icon: Heart,
+        color: '#EF4444',
+        bgColor: '#FEF2F2',
         borderColor: '#FEE2E2',
         unit: 'bpm',
         normalRange: '60-100'
       },
-      'Blood Pressure': { 
-        icon: Activity, 
-        color: '#3B82F6', 
-        bgColor: '#EFF6FF', 
+      'Blood Pressure': {
+        icon: Activity,
+        color: '#3B82F6',
+        bgColor: '#EFF6FF',
         borderColor: '#DBEAFE',
         unit: 'mmHg',
         normalRange: '90-120 / 60-80'
       },
-      'Temperature': { 
-        icon: Thermometer, 
-        color: '#F97316', 
-        bgColor: '#FFF7ED', 
+      'Temperature': {
+        icon: Thermometer,
+        color: '#F97316',
+        bgColor: '#FFF7ED',
         borderColor: '#FFEDD5',
         unit: '°F',
         normalRange: '97-99'
       },
-      'Glucose': { 
-        icon: Droplets, 
-        color: '#8B5CF6', 
-        bgColor: '#FAF5FF', 
+      'Glucose': {
+        icon: Droplets,
+        color: '#8B5CF6',
+        bgColor: '#FAF5FF',
         borderColor: '#F3E8FF',
         unit: 'mg/dL',
         normalRange: '70-130'
       },
-      'Oxygen': { 
-        icon: Activity, 
-        color: '#10B981', 
-        bgColor: '#F0FDF4', 
+      'Oxygen': {
+        icon: Activity,
+        color: '#10B981',
+        bgColor: '#F0FDF4',
         borderColor: '#DCFCE7',
         unit: '%',
         normalRange: '95-100'
@@ -401,1006 +405,602 @@ export default function RemoteMonitoring() {
   };
 
   return (
-    <>
-      <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    <div className="rm-page">
+      <div className="rm-container">
+        {/* Header */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="card rm-header"
+          style={{ marginBottom: '1.5rem' }}
+        >
+          <div className="header-brand">
+            <div className="brand-icon-box flex-center">
+              <Stethoscope style={{ width: '28px', height: '28px', color: 'white' }} />
+            </div>
+            <div>
+              <h1 className="brand-title">Remote Patient Monitoring System</h1>
+              <p className="brand-subtitle">
+                Real-time healthcare monitoring • {currentTime.toLocaleTimeString()} • {currentTime.toLocaleDateString()}
+              </p>
+            </div>
+          </div>
 
-        * {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
+          <div className="header-actions">
+            {/* Connection Status */}
+            <motion.div
+              animate={isConnected ? { scale: [1, 1.05, 1] } : {}}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="status-badge"
+              style={{
+                background: isConnected ? '#F0FDF4' : '#FEF2F2',
+                border: `1px solid ${isConnected ? '#86EFAC' : '#FCA5A5'}`,
+                color: isConnected ? '#059669' : '#DC2626'
+              }}
+            >
+              <div
+                className={`status-dot ${isConnected ? 'pulse-ring' : ''}`}
+                style={{ background: isConnected ? '#10B981' : '#EF4444' }}
+              />
+              <span>{isConnected ? 'System Online' : 'Offline'}</span>
+            </motion.div>
 
-        @keyframes pulse-ring {
-          0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-          50% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
+            {/* AI Assistant */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowChatbot(!showChatbot)}
+              className="btn-base btn-ai"
+            >
+              <MessageSquare style={{ width: '16px', height: '16px' }} />
+              AI Assistant
+            </motion.button>
 
-        @keyframes slide-up {
-          from { transform: translateY(10px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
+            {/* Notifications */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="btn-icon"
+            >
+              <Bell style={{ width: '20px', height: '20px' }} />
+              {notifications.length > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="notification-count flex-center"
+                >
+                  {notifications.length}
+                </motion.span>
+              )}
+            </motion.button>
 
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
+            {/* Settings */}
+            <motion.button
+              whileHover={{ scale: 1.05, rotate: 90 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn-icon"
+            >
+              <Settings style={{ width: '20px', height: '20px' }} />
+            </motion.button>
+          </div>
+        </motion.div>
 
-        .pulse-ring {
-          animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
+        {/* AI Insights */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="insights-section"
+        >
+          <div className="card">
+            <h2 className="section-title">
+              <BarChart3 style={{ width: '24px', height: '24px', color: '#3B82F6' }} />
+              AI Health Insights & Alerts
+            </h2>
+            <div className="insights-grid">
+              {aiInsights.map((insight, idx) => {
+                const Icon = insight.icon;
+                const colors = {
+                  critical: { bg: '#FEF2F2', border: '#FCA5A5', text: '#DC2626' },
+                  warning: { bg: '#FFFBEB', border: '#FCD34D', text: '#D97706' },
+                  success: { bg: '#F0FDF4', border: '#86EFAC', text: '#059669' },
+                  info: { bg: '#EFF6FF', border: '#93C5FD', text: '#2563EB' }
+                };
+                const color = colors[insight.type];
+                return (
+                  <motion.div
+                    key={idx}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="insight-card"
+                    style={{
+                      background: color.bg,
+                      border: `1px solid ${color.border}`
+                    }}
+                  >
+                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                      <Icon style={{ width: '20px', height: '20px', color: color.text, flexShrink: 0, marginTop: '2px' }} />
+                      <p style={{ fontSize: '0.875rem', color: '#374151', lineHeight: '1.5', margin: 0 }}>
+                        {insight.message}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
 
-        .slide-up {
-          animation: slide-up 0.3s ease-out;
-        }
-
-        ::-webkit-scrollbar {
-          width: 6px;
-          height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-          background: #F3F4F6;
-          border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background: #D1D5DB;
-          border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-          background: #9CA3AF;
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-
-        input:focus, button:focus {
-          outline: none;
-        }
-
-        .card-shadow {
-          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        }
-
-        .card-shadow-hover:hover {
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-      `}</style>
-
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 50%, #F0FDFA 100%)',
-        padding: '1.5rem'
-      }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          {/* Header */}
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            style={{
-              background: 'white',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              marginBottom: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-              border: '1px solid #E5E7EB'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{
-                  width: '56px',
-                  height: '56px',
-                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)'
-                }}>
-                  <Stethoscope style={{ width: '28px', height: '28px', color: 'white' }} />
-                </div>
-                <div>
-                  <h1 style={{
-                    fontSize: 'clamp(1.25rem, 3vw, 1.875rem)',
-                    fontWeight: '700',
-                    color: '#111827',
-                    marginBottom: '0.25rem'
-                  }}>
-                    Remote Patient Monitoring System
-                  </h1>
-                  <p style={{ color: '#6B7280', fontSize: 'clamp(0.875rem, 2vw, 0.875rem)' }}>
-                    Real-time healthcare monitoring • {currentTime.toLocaleTimeString()} • {currentTime.toLocaleDateString()}
+        {/* Statistics Cards */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+          }}
+          className="stats-grid"
+        >
+          {[
+            { title: 'Total Patients', value: patients.length, icon: Users, color: '#3B82F6', bg: '#EFF6FF', change: '+12%' },
+            { title: 'Stable', value: patients.filter(p => p.status === 'stable').length, icon: CheckCircle, color: '#10B981', bg: '#F0FDF4', change: '+5%' },
+            { title: 'Need Attention', value: patients.filter(p => p.status === 'warning').length, icon: AlertTriangle, color: '#F59E0B', bg: '#FFFBEB', change: '-2%' },
+            { title: 'Critical', value: patients.filter(p => p.status === 'critical').length, icon: AlertCircle, color: '#EF4444', bg: '#FEF2F2', change: '0%' }
+          ].map((stat, idx) => (
+            <motion.div
+              key={idx}
+              variants={{
+                hidden: { y: 20, opacity: 0 },
+                visible: { y: 0, opacity: 1 }
+              }}
+              className="stat-card"
+            >
+              <div
+                className="stat-bg-circle"
+                style={{ background: stat.bg }}
+              />
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div className="stat-header">
+                  <p className="stat-label">
+                    {stat.title}
                   </p>
+                  <div className="stat-icon-wrapper flex-center" style={{ background: stat.bg }}>
+                    <stat.icon style={{ width: '20px', height: '20px', color: stat.color }} />
+                  </div>
+                </div>
+                <div className="stat-value-row">
+                  <p className="stat-value">
+                    {stat.value}
+                  </p>
+                  <span className="stat-change" style={{
+                    color: stat.change.startsWith('+') ? '#10B981' : stat.change.startsWith('-') ? '#EF4444' : '#6B7280',
+                    background: stat.change.startsWith('+') ? '#F0FDF4' : stat.change.startsWith('-') ? '#FEF2F2' : '#F3F4F6'
+                  }}>
+                    {stat.change}
+                  </span>
                 </div>
               </div>
+            </motion.div>
+          ))}
+        </motion.div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                {/* Connection Status */}
-                <motion.div
-                  animate={isConnected ? { scale: [1, 1.05, 1] } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '8px',
-                    background: isConnected ? '#F0FDF4' : '#FEF2F2',
-                    border: `1px solid ${isConnected ? '#86EFAC' : '#FCA5A5'}`,
-                    color: isConnected ? '#059669' : '#DC2626'
-                  }}
-                >
-                  <div style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    background: isConnected ? '#10B981' : '#EF4444'
-                  }} className={isConnected ? 'pulse-ring' : ''} />
-                  <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>
-                    {isConnected ? 'System Online' : 'Offline'}
-                  </span>
-                </motion.div>
+        {/* Patient Cards */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+          }}
+          className="patients-grid"
+        >
+          {patients.map((patient) => {
+            const statusConfig = getStatusConfig(patient.status);
+            const StatusIcon = statusConfig.icon;
 
-                {/* AI Assistant */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowChatbot(!showChatbot)}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-                    border: 'none',
-                    color: 'white',
-                    fontSize: '0.875rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    boxShadow: '0 2px 4px rgba(139, 92, 246, 0.3)'
-                  }}
-                >
-                  <MessageSquare style={{ width: '16px', height: '16px' }} />
-                  AI Assistant
-                </motion.button>
-
-                {/* Notifications */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  style={{
-                    position: 'relative',
-                    padding: '0.5rem',
-                    borderRadius: '8px',
-                    background: 'white',
-                    border: '1px solid #E5E7EB',
-                    color: '#374151',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Bell style={{ width: '20px', height: '20px' }} />
-                  {notifications.length > 0 && (
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      style={{
-                        position: 'absolute',
-                        top: '-4px',
-                        right: '-4px',
-                        width: '20px',
-                        height: '20px',
-                        background: '#EF4444',
-                        borderRadius: '50%',
-                        fontSize: '11px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 'bold',
-                        color: 'white',
-                        border: '2px solid white'
-                      }}
-                    >
-                      {notifications.length}
-                    </motion.span>
-                  )}
-                </motion.button>
-
-                {/* Settings */}
-                <motion.button
-                  whileHover={{ scale: 1.05, rotate: 90 }}
-                  whileTap={{ scale: 0.95 }}
-                  style={{
-                    padding: '0.5rem',
-                    borderRadius: '8px',
-                    background: 'white',
-                    border: '1px solid #E5E7EB',
-                    color: '#374151',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Settings style={{ width: '20px', height: '20px' }} />
-                </motion.button>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* AI Insights */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{ marginBottom: '1.5rem' }}
-          >
-            <div style={{
-              background: 'white',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-              border: '1px solid #E5E7EB'
-            }}>
-              <h2 style={{
-                fontSize: '1.25rem',
-                fontWeight: '700',
-                color: '#111827',
-                marginBottom: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                <BarChart3 style={{ width: '24px', height: '24px', color: '#3B82F6' }} />
-                AI Health Insights & Alerts
-              </h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
-                {aiInsights.map((insight, idx) => {
-                  const Icon = insight.icon;
-                  const colors = {
-                    critical: { bg: '#FEF2F2', border: '#FCA5A5', text: '#DC2626' },
-                    warning: { bg: '#FFFBEB', border: '#FCD34D', text: '#D97706' },
-                    success: { bg: '#F0FDF4', border: '#86EFAC', text: '#059669' },
-                    info: { bg: '#EFF6FF', border: '#93C5FD', text: '#2563EB' }
-                  };
-                  const color = colors[insight.type];
-                  return (
-                    <motion.div
-                      key={idx}
-                      initial={{ x: -20, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: idx * 0.1 }}
-                      whileHover={{ scale: 1.02, y: -2 }}
-                      style={{
-                        background: color.bg,
-                        border: `1px solid ${color.border}`,
-                        borderRadius: '12px',
-                        padding: '1rem',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <div style={{ display: 'flex', gap: '0.75rem' }}>
-                        <Icon style={{ width: '20px', height: '20px', color: color.text, flexShrink: 0, marginTop: '2px' }} />
-                        <p style={{ fontSize: '0.875rem', color: '#374151', lineHeight: '1.5', margin: 0 }}>
-                          {insight.message}
-                        </p>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Statistics Cards */}
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-            }}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '1rem',
-              marginBottom: '1.5rem'
-            }}
-          >
-            {[
-              { title: 'Total Patients', value: patients.length, icon: Users, color: '#3B82F6', bg: '#EFF6FF', change: '+12%' },
-              { title: 'Stable', value: patients.filter(p => p.status === 'stable').length, icon: CheckCircle, color: '#10B981', bg: '#F0FDF4', change: '+5%' },
-              { title: 'Need Attention', value: patients.filter(p => p.status === 'warning').length, icon: AlertTriangle, color: '#F59E0B', bg: '#FFFBEB', change: '-2%' },
-              { title: 'Critical', value: patients.filter(p => p.status === 'critical').length, icon: AlertCircle, color: '#EF4444', bg: '#FEF2F2', change: '0%' }
-            ].map((stat, idx) => (
+            return (
               <motion.div
-                key={idx}
+                key={patient.id}
                 variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1 }
+                  hidden: { scale: 0.95, opacity: 0 },
+                  visible: { scale: 1, opacity: 1 }
                 }}
-                whileHover={{ scale: 1.03, y: -4 }}
+                className="patient-card"
                 style={{
-                  background: 'white',
-                  borderRadius: '12px',
-                  padding: '1.5rem',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  border: '1px solid #E5E7EB',
-                  cursor: 'pointer',
-                  position: 'relative',
-                  overflow: 'hidden'
+                  border: `2px solid ${statusConfig.borderColor}`
                 }}
-                className="card-shadow-hover"
               >
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  width: '120px',
-                  height: '120px',
-                  background: stat.bg,
-                  borderRadius: '50%',
-                  transform: 'translate(40%, -40%)',
-                  opacity: 0.5
-                }} />
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                    <p style={{ color: '#6B7280', fontSize: '0.875rem', fontWeight: 500, margin: 0 }}>
-                      {stat.title}
-                    </p>
-                    <div style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '10px',
-                      background: stat.bg,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <stat.icon style={{ width: '20px', height: '20px', color: stat.color }} />
+                {/* Patient Header */}
+                <div className="patient-header" style={{ background: statusConfig.bgColor }}>
+                  <div className="patient-title-row">
+                    <div className="patient-info-left">
+                      <div className="patient-name-box">
+                        <h3 className="patient-name">{patient.name}</h3>
+                        <div className="patient-status-badge" style={{ background: statusConfig.color }}>
+                          <StatusIcon style={{ width: '12px', height: '12px' }} />
+                          {statusConfig.label}
+                        </div>
+                      </div>
+                      <div className="patient-meta-row">
+                        <span>{patient.age} yrs • {patient.gender}</span>
+                        <span>•</span>
+                        <span style={{ fontWeight: 500 }}>{patient.condition}</span>
+                      </div>
+                      <div className="patient-meta-sub">
+                        <Clock style={{ width: '14px', height: '14px' }} />
+                        <span>Last update: {patient.lastUpdate}</span>
+                      </div>
+                      <div className="patient-meta-sub" style={{ marginTop: '0.25rem' }}>
+                        <MapPin style={{ width: '14px', height: '14px' }} />
+                        <span>{patient.location}</span>
+                      </div>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-                    <p style={{
-                      fontSize: '2.25rem',
-                      fontWeight: '700',
-                      color: '#111827',
-                      margin: 0,
-                      lineHeight: 1
-                    }}>
-                      {stat.value}
-                    </p>
-                    <span style={{
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      color: stat.change.startsWith('+') ? '#10B981' : stat.change.startsWith('-') ? '#EF4444' : '#6B7280',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      background: stat.change.startsWith('+') ? '#F0FDF4' : stat.change.startsWith('-') ? '#FEF2F2' : '#F3F4F6'
-                    }}>
-                      {stat.change}
-                    </span>
+
+                  {/* Alerts */}
+                  {patient.alerts && patient.alerts.length > 0 && (
+                    <div className="patient-alerts">
+                      {patient.alerts.map((alert, idx) => (
+                        <motion.span
+                          key={idx}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          whileHover={{ scale: 1.05 }}
+                          className="patient-alert-tag"
+                        >
+                          ⚠ {alert}
+                        </motion.span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Vitals */}
+                <div className="patient-content">
+                  <h4 className="vitals-title">Current Vitals</h4>
+                  <div className="vitals-grid">
+                    {[
+                      { label: 'Heart Rate', value: `${patient.vitals.heartRate} bpm` },
+                      { label: 'Blood Pressure', value: patient.vitals.bloodPressure },
+                      { label: 'Temperature', value: `${patient.vitals.temperature}°F` },
+                      { label: 'Glucose', value: `${patient.vitals.glucose} mg/dL` },
+                      { label: 'Oxygen', value: `${patient.vitals.oxygen}%` }
+                    ].map((vital, idx) => {
+                      const config = getVitalConfig(vital.label);
+                      const VitalIcon = config.icon;
+                      return (
+                        <motion.div
+                          key={idx}
+                          whileHover={{ scale: 1.05, y: -2 }}
+                          className="vital-box"
+                          style={{
+                            background: config.bgColor,
+                            border: `1px solid ${config.borderColor}`
+                          }}
+                        >
+                          <div className="vital-header">
+                            <VitalIcon style={{ width: '16px', height: '16px', color: config.color }} />
+                            <span className="vital-label">{vital.label}</span>
+                          </div>
+                          <p className="vital-value">{vital.value}</p>
+                        </motion.div>
+                      );
+                    })}
                   </div>
+
+                  {/* Doctor & Appointment Info */}
+                  <div className="patient-footer-info">
+                    <div>
+                      <div className="footer-info-label">Assigned Doctor</div>
+                      <div className="footer-info-value">
+                        <UserCheck style={{ width: '14px', height: '14px', display: 'inline', marginRight: '4px' }} />
+                        {patient.doctor}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="footer-info-label">Next Appointment</div>
+                      <div className="footer-info-value">
+                        <Calendar style={{ width: '14px', height: '14px', display: 'inline', marginRight: '4px' }} />
+                        {patient.nextAppointment}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="patient-actions">
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleCall(patient)}
+                    className="btn-base btn-call"
+                  >
+                    <Phone style={{ width: '16px', height: '16px' }} />
+                    Call
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleVideoCall(patient)}
+                    className="btn-base btn-video"
+                  >
+                    <Video style={{ width: '16px', height: '16px' }} />
+                    Video
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setSelectedPatient(patient);
+                      setShowChatbot(true);
+                    }}
+                    className="btn-base btn-chat"
+                  >
+                    <MessageSquare style={{ width: '16px', height: '16px' }} />
+                    Chat
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleViewDetails(patient)}
+                    className="btn-base btn-outline"
+                  >
+                    <Eye style={{ width: '16px', height: '16px' }} />
+                    Details
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleDownloadReport(patient)}
+                    className="btn-base btn-outline"
+                  >
+                    <Download style={{ width: '16px', height: '16px' }} />
+                    Report
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleScheduleAppointment(patient)}
+                    className="btn-base btn-outline"
+                  >
+                    <Calendar style={{ width: '16px', height: '16px' }} />
+                    Schedule
+                  </motion.button>
                 </div>
               </motion.div>
-            ))}
-          </motion.div>
+            );
+          })}
+        </motion.div>
 
-          {/* Patient Cards */}
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-            }}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))',
-              gap: '1.5rem'
-            }}
-          >
-            {patients.map((patient) => {
-              const statusConfig = getStatusConfig(patient.status);
-              const StatusIcon = statusConfig.icon;
-              
-              return (
-                <motion.div
-                  key={patient.id}
-                  variants={{
-                    hidden: { scale: 0.95, opacity: 0 },
-                    visible: { scale: 1, opacity: 1 }
-                  }}
-                  whileHover={{ y: -4 }}
-                  style={{
-                    background: 'white',
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                    border: `2px solid ${statusConfig.borderColor}`
-                  }}
-                  className="card-shadow-hover"
-                >
-                  {/* Patient Header */}
-                  <div style={{
-                    background: statusConfig.bgColor,
-                    padding: '1.25rem',
-                    borderBottom: `2px solid ${statusConfig.borderColor}`
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                          <h3 style={{
-                            fontSize: '1.25rem',
-                            fontWeight: '700',
-                            color: '#111827',
-                            margin: 0
-                          }}>
-                            {patient.name}
-                          </h3>
-                          <div style={{
-                            padding: '4px 12px',
-                            borderRadius: '6px',
-                            background: statusConfig.color,
-                            color: 'white',
-                            fontSize: '0.75rem',
-                            fontWeight: '700',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}>
-                            <StatusIcon style={{ width: '12px', height: '12px' }} />
-                            {statusConfig.label}
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: '#6B7280' }}>
-                          <span>{patient.age} yrs • {patient.gender}</span>
-                          <span>•</span>
-                          <span style={{ fontWeight: 500 }}>{patient.condition}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem', fontSize: '0.75rem', color: '#9CA3AF' }}>
-                          <Clock style={{ width: '14px', height: '14px' }} />
-                          <span>Last update: {patient.lastUpdate}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem', fontSize: '0.75rem', color: '#9CA3AF' }}>
-                          <MapPin style={{ width: '14px', height: '14px' }} />
-                          <span>{patient.location}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Alerts */}
-                    {patient.alerts && patient.alerts.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        {patient.alerts.map((alert, idx) => (
-                          <motion.span
-                            key={idx}
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            whileHover={{ scale: 1.05 }}
-                            style={{
-                              fontSize: '0.75rem',
-                              background: '#FEE2E2',
-                              color: '#DC2626',
-                              padding: '4px 10px',
-                              borderRadius: '6px',
-                              fontWeight: 600,
-                              border: '1px solid #FCA5A5'
-                            }}
-                          >
-                            ⚠ {alert}
-                          </motion.span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Vitals */}
-                  <div style={{ padding: '1.25rem' }}>
-                    <h4 style={{
-                      fontSize: '0.875rem',
-                      fontWeight: '600',
-                      color: '#6B7280',
-                      marginBottom: '1rem',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em'
-                    }}>
-                      Current Vitals
-                    </h4>
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-                      gap: '0.75rem'
-                    }}>
-                      {[
-                        { label: 'Heart Rate', value: `${patient.vitals.heartRate} bpm` },
-                        { label: 'Blood Pressure', value: patient.vitals.bloodPressure },
-                        { label: 'Temperature', value: `${patient.vitals.temperature}°F` },
-                        { label: 'Glucose', value: `${patient.vitals.glucose} mg/dL` },
-                        { label: 'Oxygen', value: `${patient.vitals.oxygen}%` }
-                      ].map((vital, idx) => {
-                        const config = getVitalConfig(vital.label);
-                        const VitalIcon = config.icon;
-                        return (
-                          <motion.div
-                            key={idx}
-                            whileHover={{ scale: 1.05, y: -2 }}
-                            style={{
-                              background: config.bgColor,
-                              border: `1px solid ${config.borderColor}`,
-                              borderRadius: '10px',
-                              padding: '0.75rem',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                              <VitalIcon style={{ width: '16px', height: '16px', color: config.color }} />
-                              <span style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 500 }}>
-                                {vital.label}
-                              </span>
-                            </div>
-                            <p style={{
-                              fontSize: '1rem',
-                              fontWeight: '700',
-                              color: '#111827',
-                              margin: 0
-                            }}>
-                              {vital.value}
-                            </p>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Doctor & Appointment Info */}
-                    <div style={{
-                      marginTop: '1rem',
-                      padding: '0.75rem',
-                      background: '#F9FAFB',
-                      borderRadius: '8px',
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '0.75rem',
-                      fontSize: '0.75rem'
-                    }}>
-                      <div>
-                        <div style={{ color: '#6B7280', marginBottom: '0.25rem' }}>Assigned Doctor</div>
-                        <div style={{ color: '#111827', fontWeight: 600 }}>
-                          <UserCheck style={{ width: '14px', height: '14px', display: 'inline', marginRight: '4px' }} />
-                          {patient.doctor}
-                        </div>
+        {/* AI Chatbot */}
+        <AnimatePresence>
+          {showChatbot && (
+            <motion.div
+              initial={{ opacity: 0, x: 400, scale: 0.8 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 400, scale: 0.8 }}
+              className="chatbot-container"
+            >
+              <div className="chatbot-wrapper">
+                {/* Chat Header */}
+                <div className="chat-header">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div className="flex-center" style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '10px',
+                        background: 'rgba(255, 255, 255, 0.2)'
+                      }}>
+                        <MessageSquare style={{ width: '20px', height: '20px' }} />
                       </div>
                       <div>
-                        <div style={{ color: '#6B7280', marginBottom: '0.25rem' }}>Next Appointment</div>
-                        <div style={{ color: '#111827', fontWeight: 600 }}>
-                          <Calendar style={{ width: '14px', height: '14px', display: 'inline', marginRight: '4px' }} />
-                          {patient.nextAppointment}
-                        </div>
+                        <h3 style={{ fontSize: '1rem', fontWeight: '700', margin: 0 }}>AI Medical Assistant</h3>
+                        <p style={{ fontSize: '0.75rem', margin: 0, opacity: 0.9 }}>Online • Instant Response</p>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div style={{
-                    padding: '1rem 1.25rem',
-                    background: '#F9FAFB',
-                    borderTop: '1px solid #E5E7EB',
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '0.75rem'
-                  }}>
                     <motion.button
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleCall(patient)}
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => setShowChatbot(false)}
                       style={{
-                        padding: '0.625rem',
-                        borderRadius: '8px',
-                        background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                        background: 'rgba(255, 255, 255, 0.2)',
                         border: 'none',
                         color: 'white',
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
                         cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem',
-                        boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)'
+                        borderRadius: '8px',
+                        padding: '0.5rem'
                       }}
                     >
-                      <Phone style={{ width: '16px', height: '16px' }} />
-                      Call
+                      <XCircle style={{ width: '20px', height: '20px' }} />
                     </motion.button>
+                  </div>
+                </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleVideoCall(patient)}
+                {/* Chat Messages */}
+                <div className="chat-messages no-scrollbar">
+                  {chatMessages.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '2rem 1rem', color: '#9CA3AF' }}>
+                      <MessageSquare style={{ width: '48px', height: '48px', margin: '0 auto 1rem', color: '#8B5CF6' }} />
+                      <p style={{ fontWeight: 600, color: '#111827', marginBottom: '0.5rem' }}>AI Medical Assistant</p>
+                      <p style={{ fontSize: '0.875rem' }}>Ask me anything about patient care, medication, or health insights!</p>
+                    </div>
+                  )}
+
+                  {chatMessages.map((msg) => (
+                    <motion.div
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
                       style={{
-                        padding: '0.625rem',
-                        borderRadius: '8px',
-                        background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-                        border: 'none',
-                        color: 'white',
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
-                        cursor: 'pointer',
                         display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem',
+                        justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start'
+                      }}
+                    >
+                      <div className={`chat-msg ${msg.sender === 'user' ? 'chat-msg-user' : 'chat-msg-bot'}`}>
+                        <p style={{ fontSize: '0.875rem', margin: '0 0 0.5rem 0', lineHeight: '1.5' }}>{msg.text}</p>
+                        <p style={{ fontSize: '0.7rem', opacity: 0.7, margin: 0 }}>{msg.timestamp}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+
+                  {isChatbotTyping && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      style={{ display: 'flex', justifyContent: 'flex-start' }}
+                    >
+                      <div className="chat-msg chat-msg-bot">
+                        <div style={{ display: 'flex', gap: '0.375rem' }}>
+                          {[0, 1, 2].map((i) => (
+                            <motion.span
+                              key={i}
+                              style={{
+                                width: '8px',
+                                height: '8px',
+                                background: '#8B5CF6',
+                                borderRadius: '50%'
+                              }}
+                              animate={{ y: [0, -8, 0] }}
+                              transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Chat Input */}
+                <div className="chat-input-box">
+                  <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleSendChatMessage()}
+                      placeholder="Type your message..."
+                      style={{
+                        flex: 1,
+                        padding: '0.75rem 1rem',
+                        borderRadius: '10px',
+                        border: '1px solid #E5E7EB',
+                        fontSize: '0.875rem',
+                        color: '#111827',
+                        background: '#F9FAFB'
+                      }}
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleSendChatMessage}
+                      className="btn-base"
+                      style={{
+                        padding: '0.75rem',
+                        background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                        color: 'white',
                         boxShadow: '0 2px 4px rgba(139, 92, 246, 0.3)'
                       }}
                     >
-                      <Video style={{ width: '16px', height: '16px' }} />
-                      Video
+                      <Send style={{ width: '20px', height: '20px' }} />
                     </motion.button>
-
-                    <motion.button
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        setSelectedPatient(patient);
-                        setShowChatbot(true);
-                      }}
-                      style={{
-                        padding: '0.625rem',
-                        borderRadius: '8px',
-                        background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                        border: 'none',
-                        color: 'white',
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem',
-                        boxShadow: '0 2px 4px rgba(16, 185, 129, 0.3)'
-                      }}
-                    >
-                      <MessageSquare style={{ width: '16px', height: '16px' }} />
-                      Chat
-                    </motion.button>
-
-                    <motion.button
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleViewDetails(patient)}
-                      style={{
-                        padding: '0.625rem',
-                        borderRadius: '8px',
-                        background: 'white',
-                        border: '1px solid #E5E7EB',
-                        color: '#374151',
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem'
-                      }}
-                    >
-                      <Eye style={{ width: '16px', height: '16px' }} />
-                      Details
-                    </motion.button>
-
-                    <motion.button
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleDownloadReport(patient)}
-                      style={{
-                        padding: '0.625rem',
-                        borderRadius: '8px',
-                        background: 'white',
-                        border: '1px solid #E5E7EB',
-                        color: '#374151',
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem'
-                      }}
-                    >
-                      <Download style={{ width: '16px', height: '16px' }} />
-                      Report
-                    </motion.button>
-
-                    <motion.button
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleScheduleAppointment(patient)}
-                      style={{
-                        padding: '0.625rem',
-                        borderRadius: '8px',
-                        background: 'white',
-                        border: '1px solid #E5E7EB',
-                        color: '#374151',
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem'
-                      }}
-                    >
-                      <Calendar style={{ width: '16px', height: '16px' }} />
-                      Schedule
-                    </motion.button>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-
-          {/* AI Chatbot */}
-          <AnimatePresence>
-            {showChatbot && (
-              <motion.div
-                initial={{ opacity: 0, x: 400, scale: 0.8 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 400, scale: 0.8 }}
-                style={{
-                  position: 'fixed',
-                  right: '1.5rem',
-                  bottom: '1.5rem',
-                  width: '400px',
-                  height: '600px',
-                  zIndex: 1000,
-                  maxWidth: 'calc(100vw - 3rem)',
-                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-                }}
-              >
-                <div style={{
-                  background: 'white',
-                  borderRadius: '16px',
-                  border: '1px solid #E5E7EB',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: '100%',
-                  overflow: 'hidden'
-                }}>
-                  {/* Chat Header */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-                    padding: '1.25rem',
-                    color: 'white'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{
-                          width: '40px',
-                          height: '40px',
-                          borderRadius: '10px',
-                          background: 'rgba(255, 255, 255, 0.2)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}>
-                          <MessageSquare style={{ width: '20px', height: '20px' }} />
-                        </div>
-                        <div>
-                          <h3 style={{ fontSize: '1rem', fontWeight: '700', margin: 0 }}>AI Medical Assistant</h3>
-                          <p style={{ fontSize: '0.75rem', margin: 0, opacity: 0.9 }}>Online • Instant Response</p>
-                        </div>
-                      </div>
-                      <motion.button
-                        whileHover={{ scale: 1.1, rotate: 90 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setShowChatbot(false)}
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.2)',
-                          border: 'none',
-                          color: 'white',
-                          cursor: 'pointer',
-                          borderRadius: '8px',
-                          padding: '0.5rem'
-                        }}
-                      >
-                        <XCircle style={{ width: '20px', height: '20px' }} />
-                      </motion.button>
-                    </div>
-                  </div>
-
-                  {/* Chat Messages */}
-                  <div className="no-scrollbar" style={{
-                    flex: 1,
-                    overflowY: 'auto',
-                    padding: '1.25rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1rem',
-                    background: '#F9FAFB'
-                  }}>
-                    {chatMessages.length === 0 && (
-                      <div style={{ textAlign: 'center', padding: '2rem 1rem', color: '#9CA3AF' }}>
-                        <MessageSquare style={{ width: '48px', height: '48px', margin: '0 auto 1rem', color: '#8B5CF6' }} />
-                        <p style={{ fontWeight: 600, color: '#111827', marginBottom: '0.5rem' }}>AI Medical Assistant</p>
-                        <p style={{ fontSize: '0.875rem' }}>Ask me anything about patient care, medication, or health insights!</p>
-                      </div>
-                    )}
-                    
-                    {chatMessages.map((msg) => (
-                      <motion.div
-                        key={msg.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        style={{
-                          display: 'flex',
-                          justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start'
-                        }}
-                      >
-                        <div style={{
-                          maxWidth: '80%',
-                          padding: '0.875rem',
-                          borderRadius: '12px',
-                          background: msg.sender === 'user'
-                            ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)'
-                            : 'white',
-                          color: msg.sender === 'user' ? 'white' : '#374151',
-                          border: msg.sender === 'bot' ? '1px solid #E5E7EB' : 'none',
-                          boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                        }}>
-                          <p style={{ fontSize: '0.875rem', margin: '0 0 0.5rem 0', lineHeight: '1.5' }}>{msg.text}</p>
-                          <p style={{ fontSize: '0.7rem', opacity: 0.7, margin: 0 }}>{msg.timestamp}</p>
-                        </div>
-                      </motion.div>
-                    ))}
-
-                    {isChatbotTyping && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        style={{ display: 'flex', justifyContent: 'flex-start' }}
-                      >
-                        <div style={{
-                          background: 'white',
-                          border: '1px solid #E5E7EB',
-                          borderRadius: '12px',
-                          padding: '0.875rem',
-                          boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                        }}>
-                          <div style={{ display: 'flex', gap: '0.375rem' }}>
-                            {[0, 1, 2].map((i) => (
-                              <motion.span
-                                key={i}
-                                style={{
-                                  width: '8px',
-                                  height: '8px',
-                                  background: '#8B5CF6',
-                                  borderRadius: '50%'
-                                }}
-                                animate={{ y: [0, -8, 0] }}
-                                transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </div>
-
-                  {/* Chat Input */}
-                  <div style={{
-                    padding: '1rem',
-                    borderTop: '1px solid #E5E7EB',
-                    background: 'white'
-                  }}>
-                    <div style={{ display: 'flex', gap: '0.75rem' }}>
-                      <input
-                        type="text"
-                        value={chatInput}
-                        onChange={(e) => setChatInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSendChatMessage()}
-                        placeholder="Type your message..."
-                        style={{
-                          flex: 1,
-                          padding: '0.75rem 1rem',
-                          borderRadius: '10px',
-                          border: '1px solid #E5E7EB',
-                          fontSize: '0.875rem',
-                          color: '#111827',
-                          background: '#F9FAFB'
-                        }}
-                      />
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleSendChatMessage}
-                        style={{
-                          padding: '0.75rem',
-                          borderRadius: '10px',
-                          background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-                          border: 'none',
-                          color: 'white',
-                          cursor: 'pointer',
-                          boxShadow: '0 2px 4px rgba(139, 92, 246, 0.3)'
-                        }}
-                      >
-                        <Send style={{ width: '20px', height: '20px' }} />
-                      </motion.button>
-                    </div>
                   </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-          {/* Active Call Indicator */}
-          <AnimatePresence>
-            {activeCall && (
+        {/* Active Call Indicator */}
+        <AnimatePresence>
+          {activeCall && (
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              className="card"
+              style={{
+                position: 'fixed',
+                bottom: '1.5rem',
+                left: '1.5rem',
+                padding: '1rem 1.5rem',
+                zIndex: 999,
+                maxWidth: '400px'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="flex-center"
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                    borderRadius: '50%',
+                    boxShadow: '0 4px 6px rgba(16, 185, 129, 0.3)'
+                  }}
+                >
+                  <Video style={{ width: '24px', height: '24px', color: 'white' }} />
+                </motion.div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontWeight: '700', color: '#111827', margin: '0 0 0.25rem 0' }}>Active Video Call</p>
+                  <p style={{ fontSize: '0.875rem', color: '#6B7280', margin: 0 }}>{activeCall.patientName}</p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(activeCall.meetLink);
+                    alert('✅ Meeting link copied!');
+                  }}
+                  className="btn-base"
+                  style={{ background: '#F3F4F6', border: '1px solid #E5E7EB', color: '#374151' }}
+                >
+                  Copy Link
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setActiveCall(null)}
+                  className="btn-base"
+                  style={{ background: '#FEE2E2', border: '1px solid #FCA5A5', color: '#DC2626' }}
+                >
+                  <XCircle style={{ width: '20px', height: '20px' }} />
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Patient Details Modal */}
+        <AnimatePresence>
+          {selectedPatient && (
+            <div
+              className="modal-overlay flex-center"
+              onClick={() => setSelectedPatient(null)}
+            >
               <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 50 }}
-                style={{
-                  position: 'fixed',
-                  bottom: '1.5rem',
-                  left: '1.5rem',
-                  background: 'white',
-                  borderRadius: '12px',
-                  padding: '1rem 1.5rem',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                  border: '1px solid #E5E7EB',
-                  zIndex: 999,
-                  maxWidth: '400px'
-                }}
+                initial={{ scale: 0.9, y: 50 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 50 }}
+                onClick={(e) => e.stopPropagation()}
+                className="modal-content"
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    style={{
-                      width: '48px',
-                      height: '48px',
-                      background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      boxShadow: '0 4px 6px rgba(16, 185, 129, 0.3)'
-                    }}
-                  >
-                    <Video style={{ width: '24px', height: '24px', color: 'white' }} />
-                  </motion.div>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontWeight: '700', color: '#111827', margin: '0 0 0.25rem 0' }}>Active Video Call</p>
-                    <p style={{ fontSize: '0.875rem', color: '#6B7280', margin: 0 }}>{activeCall.patientName}</p>
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                  <h2 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#111827', margin: 0 }}>
+                    {selectedPatient.name} - Patient Details
+                  </h2>
                   <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                      navigator.clipboard.writeText(activeCall.meetLink);
-                      alert('✅ Meeting link copied!');
-                    }}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      borderRadius: '8px',
-                      background: '#F3F4F6',
-                      border: '1px solid #E5E7EB',
-                      color: '#374151',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Copy Link
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setActiveCall(null)}
+                    whileHover={{ scale: 1.1, rotate: 90 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setSelectedPatient(null)}
                     style={{
                       padding: '0.5rem',
                       borderRadius: '8px',
@@ -1410,226 +1010,123 @@ export default function RemoteMonitoring() {
                       cursor: 'pointer'
                     }}
                   >
-                    <XCircle style={{ width: '20px', height: '20px' }} />
+                    <XCircle style={{ width: '24px', height: '24px' }} />
                   </motion.button>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
-          {/* Patient Details Modal */}
-          <AnimatePresence>
-            {selectedPatient && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedPatient(null)}
-                style={{
-                  position: 'fixed',
-                  inset: 0,
-                  background: 'rgba(0, 0, 0, 0.5)',
-                  backdropFilter: 'blur(4px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 999,
-                  padding: '1.5rem'
-                }}
-              >
-                <motion.div
-                  initial={{ scale: 0.9, y: 50 }}
-                  animate={{ scale: 1, y: 0 }}
-                  exit={{ scale: 0.9, y: 50 }}
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    background: 'white',
-                    borderRadius: '16px',
-                    padding: '2rem',
-                    maxWidth: '900px',
-                    width: '100%',
-                    maxHeight: '90vh',
-                    overflowY: 'auto',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-                  }}
-                >
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginBottom: '1.5rem'
-                  }}>
-                    <h2 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#111827', margin: 0 }}>
-                      {selectedPatient.name} - Patient Details
-                    </h2>
-                    <motion.button
-                      whileHover={{ scale: 1.1, rotate: 90 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => setSelectedPatient(null)}
-                      style={{
-                        padding: '0.5rem',
-                        borderRadius: '8px',
-                        background: '#FEE2E2',
-                        border: '1px solid #FCA5A5',
-                        color: '#DC2626',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <XCircle style={{ width: '24px', height: '24px' }} />
-                    </motion.button>
-                  </div>
-
-                  {/* Historical Chart */}
-                  {historicalData.length > 0 && (
-                    <div style={{
-                      background: '#F9FAFB',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '12px',
-                      padding: '1.5rem',
-                      marginBottom: '1.5rem'
-                    }}>
-                      <h3 style={{ fontSize: '1.125rem', fontWeight: '700', color: '#111827', marginBottom: '1rem' }}>
-                        24-Hour Vitals Trend
-                      </h3>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart data={historicalData}>
-                          <defs>
-                            <linearGradient id="colorHR" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#EF4444" stopOpacity={0.3} />
-                              <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
-                            </linearGradient>
-                            <linearGradient id="colorBP" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                              <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                          <XAxis dataKey="time" stroke="#6B7280" style={{ fontSize: '12px' }} />
-                          <YAxis stroke="#6B7280" style={{ fontSize: '12px' }} />
-                          <Tooltip
-                            contentStyle={{
-                              background: 'white',
-                              border: '1px solid #E5E7EB',
-                              borderRadius: '8px',
-                              boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                            }}
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey="heartRate"
-                            stroke="#EF4444"
-                            fill="url(#colorHR)"
-                            strokeWidth={2}
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey="bloodPressure"
-                            stroke="#3B82F6"
-                            fill="url(#colorBP)"
-                            strokeWidth={2}
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  )}
-
-                  {/* Additional Info */}
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '1rem'
-                  }}>
-                    <div style={{
-                      background: '#EFF6FF',
-                      border: '1px solid #DBEAFE',
-                      borderRadius: '10px',
-                      padding: '1rem'
-                    }}>
-                      <p style={{ color: '#6B7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Location</p>
-                      <p style={{ color: '#111827', fontWeight: 600, margin: 0 }}>{selectedPatient.location}</p>
-                    </div>
-                    <div style={{
-                      background: '#F0FDF4',
-                      border: '1px solid #DCFCE7',
-                      borderRadius: '10px',
-                      padding: '1rem'
-                    }}>
-                      <p style={{ color: '#6B7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Last Updated</p>
-                      <p style={{ color: '#111827', fontWeight: 600, margin: 0 }}>{selectedPatient.lastUpdate}</p>
-                    </div>
-                    <div style={{
-                      background: '#FEF2F2',
-                      border: '1px solid #FEE2E2',
-                      borderRadius: '10px',
-                      padding: '1rem'
-                    }}>
-                      <p style={{ color: '#6B7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Condition</p>
-                      <p style={{ color: '#111827', fontWeight: 600, margin: 0 }}>{selectedPatient.condition}</p>
-                    </div>
-                    <div style={{
-                      background: '#FAF5FF',
-                      border: '1px solid #F3E8FF',
-                      borderRadius: '10px',
-                      padding: '1rem'
-                    }}>
-                      <p style={{ color: '#6B7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Assigned Doctor</p>
-                      <p style={{ color: '#111827', fontWeight: 600, margin: 0 }}>{selectedPatient.doctor}</p>
-                    </div>
-                  </div>
-
-                  {/* Medications */}
-                  <div style={{ marginTop: '1.5rem' }}>
+                {/* Historical Chart */}
+                {historicalData.length > 0 && (
+                  <div className="chart-container">
                     <h3 style={{ fontSize: '1.125rem', fontWeight: '700', color: '#111827', marginBottom: '1rem' }}>
-                      Current Medications
+                      24-Hour Vitals Trend
                     </h3>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                      {selectedPatient.medications && selectedPatient.medications.map((med, idx) => (
-                        <div key={idx} style={{
-                          background: '#EFF6FF',
-                          border: '1px solid #DBEAFE',
-                          borderRadius: '8px',
-                          padding: '0.5rem 1rem',
-                          fontSize: '0.875rem',
-                          fontWeight: 500,
-                          color: '#1E40AF'
-                        }}>
-                          <Pill style={{ width: '14px', height: '14px', display: 'inline', marginRight: '6px' }} />
-                          {med}
-                        </div>
-                      ))}
-                    </div>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <AreaChart data={historicalData}>
+                        <defs>
+                          <linearGradient id="colorHR" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#EF4444" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="colorBP" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                        <XAxis dataKey="time" stroke="#6B7280" style={{ fontSize: '12px' }} />
+                        <YAxis stroke="#6B7280" style={{ fontSize: '12px' }} />
+                        <Tooltip
+                          contentStyle={{
+                            background: 'white',
+                            border: '1px solid #E5E7EB',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                          }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="heartRate"
+                          stroke="#EF4444"
+                          fill="url(#colorHR)"
+                          strokeWidth={2}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="bloodPressure"
+                          stroke="#3B82F6"
+                          fill="url(#colorBP)"
+                          strokeWidth={2}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                )}
 
-          {/* Security Footer */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            style={{
-              marginTop: '2rem',
-              background: 'white',
-              borderRadius: '12px',
-              padding: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-              border: '1px solid #E5E7EB'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-              <Shield style={{ width: '20px', height: '20px', color: '#3B82F6' }} />
-              <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#111827', margin: 0 }}>
-                Security & Compliance
-              </h3>
+                {/* Additional Info */}
+                <div className="modal-info-grid">
+                  <div className="modal-info-box" style={{ background: '#EFF6FF', border: '1px solid #DBEAFE' }}>
+                    <p className="footer-info-label">Location</p>
+                    <p className="footer-info-value">{selectedPatient.location}</p>
+                  </div>
+                  <div className="modal-info-box" style={{ background: '#F0FDF4', border: '1px solid #DCFCE7' }}>
+                    <p className="footer-info-label">Last Updated</p>
+                    <p className="footer-info-value">{selectedPatient.lastUpdate}</p>
+                  </div>
+                  <div className="modal-info-box" style={{ background: '#FEF2F2', border: '1px solid #FEE2E2' }}>
+                    <p className="footer-info-label">Condition</p>
+                    <p className="footer-info-value">{selectedPatient.condition}</p>
+                  </div>
+                  <div className="modal-info-box" style={{ background: '#FAF5FF', border: '1px solid #F3E8FF' }}>
+                    <p className="footer-info-label">Assigned Doctor</p>
+                    <p className="footer-info-value">{selectedPatient.doctor}</p>
+                  </div>
+                </div>
+
+                {/* Medications */}
+                <div style={{ marginTop: '1.5rem' }}>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: '700', color: '#111827', marginBottom: '1rem' }}>
+                    Current Medications
+                  </h3>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    {selectedPatient.medications && selectedPatient.medications.map((med, idx) => (
+                      <div key={idx} style={{
+                        background: '#EFF6FF',
+                        border: '1px solid #DBEAFE',
+                        borderRadius: '8px',
+                        padding: '0.5rem 1rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        color: '#1E40AF'
+                      }}>
+                        <Pill style={{ width: '14px', height: '14px', display: 'inline', marginRight: '6px' }} />
+                        {med}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
             </div>
-            <p style={{ fontSize: '0.875rem', color: '#6B7280', margin: 0, lineHeight: '1.6' }}>
-              🔒 AES-256 End-to-End Encryption • HIPAA Compliant • SOC 2 Type II Certified • Role-Based Access Control • Real-time TLS 1.3 Secure Connections • Regular Security Audits • Encrypted Data Storage • GDPR Compliant
-            </p>
-          </motion.div>
-        </div>
+          )}
+        </AnimatePresence>
+
+        {/* Security Footer */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="security-footer"
+        >
+          <div className="security-header">
+            <Shield style={{ width: '20px', height: '20px', color: '#3B82F6' }} />
+            <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#111827', margin: 0 }}>
+              Security & Compliance
+            </h3>
+          </div>
+          <p style={{ fontSize: '0.875rem', color: '#6B7280', margin: 0, lineHeight: '1.6' }}>
+            🔒 AES-256 End-to-End Encryption • HIPAA Compliant • SOC 2 Type II Certified • Role-Based Access Control • Real-time TLS 1.3 Secure Connections • Regular Security Audits • Encrypted Data Storage • GDPR Compliant
+          </p>
+        </motion.div>
       </div>
-    </>
+    </div>
   );
 }

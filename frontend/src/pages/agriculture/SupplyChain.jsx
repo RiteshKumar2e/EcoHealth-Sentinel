@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Truck, Package, MapPin, Clock, CheckCircle, AlertCircle, Shield, RefreshCw, LogOut, TrendingUp, User } from 'lucide-react';
+import { Truck, Package, MapPin, Clock, CheckCircle, Shield, RefreshCw, LogOut, TrendingUp } from 'lucide-react';
+import './SupplyChain.css';
 
 // API Configuration
 const API_BASE_URL = 'https://api.yourbackend.com';
@@ -12,7 +13,8 @@ const TokenManager = {
   isAuthenticated: () => !!localStorage.getItem('authToken')
 };
 
-// API Service with JWT
+// API Service with JWT (Placeholder)
+// eslint-disable-next-line no-unused-vars
 const apiService = {
   async fetchWithAuth(endpoint, options = {}) {
     const token = TokenManager.getToken();
@@ -146,6 +148,7 @@ const SupplyChain = () => {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadData = async () => {
@@ -173,170 +176,37 @@ const SupplyChain = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F3F4F6', padding: '24px' }}>
-      <style>{`
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-        }
-        
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-        }
-        
-        .container {
-          max-width: 1400px;
-          margin: 0 auto;
-        }
-        
-        .card {
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          transform: translateY(-2px);
-        }
-        
-        .btn {
-          border: none;
-          border-radius: 8px;
-          padding: 10px 20px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          font-size: 14px;
-        }
-        
-        .btn:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        .btn:active {
-          transform: translateY(0);
-        }
-        
-        .btn-primary {
-          background: #7C3AED;
-          color: white;
-        }
-        
-        .btn-primary:hover {
-          background: #6D28D9;
-        }
-        
-        .btn-secondary {
-          background: white;
-          color: #7C3AED;
-          border: 2px solid #7C3AED;
-        }
-        
-        .btn-secondary:hover {
-          background: #F5F3FF;
-        }
-        
-        .badge {
-          display: inline-block;
-          padding: 6px 12px;
-          border-radius: 6px;
-          font-size: 13px;
-          font-weight: 600;
-        }
-        
-        .progress-bar {
-          width: 100%;
-          height: 12px;
-          background: #E5E7EB;
-          border-radius: 10px;
-          overflow: hidden;
-          position: relative;
-        }
-        
-        .progress-fill {
-          height: 100%;
-          background: linear-gradient(90deg, #7C3AED, #A78BFA);
-          border-radius: 10px;
-          transition: width 0.5s ease;
-        }
-        
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        
-        .spin {
-          animation: spin 1s linear infinite;
-        }
-        
-        @media (max-width: 768px) {
-          .grid-2 { grid-template-columns: 1fr; }
-          .grid-3 { grid-template-columns: 1fr; }
-          .grid-4 { grid-template-columns: repeat(2, 1fr); }
-        }
-      `}</style>
-
-      <div className="container">
+    <div className="sc-container-full">
+      <div className="sc-wrapper">
         {/* Header */}
-        <div className="card" style={{ padding: '24px', marginBottom: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ 
-                width: '56px', 
-                height: '56px', 
-                background: '#7C3AED', 
-                borderRadius: '12px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center'
-              }}>
+        <div className="sc-card">
+          <div className="sc-header-flex">
+            <div className="sc-header-title-box">
+              <div className="sc-header-icon">
                 <Truck style={{ width: '32px', height: '32px', color: 'white' }} />
               </div>
               <div>
-                <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#111827', marginBottom: '4px' }}>
-                  Supply Chain Management
-                </h1>
-                <p style={{ color: '#6B7280', fontSize: '14px' }}>
+                <h1 className="sc-title">Supply Chain Management</h1>
+                <p className="sc-subtitle">
                   Track deliveries & connect with verified buyers
                 </p>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px', 
-                padding: '8px 16px', 
-                background: '#D1FAE5',
-                borderRadius: '8px'
-              }}>
+              <div className="sc-secured-badge">
                 <Shield style={{ width: '18px', height: '18px', color: '#059669' }} />
-                <span style={{ color: '#059669', fontWeight: '600', fontSize: '14px' }}>Secured</span>
+                <span className="sc-secured-text">Secured</span>
               </div>
-              <button 
+              <button
                 onClick={loadData}
-                className="btn"
-                style={{ 
-                  padding: '10px', 
-                  background: '#F3F4F6',
-                  color: '#374151'
-                }}
+                className="sc-icon-btn"
               >
-                <RefreshCw className={isLoading ? 'spin' : ''} style={{ width: '20px', height: '20px' }} />
+                <RefreshCw className={isLoading ? 'sc-spin' : ''} style={{ width: '20px', height: '20px' }} />
               </button>
               {isAuthenticated && (
-                <button 
+                <button
                   onClick={handleLogout}
-                  className="btn"
-                  style={{ 
-                    padding: '10px', 
-                    background: '#FEE2E2',
-                    color: '#DC2626'
-                  }}
+                  className="sc-icon-btn sc-icon-btn-danger"
                 >
                   <LogOut style={{ width: '20px', height: '20px' }} />
                 </button>
@@ -346,22 +216,11 @@ const SupplyChain = () => {
         </div>
 
         {/* Tabs */}
-        <div className="card" style={{ marginBottom: '24px', overflow: 'hidden' }}>
+        <div className="sc-card" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ display: 'flex', borderBottom: '2px solid #F3F4F6' }}>
             <button
               onClick={() => setActiveTab('tracking')}
-              style={{
-                flex: 1,
-                padding: '16px',
-                background: activeTab === 'tracking' ? '#FAFAFA' : 'white',
-                border: 'none',
-                borderBottom: activeTab === 'tracking' ? '3px solid #7C3AED' : 'none',
-                color: activeTab === 'tracking' ? '#7C3AED' : '#6B7280',
-                fontSize: '15px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
+              className={`sc-tab-btn ${activeTab === 'tracking' ? 'sc-tab-btn-active' : ''}`}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <Package style={{ width: '18px', height: '18px' }} />
@@ -370,18 +229,7 @@ const SupplyChain = () => {
             </button>
             <button
               onClick={() => setActiveTab('buyers')}
-              style={{
-                flex: 1,
-                padding: '16px',
-                background: activeTab === 'buyers' ? '#FAFAFA' : 'white',
-                border: 'none',
-                borderBottom: activeTab === 'buyers' ? '3px solid #7C3AED' : 'none',
-                color: activeTab === 'buyers' ? '#7C3AED' : '#6B7280',
-                fontSize: '15px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
+              className={`sc-tab-btn ${activeTab === 'buyers' ? 'sc-tab-btn-active' : ''}`}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <CheckCircle style={{ width: '18px', height: '18px' }} />
@@ -392,10 +240,10 @@ const SupplyChain = () => {
 
           {/* Tracking Tab */}
           {activeTab === 'tracking' && (
-            <div style={{ padding: '24px' }}>
+            <div className="sc-tab-content">
               {isLoading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '48px' }}>
-                  <RefreshCw className="spin" style={{ width: '32px', height: '32px', color: '#7C3AED' }} />
+                <div className="sc-loader-box">
+                  <RefreshCw className="sc-spin" style={{ width: '32px', height: '32px', color: '#7C3AED' }} />
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -404,34 +252,32 @@ const SupplyChain = () => {
                     return (
                       <div
                         key={shipment.id}
-                        className="card"
-                        style={{ padding: '24px', border: '1px solid #E5E7EB' }}
+                        className="sc-card sc-card-bordered"
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '20px', flexWrap: 'wrap', gap: '16px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                            <div style={{ 
-                              width: '56px', 
-                              height: '56px', 
-                              background: '#F3F4F6', 
-                              borderRadius: '10px', 
-                              display: 'flex', 
-                              alignItems: 'center', 
+                            <div style={{
+                              width: '56px',
+                              height: '56px',
+                              background: '#F3F4F6',
+                              borderRadius: '10px',
+                              display: 'flex',
+                              alignItems: 'center',
                               justifyContent: 'center'
                             }}>
                               <Package style={{ width: '28px', height: '28px', color: '#7C3AED' }} />
                             </div>
                             <div>
-                              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#111827', marginBottom: '4px' }}>
+                              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#111827', marginBottom: '4px', margin: 0 }}>
                                 {shipment.product}
                               </h3>
-                              <p style={{ color: '#6B7280', fontSize: '14px' }}>ID: {shipment.id}</p>
+                              <p style={{ color: '#6B7280', fontSize: '14px', margin: 0 }}>ID: {shipment.id}</p>
                             </div>
                           </div>
-                          <span className="badge" style={{ 
-                            background: statusStyle.bg, 
+                          <span className="sc-status-badge" style={{
+                            background: statusStyle.bg,
                             color: statusStyle.text,
-                            border: `1px solid ${statusStyle.border}`,
-                            textTransform: 'capitalize'
+                            border: `1px solid ${statusStyle.border}`
                           }}>
                             {shipment.status.replace('-', ' ')}
                           </span>
@@ -449,15 +295,10 @@ const SupplyChain = () => {
                               <MapPin style={{ width: '16px', height: '16px' }} />
                             </span>
                           </div>
-                          <div className="progress-bar">
-                            <div className="progress-fill" style={{ width: `${shipment.progress}%`, position: 'relative' }}>
+                          <div className="sc-progress-bar">
+                            <div className="sc-progress-fill" style={{ width: `${shipment.progress}%` }}>
                               {shipment.progress > 0 && shipment.progress < 100 && (
-                                <div style={{ 
-                                  position: 'absolute', 
-                                  right: '-16px', 
-                                  top: '50%', 
-                                  transform: 'translateY(-50%)'
-                                }}>
+                                <div className="sc-truck-icon">
                                   <Truck style={{ width: '24px', height: '24px', color: '#7C3AED' }} />
                                 </div>
                               )}
@@ -466,50 +307,42 @@ const SupplyChain = () => {
                         </div>
 
                         {/* Details Grid */}
-                        <div className="grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '16px' }}>
-                          <div style={{ padding: '12px', background: '#F9FAFB', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        <div className="sc-grid-4" style={{ marginBottom: '16px' }}>
+                          <div className="sc-detail-box">
+                            <div className="sc-detail-label">
                               <Package style={{ width: '16px', height: '16px', color: '#6B7280' }} />
-                              <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: '500' }}>Quantity</span>
+                              <span className="sc-detail-label-text">Quantity</span>
                             </div>
-                            <div style={{ fontSize: '15px', fontWeight: '700', color: '#111827' }}>{shipment.quantity}</div>
+                            <div className="sc-detail-value">{shipment.quantity}</div>
                           </div>
-                          <div style={{ padding: '12px', background: '#F9FAFB', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <div className="sc-detail-box">
+                            <div className="sc-detail-label">
                               <MapPin style={{ width: '16px', height: '16px', color: '#6B7280' }} />
-                              <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: '500' }}>Location</span>
+                              <span className="sc-detail-label-text">Location</span>
                             </div>
-                            <div style={{ fontSize: '15px', fontWeight: '700', color: '#111827' }}>{shipment.currentLocation}</div>
+                            <div className="sc-detail-value">{shipment.currentLocation}</div>
                           </div>
-                          <div style={{ padding: '12px', background: '#F9FAFB', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <div className="sc-detail-box">
+                            <div className="sc-detail-label">
                               <Clock style={{ width: '16px', height: '16px', color: '#6B7280' }} />
-                              <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: '500' }}>ETA</span>
+                              <span className="sc-detail-label-text">ETA</span>
                             </div>
-                            <div style={{ fontSize: '15px', fontWeight: '700', color: '#111827' }}>{shipment.estimatedArrival}</div>
+                            <div className="sc-detail-value">{shipment.estimatedArrival}</div>
                           </div>
-                          <div style={{ padding: '12px', background: '#F9FAFB', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <div className="sc-detail-box">
+                            <div className="sc-detail-label">
                               <CheckCircle style={{ width: '16px', height: '16px', color: '#6B7280' }} />
-                              <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: '500' }}>Quality</span>
+                              <span className="sc-detail-label-text">Quality</span>
                             </div>
-                            <div style={{ fontSize: '15px', fontWeight: '700', color: '#111827' }}>{shipment.quality}</div>
+                            <div className="sc-detail-value">{shipment.quality}</div>
                           </div>
                         </div>
 
                         {/* Temperature */}
                         {shipment.temperature !== 'N/A' && (
-                          <div style={{ 
-                            padding: '12px 16px', 
-                            background: '#EFF6FF', 
-                            borderRadius: '8px',
-                            border: '1px solid #BFDBFE',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                          }}>
+                          <div className="sc-iot-box">
                             <Shield style={{ width: '18px', height: '18px', color: '#1E40AF' }} />
-                            <span style={{ color: '#1E40AF', fontWeight: '600', fontSize: '14px' }}>
+                            <span className="sc-iot-text">
                               IoT Temperature: {shipment.temperature} - Optimal Range
                             </span>
                           </div>
@@ -520,16 +353,8 @@ const SupplyChain = () => {
                 </div>
               )}
 
-              <button 
-                className="btn btn-secondary"
-                style={{ 
-                  width: '100%', 
-                  marginTop: '16px',
-                  padding: '16px',
-                  border: '2px dashed #D1D5DB',
-                  background: 'white',
-                  color: '#374151'
-                }}
+              <button
+                className="sc-btn sc-btn-secondary sc-create-btn"
               >
                 + Create New Shipment
               </button>
@@ -538,17 +363,16 @@ const SupplyChain = () => {
 
           {/* Buyers Tab */}
           {activeTab === 'buyers' && (
-            <div style={{ padding: '24px' }}>
-              <div className="grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+            <div className="sc-tab-content">
+              <div className="sc-grid-2">
                 {buyers.map((buyer) => (
                   <div
                     key={buyer.id}
-                    className="card"
-                    style={{ padding: '24px', border: '1px solid #E5E7EB' }}
+                    className="sc-card sc-card-bordered"
                   >
                     <div style={{ marginBottom: '16px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#111827' }}>{buyer.name}</h3>
+                        <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#111827', margin: 0 }}>{buyer.name}</h3>
                         {buyer.verified && (
                           <CheckCircle style={{ width: '20px', height: '20px', color: '#10B981' }} />
                         )}
@@ -561,9 +385,9 @@ const SupplyChain = () => {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
-                      <div style={{ 
-                        padding: '12px', 
-                        background: '#F9FAFB', 
+                      <div style={{
+                        padding: '12px',
+                        background: '#F9FAFB',
                         borderRadius: '8px',
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -572,9 +396,9 @@ const SupplyChain = () => {
                         <span style={{ color: '#6B7280', fontWeight: '500', fontSize: '14px' }}>Payment Terms</span>
                         <span style={{ fontWeight: '700', color: '#111827', fontSize: '14px' }}>{buyer.payment}</span>
                       </div>
-                      <div style={{ 
-                        padding: '12px', 
-                        background: buyer.verified ? '#D1FAE5' : '#F3F4F6', 
+                      <div style={{
+                        padding: '12px',
+                        background: buyer.verified ? '#D1FAE5' : '#F3F4F6',
                         borderRadius: '8px',
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -588,24 +412,16 @@ const SupplyChain = () => {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                      <button className="btn btn-primary">Contact</button>
-                      <button className="btn btn-secondary">Profile</button>
+                    <div className="sc-grid-2" style={{ gap: '12px' }}>
+                      <button className="sc-btn sc-btn-primary">Contact</button>
+                      <button className="sc-btn sc-btn-secondary">Profile</button>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <button 
-                className="btn btn-secondary"
-                style={{ 
-                  width: '100%', 
-                  marginTop: '16px',
-                  padding: '16px',
-                  border: '2px dashed #D1D5DB',
-                  background: 'white',
-                  color: '#374151'
-                }}
+              <button
+                className="sc-btn sc-btn-secondary sc-create-btn"
               >
                 + Find More Buyers
               </button>
@@ -614,20 +430,20 @@ const SupplyChain = () => {
         </div>
 
         {/* AI Features */}
-        <div className="grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        <div className="sc-grid-3" style={{ marginBottom: '24px' }}>
           {[
             { icon: Truck, title: 'Route Optimization', desc: 'AI finds fastest routes, reducing delivery time by 25%', color: '#7C3AED', bg: '#F5F3FF' },
             { icon: Shield, title: 'Blockchain Tracking', desc: 'Every transaction recorded for complete transparency', color: '#2563EB', bg: '#EFF6FF' },
             { icon: CheckCircle, title: 'Quality Monitoring', desc: 'IoT sensors ensure product quality throughout transit', color: '#059669', bg: '#D1FAE5' }
           ].map((feature, idx) => (
-            <div key={idx} className="card" style={{ padding: '20px' }}>
-              <div style={{ 
-                width: '48px', 
-                height: '48px', 
-                background: feature.bg, 
-                borderRadius: '10px', 
-                display: 'flex', 
-                alignItems: 'center', 
+            <div key={idx} className="sc-card" style={{ padding: '20px', marginBottom: 0 }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                background: feature.bg,
+                borderRadius: '10px',
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: '16px'
               }}>
@@ -642,20 +458,12 @@ const SupplyChain = () => {
         </div>
 
         {/* Impact Metrics */}
-        <div className="card" style={{ padding: '32px', background: 'linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%)' }}>
-          <h3 style={{ 
-            fontSize: '24px', 
-            fontWeight: '700', 
-            marginBottom: '24px', 
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
+        <div className="sc-card sc-impact-card">
+          <h3 className="sc-impact-title">
             <TrendingUp style={{ width: '28px', height: '28px' }} />
             Supply Chain Impact
           </h3>
-          <div className="grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+          <div className="sc-grid-4">
             {[
               { value: '25%', label: 'Faster Delivery' },
               { value: '15%', label: 'Reduced Spoilage' },
@@ -664,17 +472,10 @@ const SupplyChain = () => {
             ].map((metric, idx) => (
               <div
                 key={idx}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  textAlign: 'center',
-                  border: '1px solid rgba(255, 255, 255, 0.3)'
-                }}
+                className="sc-impact-metric"
               >
-                <p style={{ fontSize: '36px', fontWeight: '800', marginBottom: '8px', color: 'white' }}>{metric.value}</p>
-                <p style={{ fontSize: '14px', fontWeight: '600', color: 'white', opacity: 0.9 }}>{metric.label}</p>
+                <p className="sc-metric-val">{metric.value}</p>
+                <p className="sc-metric-lbl">{metric.label}</p>
               </div>
             ))}
           </div>

@@ -1,0 +1,358 @@
+/* SupplyChain.css */
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sc-container-full {
+    min-height: 100vh;
+    background: #F3F4F6;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    box-sizing: border-box;
+}
+
+.sc-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.sc-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    padding: 24px;
+    margin-bottom: 24px;
+    /* Default margin */
+}
+
+.sc-card-bordered {
+    border: 1px solid #E5E7EB;
+}
+
+.sc-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.sc-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.sc-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sc-btn:active {
+    transform: translateY(0);
+}
+
+.sc-btn-primary {
+    background: #7C3AED;
+    color: white;
+}
+
+.sc-btn-primary:hover {
+    background: #6D28D9;
+}
+
+.sc-btn-secondary {
+    background: white;
+    color: #7C3AED;
+    border: 2px solid #7C3AED;
+}
+
+.sc-btn-secondary:hover {
+    background: #F5F3FF;
+}
+
+.sc-icon-btn {
+    padding: 10px;
+    background: #F3F4F6;
+    color: #374151;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sc-icon-btn:hover {
+    background: #E5E7EB;
+}
+
+.sc-icon-btn-danger {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.sc-icon-btn-danger:hover {
+    background: #FECACA;
+}
+
+/* Header */
+.sc-header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.sc-header-title-box {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.sc-header-icon {
+    width: 56px;
+    height: 56px;
+    background: #7C3AED;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sc-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4px;
+    margin-top: 0;
+}
+
+.sc-subtitle {
+    color: #6B7280;
+    fontSize: 14px;
+    margin: 0;
+}
+
+.sc-secured-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #D1FAE5;
+    border-radius: 8px;
+}
+
+.sc-secured-text {
+    color: #059669;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Tabs */
+.sc-tab-btn {
+    flex: 1;
+    padding: 16px;
+    background: white;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #6B7280;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sc-tab-btn-active {
+    background: #FAFAFA;
+    border-bottom-color: #7C3AED;
+    color: #7C3AED;
+}
+
+.sc-tab-content {
+    padding: 24px;
+}
+
+/* Progress Bar */
+.sc-progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #E5E7EB;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.sc-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7C3AED, #A78BFA);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.sc-truck-icon {
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.sc-loader-box {
+    display: flex;
+    justify-content: center;
+    padding: 48px;
+}
+
+.sc-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Grid Systems */
+.sc-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.sc-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.sc-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+@media (max-width: 768px) {
+    .sc-grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .sc-grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .sc-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Shipment Status Badge & Details */
+.sc-status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.sc-detail-box {
+    padding: 12px;
+    background: #F9FAFB;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+}
+
+.sc-detail-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.sc-detail-label-text {
+    font-size: 12px;
+    color: #6B7280;
+    font-weight: 500;
+}
+
+.sc-detail-value {
+    font-size: 15px;
+    fontWeight: 700;
+    color: #111827;
+}
+
+/* IoT Temp Box */
+.sc-iot-box {
+    padding: 12px 16px;
+    background: #EFF6FF;
+    border-radius: 8px;
+    border: 1px solid #BFDBFE;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sc-iot-text {
+    color: #1E40AF;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Buttons */
+.sc-create-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 16px;
+    border: 2px dashed #D1D5DB;
+    background: white;
+    color: #374151;
+}
+
+/* Impact Section */
+.sc-impact-card {
+    padding: 32px;
+    background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%);
+}
+
+.sc-impact-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sc-impact-metric {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sc-metric-val {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: white;
+    margin-top: 0;
+}
+
+.sc-metric-lbl {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    opacity: 0.9;
+    margin: 0;
+}

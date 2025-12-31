@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Sun, Wind, Droplets, Zap, TrendingUp, Battery, DollarSign, Leaf, MessageSquare, Send, X, Mic, Download, RefreshCw, Bell, BarChart2, Maximize2, Minimize2, Users, Share2 } from 'lucide-react';
+import './RenewableEnergy.css';
 
 export default function RenewableEnergy() {
   const [selectedEnergy, setSelectedEnergy] = useState('all');
@@ -16,7 +17,7 @@ export default function RenewableEnergy() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [liveData, setLiveData] = useState(true);
-  
+
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -199,7 +200,7 @@ export default function RenewableEnergy() {
 
   const handleVoiceInput = () => {
     if ('webkitSpeechRecognition' in window) {
-      const recognition = new webkitSpeechRecognition();
+      const recognition = new window.webkitSpeechRecognition();
       recognition.continuous = false;
       recognition.onresult = (event) => {
         setChatInput(event.results[0][0].transcript);
@@ -227,7 +228,7 @@ export default function RenewableEnergy() {
       energySources,
       projects
     };
-    
+
     const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -239,7 +240,7 @@ export default function RenewableEnergy() {
 
   const shareData = async () => {
     const text = `🌱 Renewable Energy Update\n\nCapacity: ${stats.totalCapacity} kW\nGeneration: ${stats.currentGeneration} kW\nCO₂ Saved: ${(stats.co2Saved / 1000).toFixed(1)} tons\nHomes Powered: ${stats.householdsPowered.toLocaleString()}`;
-    
+
     if (navigator.share) {
       try {
         await navigator.share({ text });
@@ -256,341 +257,269 @@ export default function RenewableEnergy() {
   const showToast = (msg) => {
     const toast = document.createElement('div');
     toast.textContent = msg;
-    toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:16px 24px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.2);z-index:10000;font-weight:600;animation:slideIn 0.3s';
+    toast.className = 'energy-toast';
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
   };
 
-  const styles = {
-    container: {
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #fef3c7 0%, #d1fae5 50%, #dbeafe 100%)',
-      padding: isFullscreen ? '0' : '24px',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    },
-    card: {
-      background: 'white',
-      borderRadius: '24px',
-      boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
-      padding: '32px',
-      marginBottom: '24px',
-      position: 'relative',
-      overflow: 'hidden',
-      transition: 'all 0.3s ease'
-    },
-    statCard: {
-      borderRadius: '16px',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-      padding: '24px',
-      color: 'white',
-      transition: 'all 0.3s ease',
-      cursor: 'pointer'
-    },
-    button: {
-      padding: '12px 24px',
-      borderRadius: '12px',
-      border: 'none',
-      color: 'white',
-      fontWeight: '600',
-      cursor: 'pointer',
-      transition: 'all 0.3s ease',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      fontSize: '14px'
-    },
-    input: {
-      width: '100%',
-      padding: '12px 16px',
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      fontSize: '14px',
-      outline: 'none',
-      transition: 'all 0.3s ease'
-    }
-  };
-
   return (
-    <>
-      <style>{`
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(16,185,129,0.4); } 50% { box-shadow: 0 0 40px rgba(16,185,129,0.8); } }
-        
-        .energy-card { animation: fadeIn 0.6s ease; }
-        .energy-card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
-        .stat-card:hover { transform: translateY(-4px) scale(1.02); }
-        .floating-icon { animation: float 3s ease-in-out infinite; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-        .progress-bar { transition: width 1s ease; }
-      `}</style>
-
-      <div style={styles.container}>
-        <div style={{ maxWidth: isFullscreen ? '100%' : '1400px', margin: '0 auto' }}>
-          {/* Header */}
-          <div className="energy-card" style={styles.card}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #34d399, #10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'glow 3s infinite' }}>
-                  <Zap size={32} style={{ color: 'white' }} className="floating-icon" />
-                </div>
-                <div>
-                  <h1 style={{ fontSize: '36px', fontWeight: '800', color: '#1f2937', margin: '0 0 8px 0' }}>Renewable Energy Management</h1>
-                  <p style={{ color: '#6b7280', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-                    <Leaf size={16} style={{ color: '#10b981' }} />
-                    AI-optimized clean energy • Real-time monitoring • {energySources.length} sources
-                  </p>
-                </div>
+    <div className={`renewable-energy-container ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+      <div className="energy-main-wrapper" style={{ maxWidth: isFullscreen ? '100%' : '1400px' }}>
+        {/* Header */}
+        <div className="energy-card">
+          <div className="flex-between flex-wrap gap-16">
+            <div className="flex-center gap-16">
+              <div className="header-icon-container">
+                <Zap size={32} className="white-text floating-icon" />
               </div>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                <button onClick={() => setShowChatbot(!showChatbot)} className="btn" style={{ ...styles.button, background: 'linear-gradient(135deg, #10b981, #059669)' }}>
-                  <MessageSquare size={18} />
-                  AI Chat
-                </button>
-                <button onClick={() => setShowNotifications(!showNotifications)} className="btn" style={{ ...styles.button, background: 'linear-gradient(135deg, #3b82f6, #2563eb)', position: 'relative' }}>
-                  <Bell size={18} />
-                  {notifications.length > 0 && (
-                    <span style={{ position: 'absolute', top: '-4px', right: '-4px', width: '20px', height: '20px', background: '#ef4444', borderRadius: '50%', fontSize: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700' }}>{notifications.length}</span>
-                  )}
-                </button>
-                <button onClick={() => setCompareMode(!compareMode)} className="btn" style={{ ...styles.button, background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}>
-                  <BarChart2 size={18} />
-                </button>
-                <button onClick={downloadReport} className="btn" style={{ ...styles.button, background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
-                  <Download size={18} />
-                </button>
-                <button onClick={handleRefresh} disabled={refreshing} className="btn" style={{ ...styles.button, background: 'linear-gradient(135deg, #6b7280, #4b5563)' }}>
-                  <RefreshCw size={18} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
-                </button>
-                <button onClick={() => setIsFullscreen(!isFullscreen)} className="btn" style={{ ...styles.button, background: 'linear-gradient(135deg, #ec4899, #db2777)' }}>
-                  {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-                </button>
+              <div>
+                <h1 className="text-4xl font-extrabold text-gray-800 m-0">Renewable energy</h1>
+                <p className="text-gray-500 m-0 flex-center gap-8 text-sm justify-start">
+                  <Leaf size={16} className="text-green-500" />
+                  AI-optimized clean energy • Real-time monitoring
+                </p>
               </div>
             </div>
-          </div>
-
-          {/* Statistics Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-            <div className="stat-card" style={{ ...styles.statCard, background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}>
-              <Zap size={32} style={{ marginBottom: '12px' }} className="floating-icon" />
-              <p style={{ fontSize: '14px', opacity: 0.9, margin: '0 0 4px 0' }}>Total Capacity</p>
-              <p style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 4px 0' }}>{stats.totalCapacity.toLocaleString()}</p>
-              <p style={{ fontSize: '12px', opacity: 0.8, margin: 0 }}>kW</p>
-            </div>
-
-            <div className="stat-card" style={{ ...styles.statCard, background: 'linear-gradient(135deg, #34d399, #10b981)' }}>
-              <TrendingUp size={32} style={{ marginBottom: '12px' }} className="floating-icon" />
-              <p style={{ fontSize: '14px', opacity: 0.9, margin: '0 0 4px 0' }}>Current Output</p>
-              <p style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 4px 0' }}>{stats.currentGeneration.toLocaleString()}</p>
-              <p style={{ fontSize: '12px', opacity: 0.8, margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                kW {liveData && <span style={{ display: 'inline-block', width: '8px', height: '8px', background: 'white', borderRadius: '50%', animation: 'pulse 2s infinite' }}></span>} Live
-              </p>
-            </div>
-
-            <div className="stat-card" style={{ ...styles.statCard, background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}>
-              <Leaf size={32} style={{ marginBottom: '12px' }} className="floating-icon" />
-              <p style={{ fontSize: '14px', opacity: 0.9, margin: '0 0 4px 0' }}>CO₂ Saved</p>
-              <p style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 4px 0' }}>{(stats.co2Saved / 1000).toFixed(1)}</p>
-              <p style={{ fontSize: '12px', opacity: 0.8, margin: 0 }}>tons/year</p>
-            </div>
-
-            <div className="stat-card" style={{ ...styles.statCard, background: 'linear-gradient(135deg, #a78bfa, #8b5cf6)' }}>
-              <DollarSign size={32} style={{ marginBottom: '12px' }} className="floating-icon" />
-              <p style={{ fontSize: '14px', opacity: 0.9, margin: '0 0 4px 0' }}>Cost Savings</p>
-              <p style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 4px 0' }}>₹{(stats.costSavings / 100000).toFixed(1)}</p>
-              <p style={{ fontSize: '12px', opacity: 0.8, margin: 0 }}>Lakh/year</p>
-            </div>
-
-            <div className="stat-card" style={{ ...styles.statCard, background: 'linear-gradient(135deg, #22d3ee, #06b6d4)' }}>
-              <Users size={32} style={{ marginBottom: '12px' }} className="floating-icon" />
-              <p style={{ fontSize: '14px', opacity: 0.9, margin: '0 0 4px 0' }}>Households</p>
-              <p style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 4px 0' }}>{(stats.householdsPowered / 1000).toFixed(1)}K</p>
-              <p style={{ fontSize: '12px', opacity: 0.8, margin: 0 }}>powered</p>
+            <div className="flex-center gap-12 flex-wrap">
+              <button onClick={() => setShowChatbot(!showChatbot)} className="btn btn-green-gradient">
+                <MessageSquare size={18} />
+                AI Chat
+              </button>
+              <button onClick={() => setShowNotifications(!showNotifications)} className="btn btn-blue-gradient pos-relative">
+                <Bell size={18} />
+                {notifications.length > 0 && (
+                  <span className="notification-badge">{notifications.length}</span>
+                )}
+              </button>
+              <button onClick={() => setCompareMode(!compareMode)} className="btn btn-purple-gradient">
+                <BarChart2 size={18} />
+              </button>
+              <button onClick={downloadReport} className="btn btn-amber-gradient">
+                <Download size={18} />
+              </button>
+              <button onClick={handleRefresh} disabled={refreshing} className="btn btn-gray-gradient">
+                <RefreshCw size={18} className={refreshing ? 'spin' : ''} />
+              </button>
+              <button onClick={() => setIsFullscreen(!isFullscreen)} className="btn btn-pink-gradient">
+                {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+              </button>
             </div>
           </div>
+        </div>
 
-          {/* Energy Sources */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-            {energySources.map((source, index) => {
-              const Icon = source.icon;
-              return (
-                <div key={index} className="energy-card" style={{ ...styles.card, background: source.bgColor }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <div style={{ width: '56px', height: '56px', borderRadius: '12px', background: source.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon size={28} style={{ color: 'white' }} className="floating-icon" />
-                    </div>
-                    <span style={{ padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', color: source.color, background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                      {source.efficiency}%
-                    </span>
+        {/* Statistics Cards */}
+        <div className="stat-grid">
+          <div className="stat-card stat-amber">
+            <Zap size={32} className="floating-icon mb-12" />
+            <p className="text-sm opacity-0-9 mb-4 m-0">Total Capacity</p>
+            <p className="text-4xl font-extrabold mb-4 m-0">{stats.totalCapacity.toLocaleString()}</p>
+            <p className="text-xs opacity-0-8 m-0">kW</p>
+          </div>
+
+          <div className="stat-card stat-green">
+            <TrendingUp size={32} className="floating-icon mb-12" />
+            <p className="text-sm opacity-0-9 mb-4 m-0">Current Output</p>
+            <p className="text-4xl font-extrabold mb-4 m-0">{stats.currentGeneration.toLocaleString()}</p>
+            <p className="text-xs opacity-0-8 m-0 flex-center gap-4 justify-start">
+              kW {liveData && <span className="live-dot"></span>} Live
+            </p>
+          </div>
+
+          <div className="stat-card stat-blue">
+            <Leaf size={32} className="floating-icon mb-12" />
+            <p className="text-sm opacity-0-9 mb-4 m-0">CO₂ Saved</p>
+            <p className="text-4xl font-extrabold mb-4 m-0">{(stats.co2Saved / 1000).toFixed(1)}</p>
+            <p className="text-xs opacity-0-8 m-0">tons/year</p>
+          </div>
+
+          <div className="stat-card stat-purple">
+            <DollarSign size={32} className="floating-icon mb-12" />
+            <p className="text-sm opacity-0-9 mb-4 m-0">Cost Savings</p>
+            <p className="text-4xl font-extrabold mb-4 m-0">₹{(stats.costSavings / 100000).toFixed(1)}</p>
+            <p className="text-xs opacity-0-8 m-0">Lakh/year</p>
+          </div>
+
+          <div className="stat-card stat-cyan">
+            <Users size={32} className="floating-icon mb-12" />
+            <p className="text-sm opacity-0-9 mb-4 m-0">Households</p>
+            <p className="text-4xl font-extrabold mb-4 m-0">{(stats.householdsPowered / 1000).toFixed(1)}K</p>
+            <p className="text-xs opacity-0-8 m-0">powered</p>
+          </div>
+        </div>
+
+        {/* Energy Sources */}
+        <div className="source-grid">
+          {energySources.map((source, index) => {
+            const Icon = source.icon;
+            return (
+              <div key={index} className="source-card" style={{ background: source.bgColor }}>
+                <div className="flex-between mb-16">
+                  <div className="source-icon-container" style={{ background: source.gradient }}>
+                    <Icon size={28} className="white-text floating-icon" />
                   </div>
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1f2937', margin: '0 0 12px 0' }}>{source.type} Energy</h3>
-                  <div style={{ marginBottom: '12px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px' }}>
-                      <span style={{ color: '#6b7280' }}>Capacity:</span>
-                      <span style={{ fontWeight: '600', color: '#1f2937' }}>{source.capacity} kW</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-                      <span style={{ color: '#6b7280' }}>Generation:</span>
-                      <span style={{ fontWeight: '600', color: '#1f2937' }}>{source.generation} kW</span>
-                    </div>
+                  <span className="source-badge" style={{ color: source.color }}>
+                    {source.efficiency}%
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-12 m-0">{source.type} Energy</h3>
+                <div className="mb-12">
+                  <div className="flex-between text-sm mb-4">
+                    <span className="text-gray-500">Capacity:</span>
+                    <span className="font-bold text-gray-800">{source.capacity} kW</span>
                   </div>
-                  <div style={{ width: '100%', height: '8px', background: '#e5e7eb', borderRadius: '10px', overflow: 'hidden' }}>
-                    <div className="progress-bar" style={{ width: `${source.efficiency}%`, height: '100%', background: source.gradient, borderRadius: '10px' }}></div>
+                  <div className="flex-between text-sm">
+                    <span className="text-gray-500">Generation:</span>
+                    <span className="font-bold text-gray-800">{source.generation} kW</span>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Charts Section */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '24px', marginBottom: '24px' }}>
-            <div className="energy-card" style={{ ...styles.card, gridColumn: 'span 2' }}>
-              <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1f2937', marginBottom: '16px' }}>Monthly Energy Generation</h2>
-              <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={monthlyGeneration}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="month" stroke="#6b7280" style={{ fontSize: '12px' }} />
-                  <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
-                  <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                  <Legend />
-                  <Bar dataKey="solar" stackId="a" fill="#f59e0b" name="Solar" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="wind" stackId="a" fill="#3b82f6" name="Wind" />
-                  <Bar dataKey="hydro" stackId="a" fill="#06b6d4" name="Hydro" />
-                  <Bar dataKey="biomass" stackId="a" fill="#10b981" name="Biomass" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="energy-card" style={styles.card}>
-              <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1f2937', marginBottom: '16px' }}>Energy Mix Distribution</h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={energyMix}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}%`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {energyMix.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Projects */}
-          <div className="energy-card" style={{ ...styles.card, marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1f2937', marginBottom: '16px' }}>Active & Planned Projects</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-              {projects.map((project, index) => (
-                <div key={index} style={{ background: 'linear-gradient(135deg, #ede9fe, #f3f4f6)', borderRadius: '16px', padding: '20px', border: '2px solid #e0e7ff' }}>
-                  <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <div>
-                      <h3 style={{ fontWeight: '700', color: '#1f2937', margin: '0 0 4px 0', fontSize: '16px' }}>{project.name}</h3>
-                      <p style={{ fontSize: '13px', color: '#6b7280', margin: 0 }}>{project.type} • {project.capacity} kW</p>
-                    </div>
-                    <span style={{
-                      padding: '6px 12px',
-                      borderRadius: '20px',
-                      fontSize: '11px',
-                      fontWeight: '700',
-                      color: 'white',
-                      background: project.status === 'Operational' ? '#10b981' : project.status === 'In Progress' ? '#3b82f6' : '#f59e0b'
-                    }}>
-                      {project.status}
-                    </span>
-                  </div>
-                  <div style={{ marginBottom: '12px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
-                      <span style={{ color: '#6b7280' }}>Progress</span>
-                      <span style={{ fontWeight: '700', color: '#1f2937' }}>{project.completion}%</span>
-                    </div>
-                    <div style={{ width: '100%', height: '8px', background: '#e5e7eb', borderRadius: '10px', overflow: 'hidden' }}>
-                      <div className="progress-bar" style={{ width: `${project.completion}%`, height: '100%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', borderRadius: '10px' }}></div>
-                    </div>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '13px' }}>
-                    <div>
-                      <p style={{ color: '#6b7280', margin: '0 0 4px 0' }}>Investment</p>
-                      <p style={{ fontWeight: '700', color: '#1f2937', margin: 0 }}>₹{(project.investment / 100000).toFixed(1)}L</p>
-                    </div>
-                    <div>
-                      <p style={{ color: '#6b7280', margin: '0 0 4px 0' }}>Completion</p>
-                      <p style={{ fontWeight: '700', color: '#1f2937', margin: 0 }}>{project.expectedCompletion}</p>
-                    </div>
-                  </div>
+                <div className="progress-container">
+                  <div className="progress-bar" style={{ width: `${source.efficiency}%`, background: source.gradient }}></div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            );
+          })}
+        </div>
 
-          {/* Predictions Chart */}
-          <div className="energy-card" style={{ ...styles.card, marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1f2937', marginBottom: '16px' }}>AI-Powered Growth Predictions</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={predictions}>
+        {/* Charts Section */}
+        <div className="charts-grid">
+          <div className="energy-card chart-card-full">
+            <h2 className="text-2xl font-bold text-gray-800 mb-16">Monthly Energy Generation</h2>
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={monthlyGeneration}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="year" stroke="#6b7280" style={{ fontSize: '12px' }} />
+                <XAxis dataKey="month" stroke="#6b7280" style={{ fontSize: '12px' }} />
                 <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
-                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }} />
+                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                 <Legend />
-                <Line type="monotone" dataKey="capacity" stroke="#3b82f6" strokeWidth={3} name="Capacity (kW)" dot={{ r: 6 }} />
-                <Line type="monotone" dataKey="generation" stroke="#10b981" strokeWidth={3} name="Generation (kW)" dot={{ r: 6 }} />
-              </LineChart>
+                <Bar dataKey="solar" stackId="a" fill="#f59e0b" name="Solar" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="wind" stackId="a" fill="#3b82f6" name="Wind" />
+                <Bar dataKey="hydro" stackId="a" fill="#06b6d4" name="Hydro" />
+                <Bar dataKey="biomass" stackId="a" fill="#10b981" name="Biomass" />
+              </BarChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Benefits */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-            {benefits.map((benefit, index) => {
-              const Icon = benefit.icon;
-              return (
-                <div key={index} className="energy-card" style={{ ...styles.card, background: benefit.bgColor }}>
-                  <Icon size={32} style={{ color: benefit.color, marginBottom: '12px' }} />
-                  <h3 style={{ fontWeight: '700', color: '#1f2937', margin: '0 0 8px 0', fontSize: '16px' }}>{benefit.title}</h3>
-                  <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '32px', fontWeight: '800', color: benefit.color }}>{benefit.value}</span>
-                    <span style={{ fontSize: '13px', color: '#6b7280', marginLeft: '8px' }}>{benefit.unit}</span>
-                  </div>
-                  <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>{benefit.description}</p>
-                </div>
-              );
-            })}
+          <div className="energy-card">
+            <h2 className="text-lg font-bold text-gray-800 mb-16">Energy Mix Distribution</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={energyMix}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}%`}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {energyMix.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
+        </div>
 
-          {/* AI Optimization Info */}
-          <div style={{ background: 'linear-gradient(135deg, #10b981, #059669)', borderRadius: '24px', padding: '40px', color: 'white', boxShadow: '0 10px 40px rgba(16,185,129,0.3)', animation: 'glow 4s infinite' }}>
-            <div style={{ display: 'flex', alignItems: 'start', gap: '24px' }}>
-              <Zap size={40} style={{ flexShrink: 0 }} className="floating-icon" />
-              <div style={{ flex: 1 }}>
-                <h2 style={{ fontSize: '28px', fontWeight: '800', margin: '0 0 16px 0' }}>AI-Powered Energy Optimization</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
-                  <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '16px', backdropFilter: 'blur(10px)' }}>
-                    <h3 style={{ fontWeight: '700', margin: '0 0 8px 0', fontSize: '16px' }}>🤖 Smart Load Balancing</h3>
-                    <p style={{ fontSize: '13px', opacity: 0.9, margin: 0, lineHeight: '1.6' }}>AI algorithms dynamically distribute power based on weather, demand, and efficiency.</p>
+        {/* Projects */}
+        <div className="energy-card mb-24">
+          <h2 className="text-2xl font-bold text-gray-800 mb-16">Active & Planned Projects</h2>
+          <div className="projects-grid">
+            {projects.map((project, index) => (
+              <div key={index} className="project-item">
+                <div className="flex-between flex-start mb-12">
+                  <div>
+                    <h3 className="font-bold text-gray-800 mb-4 m-0 text-lg">{project.name}</h3>
+                    <p className="text-sm text-gray-500 m-0">{project.type} • {project.capacity} kW</p>
                   </div>
-                  <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '16px', backdropFilter: 'blur(10px)' }}>
-                    <h3 style={{ fontWeight: '700', margin: '0 0 8px 0', fontSize: '16px' }}>📊 Predictive Maintenance</h3>
-                    <p style={{ fontSize: '13px', opacity: 0.9, margin: 0, lineHeight: '1.6' }}>ML models predict failures, reducing downtime by 40% and extending equipment life.</p>
+                  <span className="status-badge" style={{
+                    background: project.status === 'Operational' ? '#10b981' : project.status === 'In Progress' ? '#3b82f6' : '#f59e0b'
+                  }}>
+                    {project.status}
+                  </span>
+                </div>
+                <div className="mb-12">
+                  <div className="flex-between text-sm mb-6">
+                    <span className="text-gray-500">Progress</span>
+                    <span className="font-bold text-gray-800">{project.completion}%</span>
                   </div>
-                  <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '16px', backdropFilter: 'blur(10px)' }}>
-                    <h3 style={{ fontWeight: '700', margin: '0 0 8px 0', fontSize: '16px' }}>☀️ Weather Forecasting</h3>
-                    <p style={{ fontSize: '13px', opacity: 0.9, margin: 0, lineHeight: '1.6' }}>AI predicts solar and wind patterns 7 days ahead for optimal energy planning.</p>
+                  <div className="progress-container">
+                    <div className="progress-bar project-progress-bar" style={{ width: `${project.completion}%` }}></div>
                   </div>
-                  <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '16px', backdropFilter: 'blur(10px)' }}>
-                    <h3 style={{ fontWeight: '700', margin: '0 0 8px 0', fontSize: '16px' }}>⚡ Grid Optimization</h3>
-                    <p style={{ fontSize: '13px', opacity: 0.9, margin: 0, lineHeight: '1.6' }}>Real-time AI balances renewable generation with grid demand for stability.</p>
+                </div>
+                <div className="grid grid-2-col gap-12">
+                  <div className="text-sm">
+                    <p className="text-gray-500 mb-4 m-0">Investment</p>
+                    <p className="font-bold text-gray-800 m-0">₹{(project.investment / 100000).toFixed(1)}L</p>
                   </div>
+                  <div className="text-sm">
+                    <p className="text-gray-500 mb-4 m-0">Completion</p>
+                    <p className="font-bold text-gray-800 m-0">{project.expectedCompletion}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Predictions Chart */}
+        <div className="energy-card mb-24">
+          <h2 className="text-2xl font-bold text-gray-800 mb-16">AI-Powered Growth Predictions</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={predictions}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="year" stroke="#6b7280" style={{ fontSize: '12px' }} />
+              <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
+              <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }} />
+              <Legend />
+              <Line type="monotone" dataKey="capacity" stroke="#3b82f6" strokeWidth={3} name="Capacity (kW)" dot={{ r: 6 }} />
+              <Line type="monotone" dataKey="generation" stroke="#10b981" strokeWidth={3} name="Generation (kW)" dot={{ r: 6 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Benefits */}
+        <div className="benefits-grid">
+          {benefits.map((benefit, index) => {
+            const Icon = benefit.icon;
+            return (
+              <div key={index} className="energy-card" style={{ background: benefit.bgColor }}>
+                <Icon size={32} style={{ color: benefit.color }} className="mb-12" />
+                <h3 className="font-bold text-gray-800 mb-8 m-0 text-lg">{benefit.title}</h3>
+                <div className="flex-center justify-start mb-8 items-baseline">
+                  <span className="text-4xl font-extrabold" style={{ color: benefit.color }}>{benefit.value}</span>
+                  <span className="text-sm text-gray-500 ml-8">{benefit.unit}</span>
+                </div>
+                <p className="text-xs text-gray-500 m-0">{benefit.description}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* AI Optimization Info */}
+        <div className="ai-optimization-banner">
+          <div className="flex-start gap-24">
+            <Zap size={40} className="floating-icon flex-shrink-0" />
+            <div className="flex-1">
+              <h2 className="text-3xl font-extrabold mb-16 m-0">AI-Powered Energy Optimization</h2>
+              <div className="ai-knowledge-grid">
+                <div className="ai-knowledge-item">
+                  <h3 className="font-bold mb-8 m-0 text-lg">🤖 Smart Load Balancing</h3>
+                  <p className="text-sm opacity-0-9 m-0 lh-1-6">AI algorithms dynamically distribute power based on weather, demand, and efficiency.</p>
+                </div>
+                <div className="ai-knowledge-item">
+                  <h3 className="font-bold mb-8 m-0 text-lg">📊 Predictive Maintenance</h3>
+                  <p className="text-sm opacity-0-9 m-0 lh-1-6">ML models predict failures, reducing downtime by 40%.</p>
+                </div>
+                <div className="ai-knowledge-item">
+                  <h3 className="font-bold mb-8 m-0 text-lg">☀️ Weather Forecasting</h3>
+                  <p className="text-sm opacity-0-9 m-0 lh-1-6">AI predicts patterns for optimal energy planning.</p>
+                </div>
+                <div className="ai-knowledge-item">
+                  <h3 className="font-bold mb-8 m-0 text-lg">⚡ Grid Optimization</h3>
+                  <p className="text-sm opacity-0-9 m-0 lh-1-6">Real-time AI balances generation with demand.</p>
                 </div>
               </div>
             </div>
@@ -600,82 +529,56 @@ export default function RenewableEnergy() {
 
       {/* AI Chatbot */}
       {showChatbot && (
-        <div style={{ position: 'fixed', bottom: '20px', right: '20px', width: '400px', height: '600px', background: 'white', borderRadius: '24px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', zIndex: 1000, display: 'flex', flexDirection: 'column', animation: 'slideIn 0.3s' }}>
-          <div style={{ background: 'linear-gradient(135deg, #10b981, #059669)', padding: '20px', borderRadius: '24px 24px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'white' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="chat-panel">
+          <div className="chat-header">
+            <div className="flex-center gap-12">
               <Zap size={24} />
               <div>
-                <p style={{ fontWeight: '700', fontSize: '16px', margin: 0 }}>Energy AI Assistant</p>
-                <p style={{ fontSize: '12px', opacity: 0.9, margin: 0 }}>Ask me anything!</p>
+                <p className="font-bold text-lg m-0">Energy AI Assistant</p>
+                <p className="text-sm opacity-0-9 m-0">Online</p>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => setVoiceEnabled(!voiceEnabled)} style={{ padding: '8px', background: voiceEnabled ? '#fff' : 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}>
-                <Mic size={18} style={{ color: voiceEnabled ? '#10b981' : 'white' }} />
+            <div className="flex-center gap-8">
+              <button onClick={() => setVoiceEnabled(!voiceEnabled)} className="p-8 border-none br-8 cursor-pointer voice-btn" style={{ background: voiceEnabled ? '#10b981' : 'rgba(255,255,255,0.2)' }}>
+                <Mic size={18} className="white-text" />
               </button>
-              <button onClick={() => setShowChatbot(false)} style={{ padding: '8px', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+              <button onClick={() => setShowChatbot(false)} className="p-8 border-none br-8 cursor-pointer bg-trans-white-2 color-white">
                 <X size={18} />
               </button>
             </div>
           </div>
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="chat-messages">
             {chatMessages.map((msg) => (
               <div key={msg.id}>
-                <div style={{
-                  maxWidth: '80%',
-                  padding: '12px 16px',
-                  borderRadius: msg.type === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                  background: msg.type === 'user' ? 'linear-gradient(135deg, #10b981, #059669)' : '#f3f4f6',
-                  color: msg.type === 'user' ? 'white' : '#1f2937',
-                  alignSelf: msg.type === 'user' ? 'flex-end' : 'flex-start',
-                  fontSize: '14px',
-                  lineHeight: '1.5',
-                  whiteSpace: 'pre-wrap'
-                }}>
+                <div className={`message-bubble ${msg.type === 'user' ? 'message-user' : 'message-bot'}`}>
                   {msg.text}
                 </div>
                 {msg.suggestions && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
+                  <div className="flex-wrap gap-8 d-flex mt-8">
                     {msg.suggestions.map((sug, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleSuggestionClick(sug)}
-                        style={{ padding: '6px 12px', background: '#d1fae5', color: '#059669', border: 'none', borderRadius: '16px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = '#a7f3d0'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = '#d1fae5'}
-                      >
-                        {sug}
-                      </button>
+                      <button key={i} onClick={() => handleSuggestionClick(sug)} className="suggestion-btn">{sug}</button>
                     ))}
                   </div>
                 )}
               </div>
             ))}
             {isTyping && (
-              <div style={{ display: 'flex', gap: '4px', padding: '12px 16px', background: '#f3f4f6', borderRadius: '16px', alignSelf: 'flex-start' }}>
-                <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', animation: 'pulse 1s infinite' }}></div>
-                <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', animation: 'pulse 1s infinite 0.2s' }}></div>
-                <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', animation: 'pulse 1s infinite 0.4s' }}></div>
+              <div className="typing-indicator">
+                <div className="typing-dot"></div>
+                <div className="typing-dot" style={{ animationDelay: '0.2s' }}></div>
+                <div className="typing-dot" style={{ animationDelay: '0.4s' }}></div>
               </div>
             )}
             <div ref={chatEndRef}></div>
           </div>
 
-          <div style={{ padding: '16px', borderTop: '1px solid #e5e7eb', display: 'flex', gap: '8px' }}>
-            <input
-              ref={inputRef}
-              type="text"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleChatSend()}
-              placeholder="Ask about renewable energy..."
-              style={{ ...styles.input, flex: 1 }}
-            />
-            <button onClick={handleVoiceInput} style={{ padding: '12px', background: '#f3f4f6', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
-              <Mic size={20} style={{ color: '#6b7280' }} />
+          <div className="chat-input-wrapper">
+            <input ref={inputRef} type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleChatSend()} placeholder="Ask about renewable energy..." className="chat-input" />
+            <button onClick={handleVoiceInput} className="p-12 border-none br-12 cursor-pointer bg-gray-100">
+              <Mic size={20} className="text-gray-500" />
             </button>
-            <button onClick={handleChatSend} style={{ padding: '12px 16px', background: 'linear-gradient(135deg, #10b981, #059669)', border: 'none', borderRadius: '12px', color: 'white', cursor: 'pointer', transition: 'all 0.2s' }}>
+            <button onClick={handleChatSend} className="p-12 border-none br-12 cursor-pointer text-white btn-green-gradient">
               <Send size={20} />
             </button>
           </div>
@@ -684,21 +587,21 @@ export default function RenewableEnergy() {
 
       {/* Notifications */}
       {showNotifications && (
-        <div style={{ position: 'fixed', top: '100px', right: '20px', width: '320px', background: 'white', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', zIndex: 999, padding: '16px', animation: 'slideIn 0.3s' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h3 style={{ fontWeight: '700', fontSize: '16px', color: '#1f2937', margin: 0 }}>Notifications</h3>
-            <button onClick={() => setShowNotifications(false)} style={{ padding: '4px', background: 'transparent', border: 'none', cursor: 'pointer' }}>
-              <X size={18} style={{ color: '#6b7280' }} />
+        <div className="notification-panel">
+          <div className="flex-between mb-16">
+            <h3 className="font-bold text-lg text-gray-800 m-0">Notifications</h3>
+            <button onClick={() => setShowNotifications(false)} className="p-4 border-none cursor-pointer bg-transparent">
+              <X size={18} className="text-gray-500" />
             </button>
           </div>
           {notifications.map(notif => (
-            <div key={notif.id} style={{ padding: '12px', borderRadius: '8px', marginBottom: '8px', background: notif.type === 'success' ? '#d1fae5' : '#dbeafe' }}>
-              <p style={{ fontSize: '13px', fontWeight: '600', color: '#1f2937', margin: '0 0 4px 0' }}>{notif.message}</p>
-              <p style={{ fontSize: '11px', color: '#6b7280', margin: 0 }}>{notif.time}</p>
+            <div key={notif.id} className={`p-12 br-8 mb-8 ${notif.type === 'success' ? 'bg-green-100' : 'bg-blue-100'}`}>
+              <p className="text-sm font-bold text-gray-800 mb-4 m-0">{notif.message}</p>
+              <p className="text-xs text-gray-500 m-0">{notif.time}</p>
             </div>
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 }

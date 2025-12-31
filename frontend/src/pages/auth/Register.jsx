@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Building, Phone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import './Register.css';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -71,9 +72,9 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
-    if (Object.keys(newErrors).length > 0) { 
-      setErrors(newErrors); 
-      return; 
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
     }
     setIsLoading(true);
 
@@ -87,80 +88,96 @@ export default function Register() {
     }, 2000);
   };
 
-  const styles = {
-    container: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', background: '#1e293b' },
-    card: { width: '100%', maxWidth: '800px', backgroundColor: 'rgba(30,41,59,0.8)', borderRadius: '16px', padding: '2rem', border: '1px solid #334155', backdropFilter: 'blur(8px)' },
-    label: { display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', color: '#cbd5e1' },
-    input: (hasError) => ({ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '8px', border: `1px solid ${hasError ? '#f87171' : '#475569'}`, backgroundColor: 'rgba(51,65,85,0.5)', color: '#fff' }),
-    error: { display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.25rem', color: '#f87171', fontSize: '0.75rem' },
-    button: { width: '100%', padding: '0.75rem', borderRadius: '8px', backgroundColor: '#8b5cf6', color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', border: 'none', cursor: 'pointer' },
-    checkboxLabel: { display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', color: '#cbd5e1', fontSize: '0.875rem' },
-    select: { width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #4c6947ff', backgroundColor: 'rgba(51,65,85,0.5)', color: '#fff' },
-    footer: { textAlign: 'center', marginTop: '1.5rem', color: '#cbd5e1', fontSize: '0.8rem' },
-    grid: { display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' },
-    gridMd: { display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '1rem' },
-    icon: { position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' },
-    passwordButton: { position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }
-  };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
+    <div className="register-container">
+      <div className="register-card">
         {/* Logo/Brand */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'inline-block', padding: '1rem', backgroundColor: 'rgba(139,92,246,0.2)', borderRadius: '16px', marginBottom: '1rem' }}>
-            <User style={{ width: '48px', height: '48px', color: '#c084fc' }} />
+        <div className="brand-section">
+          <div className="brand-logo-bg">
+            <User className="brand-logo-icon" />
           </div>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#fff', marginBottom: '0.5rem' }}>Create Your Account</h1>
-          <p style={{ color: '#94a3b8' }}>Join us in building responsible AI solutions</p>
+          <h1 className="brand-title">Create Your Account</h1>
+          <p className="brand-subtitle">Join us in building responsible AI solutions</p>
         </div>
 
         {/* FORM */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <form onSubmit={handleSubmit} className="register-form">
           {/* Full Name & Email */}
-          <div style={styles.gridMd}>
-            <div>
-              <label htmlFor="fullName" style={styles.label}>Full Name</label>
-              <div style={{ position: 'relative' }}>
-                <User style={styles.icon} />
-                <input type="text" id="fullName" name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Enter Full Name" style={styles.input(errors.fullName)} />
+          <div className="form-grid-md">
+            <div className="form-group">
+              <label htmlFor="fullName" className="form-label">Full Name</label>
+              <div className="input-wrapper">
+                <User className="form-icon" />
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  placeholder="Enter Full Name"
+                  className={`form-input ${errors.fullName ? 'input-error' : ''}`}
+                />
               </div>
-              {errors.fullName && <div style={styles.error}><AlertCircle style={{ width: '12px', height: '12px' }} />{errors.fullName}</div>}
+              {errors.fullName && <div className="error-text"><AlertCircle size={12} />{errors.fullName}</div>}
             </div>
 
-            <div>
-              <label htmlFor="email" style={styles.label}>Email Address</label>
-              <div style={{ position: 'relative' }}>
-                <Mail style={styles.icon} />
-                <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email id" style={styles.input(errors.email)} />
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">Email Address</label>
+              <div className="input-wrapper">
+                <Mail className="form-icon" />
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email id"
+                  className={`form-input ${errors.email ? 'input-error' : ''}`}
+                />
               </div>
-              {errors.email && <div style={styles.error}><AlertCircle style={{ width: '12px', height: '12px' }} />{errors.email}</div>}
+              {errors.email && <div className="error-text"><AlertCircle size={12} />{errors.email}</div>}
             </div>
           </div>
 
           {/* Organization & Phone */}
-          <div style={styles.gridMd}>
-            <div>
-              <label htmlFor="organization" style={styles.label}>Organization</label>
-              <div style={{ position: 'relative' }}>
-                <Building style={styles.icon} />
-                <input type="text" id="organization" name="organization" value={formData.organization} onChange={handleChange} placeholder="Your company/org" style={styles.input(errors.organization)} />
+          <div className="form-grid-md">
+            <div className="form-group">
+              <label htmlFor="organization" className="form-label">Organization</label>
+              <div className="input-wrapper">
+                <Building className="form-icon" />
+                <input
+                  type="text"
+                  id="organization"
+                  name="organization"
+                  value={formData.organization}
+                  onChange={handleChange}
+                  placeholder="Your company/org"
+                  className={`form-input ${errors.organization ? 'input-error' : ''}`}
+                />
               </div>
-              {errors.organization && <div style={styles.error}><AlertCircle style={{ width: '12px', height: '12px' }} />{errors.organization}</div>}
+              {errors.organization && <div className="error-text"><AlertCircle size={12} />{errors.organization}</div>}
             </div>
-            <div>
-              <label htmlFor="phone" style={styles.label}>Phone Number</label>
-              <div style={{ position: 'relative' }}>
-                <Phone style={styles.icon} />
-                <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="+91 xxxxxxxxx" style={styles.input(false)} />
+            <div className="form-group">
+              <label htmlFor="phone" className="form-label">Phone Number</label>
+              <div className="input-wrapper">
+                <Phone className="form-icon" />
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="+91 xxxxxxxxx"
+                  className="form-input"
+                />
               </div>
             </div>
           </div>
 
           {/* Role */}
-          <div>
-            <label htmlFor="role" style={styles.label}>Role</label>
-            <select id="role" name="role" value={formData.role} onChange={handleChange} style={styles.select}>
+          <div className="form-group">
+            <label htmlFor="role" className="form-label">Role</label>
+            <select id="role" name="role" value={formData.role} onChange={handleChange} className="form-select">
               <option value="Select Option">Select Option</option>
               <option value="healthcare">Healthcare Specialist</option>
               <option value="agriculture">Agriculture Expert</option>
@@ -171,59 +188,79 @@ export default function Register() {
           </div>
 
           {/* Password & Confirm */}
-          <div style={styles.gridMd}>
-            <div>
-              <label htmlFor="password" style={styles.label}>Password</label>
-              <div style={{ position: 'relative' }}>
-                <Lock style={styles.icon} />
-                <input type={showPassword ? 'text' : 'password'} id="password" name="password" value={formData.password} onChange={handleChange} placeholder="Create password" style={{ ...styles.input(errors.password), paddingRight: '3rem' }} />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.passwordButton}>
-                  {showPassword ? <EyeOff style={{ width: '20px', height: '20px' }} /> : <Eye style={{ width: '20px', height: '20px' }} />}
+          <div className="form-grid-md">
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">Password</label>
+              <div className="input-wrapper">
+                <Lock className="form-icon" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Create password"
+                  className={`form-input input-password ${errors.password ? 'input-error' : ''}`}
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="password-toggle">
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-              {errors.password && <div style={styles.error}><AlertCircle style={{ width: '12px', height: '12px' }} />{errors.password}</div>}
+              {errors.password && <div className="error-text"><AlertCircle size={12} />{errors.password}</div>}
             </div>
 
-            <div>
-              <label htmlFor="confirmPassword" style={styles.label}>Confirm Password</label>
-              <div style={{ position: 'relative' }}>
-                <Lock style={styles.icon} />
-                <input type={showConfirmPassword ? 'text' : 'password'} id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Confirm password" style={{ ...styles.input(errors.confirmPassword), paddingRight: '3rem' }} />
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.passwordButton}>
-                  {showConfirmPassword ? <EyeOff style={{ width: '20px', height: '20px' }} /> : <Eye style={{ width: '20px', height: '20px' }} />}
+            <div className="form-group">
+              <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+              <div className="input-wrapper">
+                <Lock className="form-icon" />
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm password"
+                  className={`form-input input-password ${errors.confirmPassword ? 'input-error' : ''}`}
+                />
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="password-toggle">
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-              {errors.confirmPassword && <div style={styles.error}><AlertCircle style={{ width: '12px', height: '12px' }} />{errors.confirmPassword}</div>}
+              {errors.confirmPassword && <div className="error-text"><AlertCircle size={12} />{errors.confirmPassword}</div>}
             </div>
           </div>
 
           {/* Terms */}
-          <div>
-            <label style={styles.checkboxLabel}>
-              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} style={{ marginTop: '0.25rem', width: '16px', height: '16px', borderRadius: '4px', border: errors.agreeToTerms ? '1px solid #f87171' : '1px solid #475569', backgroundColor: 'rgba(51,65,85,0.5)' }} />
-              <span>I agree to the <a href="#" style={{ color: '#c084fc' }}>Terms of Service</a> and <a href="#" style={{ color: '#c084fc' }}>Privacy Policy</a></span>
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                name="agreeToTerms"
+                checked={formData.agreeToTerms}
+                onChange={handleChange}
+                className={`checkbox-input ${errors.agreeToTerms ? 'checkbox-error' : ''}`}
+              />
+              <span>I agree to the <a href="#" className="terms-link">Terms of Service</a> and <a href="#" className="terms-link">Privacy Policy</a></span>
             </label>
-            {errors.agreeToTerms && <div style={styles.error}><AlertCircle style={{ width: '12px', height: '12px' }} />{errors.agreeToTerms}</div>}
+            {errors.agreeToTerms && <div className="error-text"><AlertCircle size={12} />{errors.agreeToTerms}</div>}
           </div>
 
           {/* Submit */}
-          <button type="submit" disabled={isLoading} style={styles.button}>
-            {isLoading ? <> <div style={{ width: '20px', height: '20px', border: '2px solid #fff', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div> <span>Creating account...</span> </> : <> <span>Create Account</span> <ArrowRight style={{ width: '20px', height: '20px' }} /> </>}
+          <button type="submit" disabled={isLoading} className="submit-btn">
+            {isLoading ? <> <div className="loading-spinner"></div> <span>Creating account...</span> </> : <> <span>Create Account</span> <ArrowRight size={20} /> </>}
           </button>
         </form>
 
         {/* Sign In */}
-        <div style={{ textAlign: 'center', marginTop: '1.5rem', color: '#94a3b8', fontSize: '0.875rem' }}>
-          Already have an account? <Link to="/auth/login" style={{ color: '#c084fc' }}>Sign in</Link>
+        <div className="signin-section">
+          Already have an account? <Link to="/auth/login" className="signin-link">Sign in</Link>
         </div>
 
         {/* Footer */}
-        <div style={styles.footer}>
-          <p>© 2025 AI Solutions. All rights reserved.</p>
+        <div className="footer-section">
+          <p className="footer-text">© 2025 AI Solutions. All rights reserved.</p>
         </div>
       </div>
-
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

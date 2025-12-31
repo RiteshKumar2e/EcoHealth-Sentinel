@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, Bell, Activity, Sparkles, Database, Trash2, Edit, Eye, Download, Filter, Search, RefreshCw } from 'lucide-react';
+import './AppointmentScheduling.css';
 
 // MongoDB API Simulation (Replace with actual MongoDB API calls)
 class MongoDBService {
@@ -37,7 +38,7 @@ class MongoDBService {
   async findAppointments(query = {}) {
     await new Promise(resolve => setTimeout(resolve, 600));
     let results = [...this.appointments];
-    
+
     if (query.date) {
       results = results.filter(apt => apt.date === query.date);
     }
@@ -47,7 +48,7 @@ class MongoDBService {
     if (query.doctor) {
       results = results.filter(apt => apt.doctor === query.doctor);
     }
-    
+
     return { success: true, data: results };
   }
 
@@ -106,6 +107,7 @@ const AppointmentScheduling = () => {
     gender: ''
   });
   const [notification, setNotification] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [stats, setStats] = useState({ total: 0, today: 0, upcoming: 0, completed: 0 });
@@ -119,10 +121,12 @@ const AppointmentScheduling = () => {
     loadAppointments();
     optimizeTimeSlots(selectedDate);
     checkConnection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, filterStatus]);
 
   useEffect(() => {
     updateStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appointments]);
 
   const checkConnection = () => {
@@ -161,7 +165,7 @@ const AppointmentScheduling = () => {
       '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
       '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM'
     ];
-    
+
     const optimizedSlots = baseSlots.map(slot => ({
       time: slot,
       availability: Math.random() > 0.3 ? 'available' : 'booked',
@@ -169,7 +173,7 @@ const AppointmentScheduling = () => {
       aiScore: (Math.random() * 100).toFixed(1),
       patients: Math.floor(Math.random() * 3)
     }));
-    
+
     setAvailableSlots(optimizedSlots);
   };
 
@@ -185,7 +189,7 @@ const AppointmentScheduling = () => {
       advance: 0.06,
       age: patientData.age < 30 ? 0.10 : 0.04
     };
-    
+
     const noShowProbability = Object.values(factors).reduce((a, b) => a + b, 0);
     return (noShowProbability * 100).toFixed(1);
   };
@@ -197,10 +201,10 @@ const AppointmentScheduling = () => {
     }
 
     setSaving(true);
-    
+
     try {
       const noShowRisk = predictNoShow(formData);
-      
+
       const appointmentData = {
         ...formData,
         date: selectedDate,
@@ -208,7 +212,7 @@ const AppointmentScheduling = () => {
         reminderSent: false,
         confirmationSent: true
       };
-      
+
       if (editingId) {
         // Update existing appointment
         const response = await mongoService.updateAppointment(editingId, appointmentData);
@@ -225,7 +229,7 @@ const AppointmentScheduling = () => {
           showNotification('success', `✅ Saved to MongoDB! ID: ${response.data._id} | Risk: ${noShowRisk}%`);
         }
       }
-      
+
       setFormData({
         patientName: '',
         phone: '',
@@ -237,7 +241,7 @@ const AppointmentScheduling = () => {
         age: '',
         gender: ''
       });
-      
+
       optimizeTimeSlots(selectedDate);
     } catch (error) {
       showNotification('error', '❌ MongoDB operation failed');
@@ -248,7 +252,7 @@ const AppointmentScheduling = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this appointment from MongoDB?')) return;
-    
+
     try {
       const response = await mongoService.deleteAppointment(id);
       if (response.success) {
@@ -310,126 +314,107 @@ const AppointmentScheduling = () => {
     setTimeout(() => setNotification(null), 5000);
   };
 
-  const filteredAppointments = appointments.filter(apt => 
+  const filteredAppointments = appointments.filter(apt =>
     apt.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     apt.doctor.toLowerCase().includes(searchTerm.toLowerCase()) ||
     apt.phone.includes(searchTerm)
   );
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)', padding: '24px', position: 'relative', overflow: 'hidden' }}>
-      <style>{`
-        @keyframes blob { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes scale-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .animate-blob { animation: blob 7s infinite; }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-4000 { animation-delay: 4s; }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .card-3d { transition: transform 0.3s ease; }
-        .card-3d:hover { transform: translateY(-10px); }
-        .slide-in-up { animation: slideInUp 0.6s ease-out forwards; }
-        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
-        .animate-scale-pulse { animation: scale-pulse 2s ease-in-out infinite; }
-        .btn-hover:hover { transform: scale(1.05); transition: all 0.3s; }
-      `}</style>
-
+    <div className="apt-scheduling-container">
       {/* Animated Background */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-        <div className="animate-blob animation-delay-2000" style={{ position: 'absolute', width: '384px', height: '384px', background: 'rgba(147, 51, 234, 0.3)', borderRadius: '50%', filter: 'blur(80px)', top: 0, left: 0 }}></div>
-        <div className="animate-blob" style={{ position: 'absolute', width: '384px', height: '384px', background: 'rgba(59, 130, 246, 0.3)', borderRadius: '50%', filter: 'blur(80px)', top: 0, right: 0 }}></div>
-        <div className="animate-blob animation-delay-4000" style={{ position: 'absolute', width: '384px', height: '384px', background: 'rgba(236, 72, 153, 0.3)', borderRadius: '50%', filter: 'blur(80px)', bottom: 0, left: '50%' }}></div>
+      <div className="apt-background-blobs">
+        <div className="apt-blob apt-blob-1"></div>
+        <div className="apt-blob apt-blob-2"></div>
+        <div className="apt-blob apt-blob-3"></div>
       </div>
 
-      <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 10 }}>
+      <div className="apt-content-wrapper">
         {/* Header */}
-        <div className="card-3d slide-in-up" style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(20px)', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', padding: '32px', marginBottom: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ position: 'relative' }}>
-                <Calendar className="animate-float" style={{ width: '48px', height: '48px', color: '#06b6d4' }} />
-                <Sparkles style={{ width: '16px', height: '16px', color: '#facc15', position: 'absolute', top: '-4px', right: '-4px' }} className="animate-scale-pulse" />
+        <div className="apt-card-3d apt-no-hover">
+          <div className="apt-header-content">
+            <div className="apt-title-group">
+              <div className="apt-icon-wrapper">
+                <Calendar className="apt-main-icon" />
+                <Sparkles className="apt-sparkle-icon" />
               </div>
               <div>
-                <h1 style={{ fontSize: '32px', fontWeight: 'bold', background: 'linear-gradient(to right, #06b6d4, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '4px' }}>
+                <h1 className="apt-title">
                   AI-Powered Appointment System
                 </h1>
-                <p style={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-                  <Database style={{ width: '16px', height: '16px', color: connectionStatus === 'connected' ? '#10b981' : '#ef4444' }} className="animate-scale-pulse" />
+                <p className="apt-subtitle">
+                  <Database className="apt-status-icon" style={{ color: connectionStatus === 'connected' ? '#10b981' : '#ef4444' }} />
                   MongoDB {connectionStatus === 'connected' ? 'Connected' : 'Disconnected'} • Real-time Sync • Collection: appointments
                 </p>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={handleRefresh} className="btn-hover" style={{ padding: '10px 20px', background: 'linear-gradient(to right, #06b6d4, #3b82f6)', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}>
-                <RefreshCw style={{ width: '18px', height: '18px' }} />
+            <div className="apt-header-actions">
+              <button onClick={handleRefresh} className="apt-btn apt-btn-refresh">
+                <RefreshCw className="apt-btn-icon" />
                 Refresh
               </button>
-              <button onClick={handleExport} className="btn-hover" style={{ padding: '10px 20px', background: 'linear-gradient(to right, #10b981, #059669)', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}>
-                <Download style={{ width: '18px', height: '18px' }} />
+              <button onClick={handleExport} className="apt-btn apt-btn-export">
+                <Download className="apt-btn-icon" />
                 Export
               </button>
             </div>
           </div>
-          
+
           {/* Stats Dashboard */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginTop: '24px' }}>
-            <div className="card-3d" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', borderRadius: '16px', padding: '20px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Activity style={{ width: '32px', height: '32px', color: 'white' }} />
+          <div className="apt-stats-grid">
+            <div className="apt-stat-card apt-stat-green">
+              <div className="apt-stat-content">
+                <Activity className="apt-stat-icon" />
                 <div>
-                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'white' }}>{stats.total}</div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.9)' }}>Total Appointments</div>
+                  <div className="apt-stat-value">{stats.total}</div>
+                  <div className="apt-stat-label">Total Appointments</div>
                 </div>
               </div>
             </div>
-            <div className="card-3d" style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', borderRadius: '16px', padding: '20px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Calendar style={{ width: '32px', height: '32px', color: 'white' }} />
+            <div className="apt-stat-card apt-stat-blue">
+              <div className="apt-stat-content">
+                <Calendar className="apt-stat-icon" />
                 <div>
-                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'white' }}>{stats.today}</div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.9)' }}>Today's Schedule</div>
+                  <div className="apt-stat-value">{stats.today}</div>
+                  <div className="apt-stat-label">Today's Schedule</div>
                 </div>
               </div>
             </div>
-            <div className="card-3d" style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', borderRadius: '16px', padding: '20px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Bell className="animate-scale-pulse" style={{ width: '32px', height: '32px', color: 'white' }} />
+            <div className="apt-stat-card apt-stat-amber">
+              <div className="apt-stat-content">
+                <Bell className="apt-stat-icon apt-status-icon" />
                 <div>
-                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'white' }}>{stats.upcoming}</div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.9)' }}>Upcoming</div>
+                  <div className="apt-stat-value">{stats.upcoming}</div>
+                  <div className="apt-stat-label">Upcoming</div>
                 </div>
               </div>
             </div>
-            <div className="card-3d" style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)', borderRadius: '16px', padding: '20px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <CheckCircle style={{ width: '32px', height: '32px', color: 'white' }} />
+            <div className="apt-stat-card apt-stat-purple">
+              <div className="apt-stat-content">
+                <CheckCircle className="apt-stat-icon" />
                 <div>
-                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'white' }}>{stats.completed}</div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.9)' }}>Completed</div>
+                  <div className="apt-stat-value">{stats.completed}</div>
+                  <div className="apt-stat-label">Completed</div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Features */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '24px' }}>
-            <span className="animate-scale-pulse" style={{ padding: '8px 16px', background: 'rgba(6, 182, 212, 0.1)', border: '1px solid #06b6d4', borderRadius: '9999px', fontSize: '12px', fontWeight: '500', color: '#06b6d4' }}>
+          <div className="apt-features">
+            <span className="apt-feature-pill apt-pill-cyan">
               ✓ MongoDB Integration
             </span>
-            <span style={{ padding: '8px 16px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', borderRadius: '9999px', fontSize: '12px', fontWeight: '500', color: '#10b981' }}>
+            <span className="apt-feature-pill apt-pill-green">
               ✓ CRUD Operations
             </span>
-            <span style={{ padding: '8px 16px', background: 'rgba(168, 85, 247, 0.1)', border: '1px solid #a855f7', borderRadius: '9999px', fontSize: '12px', fontWeight: '500', color: '#a855f7' }}>
+            <span className="apt-feature-pill apt-pill-purple">
               ✓ AI Prediction
             </span>
-            <span style={{ padding: '8px 16px', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid #3b82f6', borderRadius: '9999px', fontSize: '12px', fontWeight: '500', color: '#3b82f6' }}>
+            <span className="apt-feature-pill apt-pill-blue">
               ✓ Real-time Updates
             </span>
-            <span style={{ padding: '8px 16px', background: 'rgba(245, 158, 11, 0.1)', border: '1px solid #f59e0b', borderRadius: '9999px', fontSize: '12px', fontWeight: '500', color: '#f59e0b' }}>
+            <span className="apt-feature-pill apt-pill-amber">
               ✓ Export Data
             </span>
           </div>
@@ -437,60 +422,60 @@ const AppointmentScheduling = () => {
 
         {/* Notification */}
         {notification && (
-          <div className="card-3d slide-in-up" style={{ marginBottom: '24px', padding: '16px 20px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '12px', background: notification.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : notification.type === 'error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(59, 130, 246, 0.15)', border: `2px solid ${notification.type === 'success' ? '#10b981' : notification.type === 'error' ? '#ef4444' : '#3b82f6'}`, boxShadow: `0 10px 15px -3px ${notification.type === 'success' ? 'rgba(16, 185, 129, 0.3)' : notification.type === 'error' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(59, 130, 246, 0.3)'}` }}>
-            {notification.type === 'success' ? <CheckCircle className="animate-spin-slow" style={{ width: '24px', height: '24px', color: '#10b981', flexShrink: 0 }} /> : notification.type === 'error' ? <XCircle style={{ width: '24px', height: '24px', color: '#ef4444', flexShrink: 0 }} /> : <AlertCircle style={{ width: '24px', height: '24px', color: '#3b82f6', flexShrink: 0 }} />}
-            <span style={{ color: notification.type === 'success' ? '#065f46' : notification.type === 'error' ? '#991b1b' : '#1e40af', fontWeight: '600', fontSize: '14px' }}>{notification.message}</span>
+          <div className={`apt-notification ${notification.type === 'success' ? 'apt-notif-success' : notification.type === 'error' ? 'apt-notif-error' : 'apt-notif-info'}`}>
+            {notification.type === 'success' ? <CheckCircle className="apt-spinner" style={{ width: '24px', height: '24px', color: '#10b981', border: 'none' }} /> : notification.type === 'error' ? <XCircle style={{ width: '24px', height: '24px', color: '#ef4444', flexShrink: 0 }} /> : <AlertCircle style={{ width: '24px', height: '24px', color: '#3b82f6', flexShrink: 0 }} />}
+            <span className={`apt-notif-text ${notification.type}`}>{notification.message}</span>
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px' }}>
+        <div className="apt-main-grid">
           {/* Booking Form */}
-          <div className="card-3d" style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(20px)', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', padding: '28px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <User className="animate-float" style={{ width: '28px', height: '28px', color: '#06b6d4' }} />
+          <div className="apt-form-card">
+            <h2 className="apt-section-title">
+              <User className="apt-section-icon" />
               {editingId ? 'Edit Appointment' : 'Schedule Appointment'}
             </h2>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '6px' }}>Patient Name *</label>
-                <input type="text" name="patientName" value={formData.patientName} onChange={handleInputChange} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none' }} placeholder="Enter full name" onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
+
+            <div className="apt-form-group">
+              <div className="apt-input-group">
+                <label className="apt-label">Patient Name *</label>
+                <input type="text" name="patientName" value={formData.patientName} onChange={handleInputChange} className="apt-input" placeholder="Enter full name" />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '6px' }}>Phone *</label>
-                  <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none' }} placeholder="+1234567890" onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
+              <div className="apt-grid-2">
+                <div className="apt-input-group">
+                  <label className="apt-label">Phone *</label>
+                  <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="apt-input" placeholder="+1234567890" />
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '6px' }}>Email *</label>
-                  <input type="email" name="email" value={formData.email} onChange={handleInputChange} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none' }} placeholder="email@example.com" onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
+                <div className="apt-input-group">
+                  <label className="apt-label">Email *</label>
+                  <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="apt-input" placeholder="email@example.com" />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '6px' }}>Age</label>
-                  <input type="number" name="age" value={formData.age} onChange={handleInputChange} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none' }} placeholder="Age" onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
+              <div className="apt-grid-3">
+                <div className="apt-input-group">
+                  <label className="apt-label">Age</label>
+                  <input type="number" name="age" value={formData.age} onChange={handleInputChange} className="apt-input" placeholder="Age" />
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '6px' }}>Gender</label>
-                  <select name="gender" value={formData.gender} onChange={handleInputChange} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none', cursor: 'pointer' }} onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}>
+                <div className="apt-input-group">
+                  <label className="apt-label">Gender</label>
+                  <select name="gender" value={formData.gender} onChange={handleInputChange} className="apt-select">
                     <option value="">Select</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                   </select>
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '6px' }}>Emergency</label>
-                  <input type="tel" name="emergencyContact" value={formData.emergencyContact} onChange={handleInputChange} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none' }} placeholder="Contact" onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
+                <div className="apt-input-group">
+                  <label className="apt-label">Emergency</label>
+                  <input type="tel" name="emergencyContact" value={formData.emergencyContact} onChange={handleInputChange} className="apt-input" placeholder="Contact" />
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '6px' }}>Select Doctor *</label>
-                <select name="doctor" value={formData.doctor} onChange={handleInputChange} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none', cursor: 'pointer' }} onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}>
+              <div className="apt-input-group">
+                <label className="apt-label">Select Doctor *</label>
+                <select name="doctor" value={formData.doctor} onChange={handleInputChange} className="apt-select">
                   <option value="">Choose a doctor</option>
                   {mongoService.getDoctors().map(doc => (
                     <option key={doc.id} value={doc.name}>
@@ -500,21 +485,21 @@ const AppointmentScheduling = () => {
                 </select>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '6px' }}>Appointment Date *</label>
-                <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} min={new Date().toISOString().split('T')[0]} style={{ width: '100%', padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none' }} onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
+              <div className="apt-input-group">
+                <label className="apt-label">Appointment Date *</label>
+                <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="apt-input" />
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '6px' }}>Reason for Visit *</label>
-                <textarea name="reason" value={formData.reason} onChange={handleInputChange} rows="3" style={{ width: '100%', padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none', resize: 'vertical' }} placeholder="Brief description of symptoms" onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
+              <div className="apt-input-group">
+                <label className="apt-label">Reason for Visit *</label>
+                <textarea name="reason" value={formData.reason} onChange={handleInputChange} rows="3" className="apt-textarea" placeholder="Brief description of symptoms" />
               </div>
 
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={handleSubmit} disabled={saving || !formData.timeSlot || !formData.patientName} className="btn-hover" style={{ flex: 1, background: editingId ? 'linear-gradient(to right, #f59e0b, #d97706)' : 'linear-gradient(to right, #06b6d4, #3b82f6)', color: 'white', padding: '14px', borderRadius: '12px', border: 'none', fontWeight: 'bold', fontSize: '15px', cursor: saving || !formData.timeSlot || !formData.patientName ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', opacity: saving || !formData.timeSlot || !formData.patientName ? 0.5 : 1, boxShadow: '0 10px 15px -3px rgba(6, 182, 212, 0.3)' }}>
+                <button onClick={handleSubmit} disabled={saving || !formData.timeSlot || !formData.patientName} className={`apt-btn ${editingId ? 'apt-btn-update' : 'apt-btn-save'}`} style={{ flex: 1, opacity: saving || !formData.timeSlot || !formData.patientName ? 0.5 : 1, cursor: saving || !formData.timeSlot || !formData.patientName ? 'not-allowed' : 'pointer' }}>
                   {saving ? (
                     <>
-                      <div style={{ width: '18px', height: '18px', border: '2px solid white', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                      <div className="apt-spinner"></div>
                       Saving...
                     </>
                   ) : (
@@ -525,7 +510,7 @@ const AppointmentScheduling = () => {
                   )}
                 </button>
                 {editingId && (
-                  <button onClick={() => { setEditingId(null); setFormData({ patientName: '', phone: '', email: '', reason: '', doctor: '', timeSlot: '', emergencyContact: '', age: '', gender: '' }); }} className="btn-hover" style={{ padding: '14px 20px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '2px solid #ef4444', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+                  <button onClick={() => { setEditingId(null); setFormData({ patientName: '', phone: '', email: '', reason: '', doctor: '', timeSlot: '', emergencyContact: '', age: '', gender: '' }); }} className="apt-btn apt-btn-cancel">
                     Cancel
                   </button>
                 )}
@@ -534,32 +519,37 @@ const AppointmentScheduling = () => {
           </div>
 
           {/* Available Slots */}
-          <div className="card-3d" style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(20px)', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', padding: '28px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Clock className="animate-spin-slow" style={{ width: '28px', height: '28px', color: '#06b6d4' }} />
+          <div className="apt-form-card">
+            <h2 className="apt-section-title">
+              <Clock className="apt-section-icon" />
               AI-Optimized Slots
             </h2>
-            
-            <div style={{ marginBottom: '20px', padding: '14px', background: 'rgba(6, 182, 212, 0.1)', border: '1px solid #06b6d4', borderRadius: '12px' }}>
-              <p style={{ fontSize: '13px', color: '#0e7490', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <AlertCircle className="animate-scale-pulse" style={{ width: '18px', height: '18px', flexShrink: 0 }} />
+
+            <div className="apt-info-box">
+              <p className="apt-info-text">
+                <AlertCircle style={{ width: '18px', height: '18px', flexShrink: 0 }} />
                 Slots optimized using AI predictive analytics
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', maxHeight: '420px', overflowY: 'auto', paddingRight: '8px' }}>
+            <div className="apt-slots-grid">
               {availableSlots.map((slot, index) => (
-                <button key={index} onClick={() => slot.availability === 'available' && setFormData(prev => ({ ...prev, timeSlot: slot.time }))} disabled={slot.availability === 'booked'} className="card-3d" style={{ padding: '16px', borderRadius: '12px', border: `2px solid ${slot.availability === 'available' ? (formData.timeSlot === slot.time ? '#06b6d4' : '#e2e8f0') : '#f1f5f9'}`, background: slot.availability === 'available' ? (formData.timeSlot === slot.time ? 'rgba(6, 182, 212, 0.15)' : 'white') : '#f8fafc', cursor: slot.availability === 'booked' ? 'not-allowed' : 'pointer', opacity: slot.availability === 'booked' ? 0.5 : 1, boxShadow: formData.timeSlot === slot.time ? '0 10px 15px -3px rgba(6, 182, 212, 0.3)' : 'none' }}>
-                  <div style={{ fontWeight: 'bold', color: '#1e293b', fontSize: '16px', marginBottom: '8px' }}>{slot.time}</div>
+                <button
+                  key={index}
+                  onClick={() => slot.availability === 'available' && setFormData(prev => ({ ...prev, timeSlot: slot.time }))}
+                  disabled={slot.availability === 'booked'}
+                  className={`apt-slot-card ${slot.availability === 'booked' ? 'booked' : 'available'} ${formData.timeSlot === slot.time ? 'selected' : ''}`}
+                >
+                  <div className="apt-slot-time">{slot.time}</div>
                   {slot.availability === 'available' ? (
                     <>
-                      <div style={{ fontSize: '11px', color: '#10b981', fontWeight: '600', marginBottom: '4px' }}>✓ Available</div>
-                      <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Wait: ~{slot.waitTime}m</div>
-                      <div style={{ fontSize: '11px', color: '#06b6d4', fontWeight: '600' }}>AI: {slot.aiScore}%</div>
-                      <div style={{ fontSize: '11px', color: '#8b5cf6', marginTop: '4px' }}>{slot.patients} patients</div>
+                      <div className="apt-slot-detail apt-text-green">✓ Available</div>
+                      <div className="apt-slot-detail apt-text-slate">Wait: ~{slot.waitTime}m</div>
+                      <div className="apt-slot-detail apt-text-cyan">AI: {slot.aiScore}%</div>
+                      <div className="apt-slot-detail apt-text-purple">{slot.patients} patients</div>
                     </>
                   ) : (
-                    <div style={{ fontSize: '11px', color: '#ef4444', fontWeight: '600', marginTop: '8px' }}>✗ Booked</div>
+                    <div className="apt-slot-detail apt-text-red-bold">✗ Booked</div>
                   )}
                 </button>
               ))}
@@ -568,22 +558,22 @@ const AppointmentScheduling = () => {
         </div>
 
         {/* Appointments List */}
-        <div className="card-3d slide-in-up" style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(20px)', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', padding: '28px', marginTop: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '16px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Database className="animate-scale-pulse" style={{ width: '28px', height: '28px', color: '#10b981' }} />
+        <div className="apt-card-3d apt-no-hover" style={{ marginTop: '24px' }}>
+          <div className="apt-list-header">
+            <h2 className="apt-section-title">
+              <Database className="apt-section-icon" style={{ color: '#10b981' }} />
               MongoDB Records ({filteredAppointments.length})
             </h2>
-            
+
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              <div style={{ position: 'relative' }}>
-                <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '18px', height: '18px', color: '#94a3b8' }} />
-                <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search appointments..." style={{ paddingLeft: '40px', paddingRight: '14px', paddingTop: '10px', paddingBottom: '10px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none', width: '220px' }} onFocus={(e) => e.target.style.borderColor = '#06b6d4'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
+              <div className="apt-search-wrapper">
+                <Search className="apt-search-icon" />
+                <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search appointments..." className="apt-search-input" />
               </div>
-              
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+
+              <div className="apt-filter-group">
                 <Filter style={{ width: '18px', height: '18px', color: '#64748b' }} />
-                <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ padding: '10px 14px', background: 'white', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', outline: 'none', cursor: 'pointer' }}>
+                <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="apt-select-small">
                   <option value="all">All Status</option>
                   <option value="confirmed">Confirmed</option>
                   <option value="completed">Completed</option>
@@ -592,70 +582,77 @@ const AppointmentScheduling = () => {
               </div>
             </div>
           </div>
-          
+
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '48px 0' }}>
-              <div style={{ width: '64px', height: '64px', border: '4px solid #06b6d4', borderTop: '4px solid transparent', borderRadius: '50%', margin: '0 auto 16px', animation: 'spin 1s linear infinite' }}></div>
-              <p style={{ color: '#64748b', fontSize: '14px' }}>Loading from MongoDB...</p>
+            <div className="apt-empty-state">
+              <div className="apt-loading-spinner"></div>
+              <p>Loading from MongoDB...</p>
             </div>
           ) : filteredAppointments.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: '#94a3b8' }}>
-              <Calendar className="animate-float" style={{ width: '64px', height: '64px', margin: '0 auto 16px', opacity: 0.5 }} />
+            <div className="apt-empty-state">
+              <Calendar className="apt-empty-icon" />
               <p style={{ fontSize: '16px' }}>{searchTerm ? 'No appointments found matching your search' : 'No appointments in MongoDB database'}</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div className="apt-list-container">
               {filteredAppointments.map((apt, index) => (
-                <div key={apt._id} className="card-3d" style={{ background: 'white', border: '2px solid #e2e8f0', borderRadius: '16px', padding: '20px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '16px' }}>
-                    <div style={{ flex: 1, minWidth: '250px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                        <div className="animate-scale-pulse" style={{ width: '48px', height: '48px', background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '18px', flexShrink: 0 }}>
+                <div key={apt._id} className="apt-item-card">
+                  <div className="apt-item-content">
+                    <div className="apt-patient-info">
+                      <div className="apt-patient-header">
+                        <div className="apt-avatar">
                           {apt.patientName.charAt(0)}
                         </div>
-                        <div>
-                          <h3 style={{ fontWeight: 'bold', color: '#1e293b', fontSize: '18px', marginBottom: '4px' }}>{apt.patientName}</h3>
-                          <p style={{ fontSize: '13px', color: '#64748b' }}>{apt.doctor}</p>
+                        <div className="apt-patient-details">
+                          <h3>{apt.patientName}</h3>
+                          <p>{apt.doctor}</p>
                         </div>
                       </div>
-                      <p style={{ fontSize: '13px', color: '#475569', marginLeft: '60px', marginBottom: '10px' }}>{apt.reason}</p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginLeft: '60px' }}>
-                        <span style={{ fontSize: '11px', color: '#64748b', background: '#f1f5f9', padding: '4px 10px', borderRadius: '6px' }}>📧 {apt.email}</span>
-                        <span style={{ fontSize: '11px', color: '#64748b', background: '#f1f5f9', padding: '4px 10px', borderRadius: '6px' }}>📱 {apt.phone}</span>
-                        {apt.age && <span style={{ fontSize: '11px', color: '#64748b', background: '#f1f5f9', padding: '4px 10px', borderRadius: '6px' }}>👤 {apt.age}y</span>}
-                        {apt.gender && <span style={{ fontSize: '11px', color: '#64748b', background: '#f1f5f9', padding: '4px 10px', borderRadius: '6px' }}>⚧ {apt.gender}</span>}
+                      <p className="apt-reason">{apt.reason}</p>
+                      <div className="apt-tags">
+                        <span className="apt-tag">📧 {apt.email}</span>
+                        <span className="apt-tag">📱 {apt.phone}</span>
+                        {apt.age && <span className="apt-tag">👤 {apt.age}y</span>}
+                        {apt.gender && <span className="apt-tag">⚧ {apt.gender}</span>}
                       </div>
-                      <div style={{ marginTop: '10px', marginLeft: '60px', fontSize: '11px', color: '#8b5cf6', fontFamily: 'monospace' }}>
+                      <div className="apt-id">
                         ID: {apt._id}
                       </div>
                     </div>
-                    
-                    <div style={{ textAlign: 'right', minWidth: '180px' }}>
-                      <div style={{ fontWeight: 'bold', color: '#06b6d4', fontSize: '20px', marginBottom: '6px' }}>{apt.timeSlot}</div>
-                      <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '10px' }}>📅 {apt.date}</div>
-                      
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
-                        <div style={{ display: 'inline-block', fontSize: '11px', padding: '6px 10px', borderRadius: '8px', fontWeight: '600', background: parseFloat(apt.noShowRisk) < 10 ? 'rgba(16, 185, 129, 0.1)' : parseFloat(apt.noShowRisk) < 20 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: parseFloat(apt.noShowRisk) < 10 ? '#10b981' : parseFloat(apt.noShowRisk) < 20 ? '#f59e0b' : '#ef4444', border: `1px solid ${parseFloat(apt.noShowRisk) < 10 ? '#10b981' : parseFloat(apt.noShowRisk) < 20 ? '#f59e0b' : '#ef4444'}` }}>
+
+                    <div className="apt-appointment-meta">
+                      <div className="apt-time">{apt.timeSlot}</div>
+                      <div className="apt-date">📅 {apt.date}</div>
+
+                      <div className="apt-status-actions">
+                        <div className="apt-risk-badge" style={{
+                          background: parseFloat(apt.noShowRisk) < 10 ? 'rgba(16, 185, 129, 0.1)' : parseFloat(apt.noShowRisk) < 20 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                          color: parseFloat(apt.noShowRisk) < 10 ? '#10b981' : parseFloat(apt.noShowRisk) < 20 ? '#f59e0b' : '#ef4444',
+                          border: `1px solid ${parseFloat(apt.noShowRisk) < 10 ? '#10b981' : parseFloat(apt.noShowRisk) < 20 ? '#f59e0b' : '#ef4444'}`
+                        }}>
                           AI Risk: {apt.noShowRisk}%
                         </div>
-                        
-                        <select value={apt.status} onChange={(e) => handleStatusChange(apt._id, e.target.value)} style={{ padding: '6px 10px', fontSize: '11px', borderRadius: '8px', border: '2px solid #e2e8f0', outline: 'none', cursor: 'pointer', fontWeight: '600', background: apt.status === 'confirmed' ? 'rgba(16, 185, 129, 0.1)' : apt.status === 'completed' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: apt.status === 'confirmed' ? '#10b981' : apt.status === 'completed' ? '#8b5cf6' : '#ef4444' }}>
+
+                        <select value={apt.status} onChange={(e) => handleStatusChange(apt._id, e.target.value)} className="apt-status-select" style={{
+                          background: apt.status === 'confirmed' ? 'rgba(16, 185, 129, 0.1)' : apt.status === 'completed' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                          color: apt.status === 'confirmed' ? '#10b981' : apt.status === 'completed' ? '#8b5cf6' : '#ef4444'
+                        }}>
                           <option value="confirmed">Confirmed</option>
                           <option value="completed">Completed</option>
                           <option value="cancelled">Cancelled</option>
                         </select>
                       </div>
-                      
-                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                        <button onClick={() => handleEdit(apt)} className="btn-hover" style={{ padding: '8px 12px', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', border: '1px solid #f59e0b', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+
+                      <div className="apt-action-buttons">
+                        <button onClick={() => handleEdit(apt)} className="apt-btn-small apt-btn-edit">
                           <Edit style={{ width: '14px', height: '14px' }} />
                           Edit
                         </button>
-                        <button onClick={() => setViewDetails(apt)} className="btn-hover" style={{ padding: '8px 12px', background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', border: '1px solid #3b82f6', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <button onClick={() => setViewDetails(apt)} className="apt-btn-small apt-btn-view">
                           <Eye style={{ width: '14px', height: '14px' }} />
                           View
                         </button>
-                        <button onClick={() => handleDelete(apt._id)} className="btn-hover" style={{ padding: '8px 12px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <button onClick={() => handleDelete(apt._id)} className="apt-btn-small apt-btn-delete">
                           <Trash2 style={{ width: '14px', height: '14px' }} />
                           Delete
                         </button>
@@ -670,72 +667,72 @@ const AppointmentScheduling = () => {
 
         {/* View Details Modal */}
         {viewDetails && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }} onClick={() => setViewDetails(null)}>
-            <div className="card-3d slide-in-up" style={{ background: 'white', borderRadius: '20px', padding: '32px', maxWidth: '600px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
-              <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="apt-modal-overlay" onClick={() => setViewDetails(null)}>
+            <div className="apt-modal-content" onClick={(e) => e.stopPropagation()}>
+              <h2 className="apt-section-title">
                 <Eye style={{ width: '28px', height: '28px', color: '#3b82f6' }} />
                 Appointment Details
               </h2>
-              
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px', padding: '16px', background: '#f8fafc', borderRadius: '12px' }}>
-                  <strong style={{ color: '#475569' }}>Patient:</strong>
+                <div className="apt-modal-details">
+                  <strong className="apt-text-slate">Patient:</strong>
                   <span style={{ color: '#1e293b' }}>{viewDetails.patientName}</span>
-                  
-                  <strong style={{ color: '#475569' }}>Doctor:</strong>
+
+                  <strong className="apt-text-slate">Doctor:</strong>
                   <span style={{ color: '#1e293b' }}>{viewDetails.doctor}</span>
-                  
-                  <strong style={{ color: '#475569' }}>Date & Time:</strong>
+
+                  <strong className="apt-text-slate">Date & Time:</strong>
                   <span style={{ color: '#1e293b' }}>{viewDetails.date} at {viewDetails.timeSlot}</span>
-                  
-                  <strong style={{ color: '#475569' }}>Phone:</strong>
+
+                  <strong className="apt-text-slate">Phone:</strong>
                   <span style={{ color: '#1e293b' }}>{viewDetails.phone}</span>
-                  
-                  <strong style={{ color: '#475569' }}>Email:</strong>
+
+                  <strong className="apt-text-slate">Email:</strong>
                   <span style={{ color: '#1e293b' }}>{viewDetails.email}</span>
-                  
+
                   {viewDetails.age && (
                     <>
-                      <strong style={{ color: '#475569' }}>Age:</strong>
+                      <strong className="apt-text-slate">Age:</strong>
                       <span style={{ color: '#1e293b' }}>{viewDetails.age} years</span>
                     </>
                   )}
-                  
+
                   {viewDetails.gender && (
                     <>
-                      <strong style={{ color: '#475569' }}>Gender:</strong>
+                      <strong className="apt-text-slate">Gender:</strong>
                       <span style={{ color: '#1e293b' }}>{viewDetails.gender}</span>
                     </>
                   )}
-                  
+
                   {viewDetails.emergencyContact && (
                     <>
-                      <strong style={{ color: '#475569' }}>Emergency:</strong>
+                      <strong className="apt-text-slate">Emergency:</strong>
                       <span style={{ color: '#1e293b' }}>{viewDetails.emergencyContact}</span>
                     </>
                   )}
-                  
-                  <strong style={{ color: '#475569' }}>Reason:</strong>
+
+                  <strong className="apt-text-slate">Reason:</strong>
                   <span style={{ color: '#1e293b' }}>{viewDetails.reason}</span>
-                  
-                  <strong style={{ color: '#475569' }}>Status:</strong>
+
+                  <strong className="apt-text-slate">Status:</strong>
                   <span style={{ color: '#1e293b', fontWeight: '600', textTransform: 'capitalize' }}>{viewDetails.status}</span>
-                  
-                  <strong style={{ color: '#475569' }}>No-Show Risk:</strong>
+
+                  <strong className="apt-text-slate">No-Show Risk:</strong>
                   <span style={{ color: parseFloat(viewDetails.noShowRisk) < 10 ? '#10b981' : parseFloat(viewDetails.noShowRisk) < 20 ? '#f59e0b' : '#ef4444', fontWeight: '600' }}>{viewDetails.noShowRisk}%</span>
-                  
-                  <strong style={{ color: '#475569' }}>MongoDB ID:</strong>
+
+                  <strong className="apt-text-slate">MongoDB ID:</strong>
                   <span style={{ color: '#8b5cf6', fontFamily: 'monospace', fontSize: '12px' }}>{viewDetails._id}</span>
-                  
-                  <strong style={{ color: '#475569' }}>Created:</strong>
+
+                  <strong className="apt-text-slate">Created:</strong>
                   <span style={{ color: '#64748b', fontSize: '13px' }}>{new Date(viewDetails.createdAt).toLocaleString()}</span>
-                  
-                  <strong style={{ color: '#475569' }}>Updated:</strong>
+
+                  <strong className="apt-text-slate">Updated:</strong>
                   <span style={{ color: '#64748b', fontSize: '13px' }}>{new Date(viewDetails.updatedAt).toLocaleString()}</span>
                 </div>
               </div>
-              
-              <button onClick={() => setViewDetails(null)} className="btn-hover" style={{ marginTop: '20px', width: '100%', padding: '12px', background: 'linear-gradient(to right, #06b6d4, #3b82f6)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+
+              <button onClick={() => setViewDetails(null)} className="apt-btn apt-btn-close">
                 Close
               </button>
             </div>

@@ -56,6 +56,34 @@ export const healthcareService = {
   getAiDiagnosis: (data) => api.post('/healthcare/diagnosis-assistant', data)
 };
 
+// Agri Services
+export const agriService = {
+  getDashboard: () => api.get('/agriculture/dashboard'),
+  getDiseaseDetection: () => api.get('/agriculture/disease-detection'),
+  detectDisease: (formData) => api.post('/agriculture/disease-detection', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  getIrrigation: () => api.get('/agriculture/irrigation'),
+  getSupplyChain: () => api.get('/agriculture/supply-chain'),
+  getAutomation: () => api.get('/agriculture/automation')
+};
+
+// Environment Services
+export const envService = {
+  getDashboard: () => api.get('/environment/dashboard'),
+  getCarbonCalculator: () => api.get('/environment/carbon-calculator'),
+  calculateCarbon: (data) => api.post('/environment/carbon-calculator', data),
+  getDisasterPrediction: () => api.get('/environment/disaster-prediction'),
+  getDisasterTrends: () => api.get('/environment/disaster-trends'),
+  getPollutionHeatmap: () => api.get('/environment/pollution-heatmap'),
+  getRenewableEnergy: () => api.get('/environment/renewable-energy'),
+  getWasteManagement: () => api.get('/environment/waste-management'),
+  logWaste: (data) => api.post('/environment/waste-management', data),
+  getWildlifeConservation: () => api.get('/environment/wildlife-conservation'),
+  getReports: () => api.get('/environment/reports'),
+  getAwarenessHub: () => api.get('/environment/awareness-hub')
+};
+
 // Chatbot Service
 export const chatbotService = {
   sendMessage: (message, domain, sessionId) => api.post('/chatbot', { message, domain, sessionId })

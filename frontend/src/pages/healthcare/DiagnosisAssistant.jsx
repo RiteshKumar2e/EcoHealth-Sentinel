@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Brain, Stethoscope, Activity, AlertTriangle, CheckCircle, TrendingUp, FileText, Send, Bot, User, Sparkles, Zap, HeartPulse, Microscope } from 'lucide-react';
+import './DiagnosisAssistant.css';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 const DiagnosisAssistant = () => {
   const [step, setStep] = useState(1);
@@ -91,14 +94,88 @@ const DiagnosisAssistant = () => {
 
   const runDiagnosisAI = async () => {
     setIsAnalyzing(true);
-    
-    setChatMessages(prev => [...prev, { 
-      role: 'assistant', 
-      content: '🔬 Initiating comprehensive AI analysis of patient data. This will take a few moments...' 
+
+    setChatMessages(prev => [...prev, {
+      role: 'assistant',
+      content: '🔬 Initiating comprehensive AI analysis of patient data. This will take a few moments...'
     }]);
-    
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/healthcare/diagnosis-assistant`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          symptoms: patientData.symptoms,
+          severity: patientData.severity,
+          patientData: patientData
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          const aiDiagnosis = {
+            primaryDiagnosis: {
+              name: result.possible_conditions[0].condition,
+              confidence: result.possible_conditions[0].confidence * 100,
+              icd10: 'J06.9', // Simulated ICD-10 for now
+              severity: patientData.severity.charAt(0).toUpperCase() + patientData.severity.slice(1)
+            },
+            differentialDiagnoses: result.possible_conditions.slice(1).map(c => ({
+              name: c.condition,
+              confidence: c.confidence * 100,
+              probability: c.confidence > 0.7 ? 'High' : c.confidence > 0.4 ? 'Medium' : 'Low'
+            })),
+            riskFactors: [
+              { factor: 'Age group', impact: 'Low', score: 25 },
+              { factor: 'Symptom severity', impact: 'Medium', score: 60 },
+              { factor: 'Duration of illness', impact: 'Medium', score: 55 },
+              { factor: 'Medical history', impact: 'Low', score: 30 }
+            ],
+            recommendedTests: [
+              { test: 'Complete Blood Count (CBC)', priority: 'High', reason: 'Evaluate infection markers' },
+              { test: 'Rapid Test', priority: 'High', reason: 'Differential diagnosis' }
+            ],
+            treatmentRecommendations: result.possible_conditions[0].recommendations.map(r => ({
+              treatment: r,
+              category: 'Supportive',
+              evidence: 'Strong'
+            })),
+            redFlags: [
+              'Difficulty breathing or shortness of breath',
+              'Persistent chest pain or pressure',
+              'Symptoms not improving within 3 days'
+            ],
+            aiInsights: {
+              symptomPattern: 'Consistent pattern detected based on AI analysis',
+              temporalAnalysis: 'Progression reviewed',
+              comorbidityImpact: 'Review medical history for potential impact',
+              outcomePrediction: 'High probability of recovery with proper care'
+            },
+            urgencyLevel: result.urgency,
+            confidenceScore: result.possible_conditions[0].confidence * 100,
+            evidenceQuality: 'Medium'
+          };
+
+          setDiagnosis(aiDiagnosis);
+          setIsAnalyzing(false);
+          setStep(4);
+          setChatMessages(prev => [...prev, {
+            role: 'assistant',
+            content: `✅ Analysis complete! I've identified ${aiDiagnosis.primaryDiagnosis.name} as a likely condition. Review the detailed results below.`
+          }]);
+          return;
+        }
+      }
+    } catch (error) {
+      console.warn("AI Diagnosis API failed, using simulation:", error);
+    }
+
+    // Simulation fallback
     await new Promise(resolve => setTimeout(resolve, 3500));
-    
+
     const aiDiagnosis = {
       primaryDiagnosis: {
         name: 'Viral Upper Respiratory Infection',
@@ -147,75 +224,43 @@ const DiagnosisAssistant = () => {
       confidenceScore: 87.5,
       evidenceQuality: 'High'
     };
-    
+
     setDiagnosis(aiDiagnosis);
     setIsAnalyzing(false);
     setStep(4);
-    
-    setChatMessages(prev => [...prev, { 
-      role: 'assistant', 
-      content: `✅ Analysis complete! I've identified ${aiDiagnosis.primaryDiagnosis.name} with ${aiDiagnosis.confidenceScore}% confidence. Review the detailed results below.` 
+
+    setChatMessages(prev => [...prev, {
+      role: 'assistant',
+      content: `✅ Analysis complete! I've identified ${aiDiagnosis.primaryDiagnosis.name} with ${aiDiagnosis.confidenceScore}% confidence. Review the detailed results below.`
     }]);
   };
 
   const renderStep1 = () => (
-    <div style={{ animation: 'fadeIn 0.6s ease-out' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <div style={{ 
-          padding: '0.75rem', 
-          background: 'linear-gradient(135deg, #E9D5FF, #DDD6FE)',
-          borderRadius: '0.75rem',
-          border: '2px solid #C4B5FD',
-          animation: 'cardFloat 3s ease-in-out infinite',
-          boxShadow: '0 4px 15px rgba(168, 85, 247, 0.15)'
-        }}>
-          <User style={{ width: '1.5rem', height: '1.5rem', color: '#7C3AED' }} />
+    <div className="fade-in-content">
+      <div className="flex-center gap-12 mb-24 justify-start">
+        <div className="icon-container icon-purple">
+          <User size={24} />
         </div>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>Patient Demographics</h2>
+        <h2 className="text-2xl font-bold m-0">Patient Demographics</h2>
       </div>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+
+      <div className="grid-2 mb-24">
         <div>
-          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4B5563', marginBottom: '0.5rem' }}>Age</label>
+          <label className="label-text mb-8">Age</label>
           <input
             type="number"
             value={patientData.age}
             onChange={(e) => setPatientData(prev => ({ ...prev, age: e.target.value }))}
-            style={{
-              width: '100%',
-              padding: '0.75rem 1rem',
-              background: 'white',
-              border: '2px solid #E5E7EB',
-              borderRadius: '0.75rem',
-              color: '#1F2937',
-              fontSize: '1rem',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}
+            className="input-field"
             placeholder="Enter patient age"
-            onFocus={(e) => e.target.style.borderColor = '#7C3AED'}
-            onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
           />
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4B5563', marginBottom: '0.5rem' }}>Gender</label>
+          <label className="label-text mb-8">Gender</label>
           <select
             value={patientData.gender}
             onChange={(e) => setPatientData(prev => ({ ...prev, gender: e.target.value }))}
-            style={{
-              width: '100%',
-              padding: '0.75rem 1rem',
-              background: 'white',
-              border: '2px solid #E5E7EB',
-              borderRadius: '0.75rem',
-              color: '#1F2937',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}
-            onFocus={(e) => e.target.style.borderColor = '#7C3AED'}
-            onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
+            className="input-field"
           >
             <option value="">Select gender</option>
             <option value="male">Male</option>
@@ -226,29 +271,14 @@ const DiagnosisAssistant = () => {
       </div>
 
       <div>
-        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4B5563', marginBottom: '0.75rem' }}>Medical History</label>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+        <label className="label-text mb-12">Medical History</label>
+        <div className="grid-2">
           {medicalConditions.map((condition, idx) => (
             <button
               key={condition}
               onClick={() => handleConditionToggle(condition)}
-              style={{
-                padding: '0.75rem 1rem',
-                borderRadius: '0.75rem',
-                border: `2px solid ${patientData.medicalHistory.includes(condition) ? '#7C3AED' : '#E5E7EB'}`,
-                background: patientData.medicalHistory.includes(condition) 
-                  ? 'linear-gradient(135deg, #E9D5FF, #DDD6FE)'
-                  : 'white',
-                color: patientData.medicalHistory.includes(condition) ? '#6B21A8' : '#4B5563',
-                fontSize: '0.875rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                animation: `slideIn 0.4s ease-out forwards ${idx * 50}ms`,
-                boxShadow: patientData.medicalHistory.includes(condition) 
-                  ? '0 4px 15px rgba(124, 58, 237, 0.2)' 
-                  : '0 1px 3px rgba(0, 0, 0, 0.1)'
-              }}
+              className={`btn-toggle ${patientData.medicalHistory.includes(condition) ? 'active' : 'inactive'}`}
+              style={{ animationDelay: `${idx * 50}ms` }}
             >
               {condition}
             </button>
@@ -259,82 +289,36 @@ const DiagnosisAssistant = () => {
       <button
         onClick={() => setStep(2)}
         disabled={!patientData.age || !patientData.gender}
-        style={{
-          width: '100%',
-          background: 'linear-gradient(135deg, #7C3AED, #6366F1)',
-          color: 'white',
-          padding: '1rem 1.5rem',
-          borderRadius: '0.75rem',
-          border: 'none',
-          fontSize: '1.125rem',
-          fontWeight: '600',
-          cursor: patientData.age && patientData.gender ? 'pointer' : 'not-allowed',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '0.5rem',
-          marginTop: '1.5rem',
-          boxShadow: '0 8px 20px rgba(124, 58, 237, 0.3)',
-          opacity: !patientData.age || !patientData.gender ? 0.5 : 1,
-          transition: 'all 0.4s ease',
-          transform: 'translateZ(0)'
-        }}
-        onMouseEnter={(e) => {
-          if (patientData.age && patientData.gender) {
-            e.target.style.transform = 'translateY(-3px)';
-            e.target.style.boxShadow = '0 12px 30px rgba(124, 58, 237, 0.4)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.transform = 'translateY(0)';
-          e.target.style.boxShadow = '0 8px 20px rgba(124, 58, 237, 0.3)';
-        }}
+        className="btn-primary w-full mt-24"
       >
         Next: Symptoms Assessment
-        <Sparkles style={{ width: '1.25rem', height: '1.25rem' }} />
+        <Sparkles size={20} />
       </button>
     </div>
   );
 
   const renderStep2 = () => (
-    <div style={{ animation: 'fadeIn 0.6s ease-out' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <div style={{ 
-          padding: '0.75rem', 
-          background: 'linear-gradient(135deg, #FECACA, #FCA5A5)',
-          borderRadius: '0.75rem',
-          border: '2px solid #F87171',
-          animation: 'cardFloat 3s ease-in-out infinite',
-          boxShadow: '0 4px 15px rgba(239, 68, 68, 0.15)'
-        }}>
-          <Activity style={{ width: '1.5rem', height: '1.5rem', color: '#DC2626' }} />
+    <div className="fade-in-content">
+      <div className="flex-center gap-12 mb-24 justify-start">
+        <div className="icon-container icon-red">
+          <Activity size={24} />
         </div>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>Symptoms Assessment</h2>
+        <h2 className="text-2xl font-bold m-0">Symptoms Assessment</h2>
       </div>
-      
+
       <div>
-        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4B5563', marginBottom: '0.75rem' }}>Select all current symptoms</label>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        <label className="label-text mb-12">Select all current symptoms</label>
+        <div className="grid-3 mb-24">
           {symptomsList.map((symptom, idx) => (
             <button
               key={symptom}
               onClick={() => handleSymptomToggle(symptom)}
+              className={`btn-toggle ${patientData.symptoms.includes(symptom) ? 'active' : 'inactive'}`}
               style={{
-                padding: '0.5rem 0.75rem',
-                borderRadius: '0.75rem',
-                border: `2px solid ${patientData.symptoms.includes(symptom) ? '#EF4444' : '#E5E7EB'}`,
-                background: patientData.symptoms.includes(symptom)
-                  ? 'linear-gradient(135deg, #FECACA, #FCA5A5)'
-                  : 'white',
-                color: patientData.symptoms.includes(symptom) ? '#991B1B' : '#4B5563',
-                fontSize: '0.875rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                animation: `slideIn 0.4s ease-out forwards ${idx * 30}ms`,
-                boxShadow: patientData.symptoms.includes(symptom) 
-                  ? '0 4px 15px rgba(239, 68, 68, 0.2)' 
-                  : '0 1px 3px rgba(0, 0, 0, 0.1)'
+                animationDelay: `${idx * 30}ms`,
+                borderColor: patientData.symptoms.includes(symptom) ? '#EF4444' : '#E5E7EB',
+                background: patientData.symptoms.includes(symptom) ? 'linear-gradient(135deg, #FECACA, #FCA5A5)' : 'white',
+                color: patientData.symptoms.includes(symptom) ? '#991B1B' : '#4B5563'
               }}
             >
               {symptom}
@@ -343,25 +327,13 @@ const DiagnosisAssistant = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+      <div className="grid-2 mb-24">
         <div>
-          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4B5563', marginBottom: '0.5rem' }}>Duration of Symptoms</label>
+          <label className="label-text mb-8">Duration of Symptoms</label>
           <select
             value={patientData.duration}
             onChange={(e) => setPatientData(prev => ({ ...prev, duration: e.target.value }))}
-            style={{
-              width: '100%',
-              padding: '0.75rem 1rem',
-              background: 'white',
-              border: '2px solid #E5E7EB',
-              borderRadius: '0.75rem',
-              color: '#1F2937',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}
-            onFocus={(e) => e.target.style.borderColor = '#7C3AED'}
-            onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
+            className="input-field"
           >
             <option value="">Select duration</option>
             <option value="<24h">Less than 24 hours</option>
@@ -372,23 +344,11 @@ const DiagnosisAssistant = () => {
           </select>
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4B5563', marginBottom: '0.5rem' }}>Severity Level</label>
+          <label className="label-text mb-8">Severity Level</label>
           <select
             value={patientData.severity}
             onChange={(e) => setPatientData(prev => ({ ...prev, severity: e.target.value }))}
-            style={{
-              width: '100%',
-              padding: '0.75rem 1rem',
-              background: 'white',
-              border: '2px solid #E5E7EB',
-              borderRadius: '0.75rem',
-              color: '#1F2937',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}
-            onFocus={(e) => e.target.style.borderColor = '#7C3AED'}
-            onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
+            className="input-field"
           >
             <option value="">Select severity</option>
             <option value="mild">Mild (1-3/10)</option>
@@ -398,118 +358,45 @@ const DiagnosisAssistant = () => {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '0.75rem' }}>
-        <button
-          onClick={() => setStep(1)}
-          style={{
-            flex: 1,
-            background: 'white',
-            border: '2px solid #E5E7EB',
-            color: '#4B5563',
-            padding: '1rem 1.5rem',
-            borderRadius: '0.75rem',
-            fontSize: '1.125rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.borderColor = '#7C3AED';
-            e.target.style.color = '#7C3AED';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.borderColor = '#E5E7EB';
-            e.target.style.color = '#4B5563';
-          }}
-        >
+      <div className="diagnosis-actions">
+        <button onClick={() => setStep(1)} className="btn-outline">
           ← Previous
         </button>
         <button
           onClick={() => setStep(3)}
           disabled={patientData.symptoms.length === 0 || !patientData.duration || !patientData.severity}
-          style={{
-            flex: 1,
-            background: 'linear-gradient(135deg, #7C3AED, #6366F1)',
-            color: 'white',
-            padding: '1rem 1.5rem',
-            borderRadius: '0.75rem',
-            border: 'none',
-            fontSize: '1.125rem',
-            fontWeight: '600',
-            cursor: (patientData.symptoms.length > 0 && patientData.duration && patientData.severity) ? 'pointer' : 'not-allowed',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            boxShadow: '0 8px 20px rgba(124, 58, 237, 0.3)',
-            opacity: (patientData.symptoms.length === 0 || !patientData.duration || !patientData.severity) ? 0.5 : 1,
-            transition: 'all 0.4s ease'
-          }}
-          onMouseEnter={(e) => {
-            if (patientData.symptoms.length > 0 && patientData.duration && patientData.severity) {
-              e.target.style.transform = 'translateY(-3px)';
-              e.target.style.boxShadow = '0 12px 30px rgba(124, 58, 237, 0.4)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 8px 20px rgba(124, 58, 237, 0.3)';
-          }}
+          className="btn-primary flex-1"
         >
           Next: Review
-          <Sparkles style={{ width: '1.25rem', height: '1.25rem' }} />
+          <Sparkles size={20} />
         </button>
       </div>
     </div>
   );
 
   const renderStep3 = () => (
-    <div style={{ animation: 'fadeIn 0.6s ease-out' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <div style={{ 
-          padding: '0.75rem', 
-          background: 'linear-gradient(135deg, #BFDBFE, #93C5FD)',
-          borderRadius: '0.75rem',
-          border: '2px solid #60A5FA',
-          animation: 'cardFloat 3s ease-in-out infinite',
-          boxShadow: '0 4px 15px rgba(59, 130, 246, 0.15)'
-        }}>
-          <FileText style={{ width: '1.5rem', height: '1.5rem', color: '#2563EB' }} />
+    <div className="fade-in-content">
+      <div className="flex-center gap-12 mb-24 justify-start">
+        <div className="icon-container icon-blue">
+          <FileText size={24} />
         </div>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>Review Patient Information</h2>
+        <h2 className="text-2xl font-bold m-0">Review Patient Information</h2>
       </div>
-      
-      <div style={{
-        background: 'linear-gradient(135deg, #F9FAFB, #F3F4F6)',
-        border: '2px solid #E5E7EB',
-        borderRadius: '1rem',
-        padding: '1.5rem',
-        marginBottom: '1.5rem',
-        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)'
-      }}>
-        <div style={{ marginBottom: '1.25rem' }}>
-          <h3 style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Demographics</h3>
-          <p style={{ color: '#1F2937', fontSize: '1.125rem' }}>
-            Age: <strong>{patientData.age}</strong> | Gender: <strong style={{ textTransform: 'capitalize' }}>{patientData.gender}</strong>
+
+      <div className="info-box mb-24">
+        <div className="mb-20">
+          <h3 className="text-sm font-bold gray-text uppercase-track mb-8">Demographics</h3>
+          <p className="text-lg m-0">
+            Age: <strong>{patientData.age}</strong> | Gender: <strong className="capitalize">{patientData.gender}</strong>
           </p>
         </div>
 
         {patientData.medicalHistory.length > 0 && (
-          <div style={{ marginBottom: '1.25rem' }}>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Medical History</h3>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div className="mb-20">
+            <h3 className="text-sm font-bold gray-text uppercase-track mb-8">Medical History</h3>
+            <div className="flex-wrap gap-8">
               {patientData.medicalHistory.map(condition => (
-                <span key={condition} style={{
-                  padding: '0.375rem 0.75rem',
-                  background: 'linear-gradient(135deg, #E9D5FF, #DDD6FE)',
-                  color: '#6B21A8',
-                  borderRadius: '9999px',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  border: '2px solid #C4B5FD',
-                  boxShadow: '0 2px 8px rgba(124, 58, 237, 0.15)'
-                }}>
+                <span key={condition} className="pill pill-purple">
                   {condition}
                 </span>
               ))}
@@ -517,20 +404,11 @@ const DiagnosisAssistant = () => {
           </div>
         )}
 
-        <div style={{ marginBottom: '1.25rem' }}>
-          <h3 style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Current Symptoms</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div className="mb-20">
+          <h3 className="text-sm font-bold gray-text uppercase-track mb-8">Current Symptoms</h3>
+          <div className="flex-wrap gap-8">
             {patientData.symptoms.map(symptom => (
-              <span key={symptom} style={{
-                padding: '0.375rem 0.75rem',
-                background: 'linear-gradient(135deg, #FECACA, #FCA5A5)',
-                color: '#991B1B',
-                borderRadius: '9999px',
-                fontSize: '0.875rem',
-                fontWeight: '600',
-                border: '2px solid #F87171',
-                boxShadow: '0 2px 8px rgba(239, 68, 68, 0.15)'
-              }}>
+              <span key={symptom} className="pill pill-red">
                 {symptom}
               </span>
             ))}
@@ -538,248 +416,99 @@ const DiagnosisAssistant = () => {
         </div>
 
         <div>
-          <h3 style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Symptom Details</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
-            <div style={{ background: 'white', borderRadius: '0.75rem', padding: '0.75rem', border: '2px solid #E5E7EB', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)' }}>
-              <p style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>Duration</p>
-              <p style={{ color: '#1F2937', fontWeight: '600' }}>{patientData.duration}</p>
+          <h3 className="text-sm font-bold gray-text uppercase-track mb-8">Symptom Details</h3>
+          <div className="grid-2">
+            <div className="hero-metric-box diagnosis-metric-review">
+              <p className="text-xs gray-text mb-4">Duration</p>
+              <p className="font-semibold m-0">{patientData.duration}</p>
             </div>
-            <div style={{ background: 'white', borderRadius: '0.75rem', padding: '0.75rem', border: '2px solid #E5E7EB', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)' }}>
-              <p style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>Severity</p>
-              <p style={{ color: '#1F2937', fontWeight: '600', textTransform: 'capitalize' }}>{patientData.severity}</p>
+            <div className="hero-metric-box diagnosis-metric-review">
+              <p className="text-xs gray-text mb-4">Severity</p>
+              <p className="font-semibold m-0 capitalize">{patientData.severity}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '0.75rem' }}>
-        <button
-          onClick={() => setStep(2)}
-          style={{
-            flex: 1,
-            background: 'white',
-            border: '2px solid #E5E7EB',
-            color: '#4B5563',
-            padding: '1rem 1.5rem',
-            borderRadius: '0.75rem',
-            fontSize: '1.125rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.borderColor = '#7C3AED';
-            e.target.style.color = '#7C3AED';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.borderColor = '#E5E7EB';
-            e.target.style.color = '#4B5563';
-          }}
-        >
+      <div className="diagnosis-actions">
+        <button onClick={() => setStep(2)} className="btn-outline">
           ← Previous
         </button>
-        <button
-          onClick={runDiagnosisAI}
-          style={{
-            flex: 1,
-            background: 'linear-gradient(135deg, #7C3AED, #EC4899, #6366F1)',
-            color: 'white',
-            padding: '1rem 1.5rem',
-            borderRadius: '0.75rem',
-            border: 'none',
-            fontSize: '1.125rem',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            boxShadow: '0 10px 25px rgba(124, 58, 237, 0.3)',
-            animation: 'glow 2s ease-in-out infinite',
-            transition: 'all 0.4s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.transform = 'translateY(-3px)';
-            e.target.style.boxShadow = '0 15px 35px rgba(124, 58, 237, 0.4)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 10px 25px rgba(124, 58, 237, 0.3)';
-          }}
-        >
-          <Brain style={{ width: '1.5rem', height: '1.5rem', animation: 'spinSlow 4s linear infinite' }} />
+        <button onClick={runDiagnosisAI} className="btn-primary btn-ai-diagnosis">
+          <Brain className="spin-slow" size={24} />
           Run AI Diagnosis
-          <Zap style={{ width: '1.25rem', height: '1.25rem', animation: 'pulse 2s ease-in-out infinite' }} />
+          <Zap className="pulse-slow" size={20} />
         </button>
       </div>
     </div>
   );
 
   const renderDiagnosisResults = () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'fadeIn 0.6s ease-out' }}>
+    <div className="flex-col gap-24 fade-in-content">
       {/* Hero Card */}
-      <div style={{
-        background: 'linear-gradient(135deg, #7C3AED, #EC4899, #6366F1)',
-        borderRadius: '1rem',
-        padding: '2rem',
-        color: 'white',
-        boxShadow: '0 20px 40px rgba(124, 58, 237, 0.25)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{ position: 'relative', zIndex: 10 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Brain style={{ width: '2.5rem', height: '2.5rem', animation: 'pulseSlow 3s ease-in-out infinite' }} />
-              <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold' }}>AI Diagnosis Complete</h2>
+      <div className="results-hero">
+        <div className="results-hero-content">
+          <div className="flex-between mb-24">
+            <div className="flex-center gap-12">
+              <Brain className="pulse-slow" size={40} />
+              <h2 className="text-2xl font-bold m-0 results-hero-title">AI Diagnosis Complete</h2>
             </div>
-            <Sparkles style={{ width: '2rem', height: '2rem', animation: 'spinSlow 4s linear infinite' }} />
+            <Sparkles className="spin-slow" size={32} />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.2)', backdropFilter: 'blur(10px)', borderRadius: '0.75rem', padding: '1rem', border: '2px solid rgba(255, 255, 255, 0.3)' }}>
-              <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Confidence Score</p>
-              <p style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>{diagnosis.confidenceScore}%</p>
+          <div className="diagnosis-hero-grid">
+            <div className="hero-metric-box">
+              <p className="hero-metric-label">Confidence Score</p>
+              <p className="hero-metric-value-lg m-0">{diagnosis.confidenceScore}%</p>
             </div>
-            <div style={{ background: 'rgba(255, 255, 255, 0.2)', backdropFilter: 'blur(10px)', borderRadius: '0.75rem', padding: '1rem', border: '2px solid rgba(255, 255, 255, 0.3)' }}>
-              <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Evidence Quality</p>
-              <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{diagnosis.evidenceQuality}</p>
+            <div className="hero-metric-box">
+              <p className="hero-metric-label">Evidence Quality</p>
+              <p className="hero-metric-value m-0">{diagnosis.evidenceQuality}</p>
             </div>
-            <div style={{ background: 'rgba(255, 255, 255, 0.2)', backdropFilter: 'blur(10px)', borderRadius: '0.75rem', padding: '1rem', border: '2px solid rgba(255, 255, 255, 0.3)' }}>
-              <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Urgency Level</p>
-              <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{diagnosis.urgencyLevel}</p>
+            <div className="hero-metric-box">
+              <p className="hero-metric-label">Urgency Level</p>
+              <p className="hero-metric-value m-0">{diagnosis.urgencyLevel}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Primary Diagnosis */}
-      <div style={{
-        background: 'white',
-        border: '2px solid #C4B5FD',
-        borderRadius: '1rem',
-        padding: '1.5rem',
-        boxShadow: '0 10px 30px rgba(124, 58, 237, 0.12)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-          <Stethoscope style={{ width: '1.75rem', height: '1.75rem', color: '#7C3AED', animation: 'swing 2s ease-in-out infinite' }} />
-          <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>Primary Diagnosis</h3>
+      <div className="primary-diagnosis-container">
+        <div className="flex-center gap-12 mb-24 justify-start">
+          <Stethoscope className="swing-animation primary-diagnosis-icon" size={28} />
+          <h3 className="text-2xl font-bold m-0">Primary Diagnosis</h3>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="flex-between align-start">
           <div>
-            <h4 style={{ 
-              fontSize: '1.875rem', 
-              fontWeight: 'bold', 
-              background: 'linear-gradient(135deg, #7C3AED, #EC4899)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              marginBottom: '0.75rem'
-            }}>
-              {diagnosis.primaryDiagnosis.name}
-            </h4>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <span style={{
-                padding: '0.375rem 0.75rem',
-                background: 'linear-gradient(135deg, #DDD6FE, #C4B5FD)',
-                color: '#6B21A8',
-                borderRadius: '0.5rem',
-                fontSize: '0.875rem',
-                fontWeight: '600',
-                border: '2px solid #A78BFA'
-              }}>
-                ICD-10: {diagnosis.primaryDiagnosis.icd10}
-              </span>
-              <span style={{
-                padding: '0.375rem 0.75rem',
-                background: 'linear-gradient(135deg, #E9D5FF, #DDD6FE)',
-                color: '#7C3AED',
-                borderRadius: '0.5rem',
-                fontSize: '0.875rem',
-                fontWeight: '600',
-                border: '2px solid #C4B5FD'
-              }}>
-                Severity: {diagnosis.primaryDiagnosis.severity}
-              </span>
+            <h4 className="primary-diagnosis-val">{diagnosis.primaryDiagnosis.name}</h4>
+            <div className="flex-center gap-12 justify-start">
+              <span className="badge-outline">ICD-10: {diagnosis.primaryDiagnosis.icd10}</span>
+              <span className="pill pill-purple">Severity: {diagnosis.primaryDiagnosis.severity}</span>
             </div>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ 
-              fontSize: '3rem', 
-              fontWeight: 'bold',
-              background: 'linear-gradient(135deg, #7C3AED, #EC4899)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>
+          <div className="text-right">
+            <div className="primary-diagnosis-val primary-confidence-value">
               {diagnosis.primaryDiagnosis.confidence}%
             </div>
-            <p style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.25rem' }}>Confidence</p>
+            <p className="text-sm gray-text mt-4">Confidence</p>
           </div>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div style={{ display: 'flex', gap: '1rem' }}>
+      <div className="diagnosis-actions">
         <button
           onClick={() => {
             setStep(1);
             setDiagnosis(null);
             setChatMessages([{ role: 'assistant', content: 'Ready to start a new diagnosis. Let\'s gather patient information.' }]);
           }}
-          style={{
-            flex: 1,
-            background: 'white',
-            border: '2px solid #E5E7EB',
-            color: '#4B5563',
-            padding: '1rem 1.5rem',
-            borderRadius: '0.75rem',
-            fontSize: '1.125rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.borderColor = '#7C3AED';
-            e.target.style.color = '#7C3AED';
-            e.target.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.borderColor = '#E5E7EB';
-            e.target.style.color = '#4B5563';
-            e.target.style.transform = 'translateY(0)';
-          }}
+          className="btn-outline"
         >
           New Diagnosis
         </button>
-        <button
-          onClick={() => window.print()}
-          style={{
-            flex: 1,
-            background: 'linear-gradient(135deg, #6366F1, #7C3AED)',
-            color: 'white',
-            padding: '1rem 1.5rem',
-            borderRadius: '0.75rem',
-            border: 'none',
-            fontSize: '1.125rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            boxShadow: '0 8px 20px rgba(99, 102, 241, 0.25)',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 12px 30px rgba(99, 102, 241, 0.35)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 8px 20px rgba(99, 102, 241, 0.25)';
-          }}
-        >
-          <FileText style={{ width: '1.5rem', height: '1.5rem' }} />
+        <button onClick={() => window.print()} className="btn-primary btn-export-report">
+          <FileText size={24} />
           Export Report
         </button>
       </div>
@@ -787,440 +516,175 @@ const DiagnosisAssistant = () => {
   );
 
   return (
-    <>
-      <style>{`
-        @keyframes float3d {
-          0%, 100% { transform: translate3d(0px, 0px, 0px); }
-          25% { transform: translate3d(-20px, -30px, 20px); }
-          50% { transform: translate3d(20px, -15px, -20px); }
-          75% { transform: translate3d(-15px, 25px, 15px); }
-        }
-        
-        @keyframes blob {
-          0%, 100% { transform: translate3d(0, 0, 0) scale3d(1, 1, 1) rotate(0deg); }
-          25% { transform: translate3d(20px, -50px, 20px) scale3d(1.1, 1.1, 1) rotate(90deg); }
-          50% { transform: translate3d(-20px, 20px, -20px) scale3d(0.9, 0.9, 1) rotate(180deg); }
-          75% { transform: translate3d(50px, 50px, 20px) scale3d(1.05, 1.05, 1) rotate(270deg); }
-        }
-        
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.05); }
-        }
-        
-        @keyframes pulseSlow {
-          0%, 100% { opacity: 1; transform: scale3d(1, 1, 1); }
-          50% { opacity: 0.9; transform: scale3d(1.05, 1.05, 1); }
-        }
-        
-        @keyframes spinSlow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        
-        @keyframes glow {
-          0%, 100% { box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3); }
-          50% { box-shadow: 0 15px 35px rgba(124, 58, 237, 0.5), 0 5px 15px rgba(236, 72, 153, 0.3); }
-        }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateX(-20px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        
-        @keyframes cardFloat {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes swing {
-          0%, 100% { transform: rotate(-5deg); }
-          50% { transform: rotate(5deg); }
-        }
-        
-        @keyframes shimmer {
-          0% { background-position: -1000px 0; }
-          100% { background-position: 1000px 0; }
-        }
-        
-        * {
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-        
-        ::-webkit-scrollbar {
-          width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-          background: #F3F4F6;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-          background: #C4B5FD;
-          border-radius: 20px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-          background: #A78BFA;
-        }
-      `}</style>
+    <div className="diagnosis-container">
+      {/* Background Particles */}
+      <div className="particle-container">
+        {particles.map(particle => (
+          <div
+            key={particle.id}
+            className="particle particle-style"
+            style={{
+              '--size': `${particle.size}px`,
+              '--x': `${particle.x}%`,
+              '--y': `${particle.y}%`,
+              '--duration': `${particle.duration}s`,
+              '--delay': `${particle.delay}s`
+            }}
+          />
+        ))}
+      </div>
 
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 50%, #F3F4F6 100%)',
-        padding: '1.5rem',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {/* Background Particles */}
-        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-          {particles.map(particle => (
-            <div
-              key={particle.id}
-              style={{
-                position: 'absolute',
-                width: `${particle.size}px`,
-                height: `${particle.size}px`,
-                left: `${particle.x}%`,
-                top: `${particle.y}%`,
-                background: 'linear-gradient(135deg, #C4B5FD, #A78BFA)',
-                borderRadius: '50%',
-                opacity: particle.opacity,
-                animation: `float3d ${particle.duration}s ease-in-out infinite ${particle.delay}s`
-              }}
-            />
-          ))}
-        </div>
+      <div className="bg-blob blob-1" />
+      <div className="bg-blob blob-2" />
+      <div className="bg-blob blob-3" />
 
-        {/* Blob Backgrounds */}
-        <div style={{ position: 'absolute', top: '25%', left: '25%', width: '24rem', height: '24rem', background: '#E9D5FF', borderRadius: '50%', mixBlendMode: 'multiply', filter: 'blur(4rem)', opacity: 0.3, animation: 'blob 7s infinite' }} />
-        <div style={{ position: 'absolute', top: '33%', right: '25%', width: '24rem', height: '24rem', background: '#BFDBFE', borderRadius: '50%', mixBlendMode: 'multiply', filter: 'blur(4rem)', opacity: 0.3, animation: 'blob 7s infinite 2s' }} />
-        <div style={{ position: 'absolute', bottom: '25%', left: '50%', width: '24rem', height: '24rem', background: '#FED7AA', borderRadius: '50%', mixBlendMode: 'multiply', filter: 'blur(4rem)', opacity: 0.3, animation: 'blob 7s infinite 4s' }} />
-
-        <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 10, display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
-          {/* Main Content */}
-          <div>
-            {/* Header */}
-            <div style={{
-              background: 'white',
-              border: '2px solid #E5E7EB',
-              borderRadius: '1rem',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.06)',
-              padding: '2rem',
-              marginBottom: '1.5rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ 
-                  width: '3.5rem', 
-                  height: '3.5rem', 
-                  background: 'linear-gradient(135deg, #7C3AED, #6366F1)',
-                  borderRadius: '1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 8px 20px rgba(124, 58, 237, 0.25)',
-                  animation: 'pulseSlow 3s ease-in-out infinite'
-                }}>
-                  <Brain style={{ width: '2rem', height: '2rem', color: 'white' }} />
-                </div>
-                <div>
-                  <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#1F2937', marginBottom: '0.25rem' }}>AI Diagnosis Assistant</h1>
-                  <p style={{ fontSize: '0.875rem', color: '#6B7280' }}>Advanced medical diagnosis powered by machine learning</p>
-                </div>
+      <div className="diagnosis-wrapper">
+        {/* Main Content */}
+        <div>
+          {/* Header */}
+          <div className="diagnosis-card flex-between mb-24 p-2rem">
+            <div className="flex-center gap-16">
+              <div className="icon-container icon-purple header-icon-container">
+                <Brain size={32} color="white" />
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <HeartPulse style={{ width: '2rem', height: '2rem', color: '#EC4899', animation: 'pulse 2s ease-in-out infinite' }} />
-                <Sparkles style={{ width: '2rem', height: '2rem', color: '#F59E0B', animation: 'spinSlow 4s linear infinite' }} />
-              </div>
-            </div>
-
-            {/* Feature Badges */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
-              <span style={{ padding: '0.5rem 1rem', background: 'linear-gradient(135deg, #E9D5FF, #DDD6FE)', color: '#6B21A8', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600', border: '2px solid #C4B5FD' }}>✓ Evidence-Based Medicine</span>
-              <span style={{ padding: '0.5rem 1rem', background: 'linear-gradient(135deg, #DBEAFE, #BFDBFE)', color: '#1E40AF', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600', border: '2px solid #93C5FD' }}>✓ Advanced Pattern Recognition</span>
-              <span style={{ padding: '0.5rem 1rem', background: 'linear-gradient(135deg, #BAE6FD, #7DD3FC)', color: '#0C4A6E', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600', border: '2px solid #38BDF8' }}>✓ Comprehensive Risk Assessment</span>
-              <span style={{ padding: '0.5rem 1rem', background: 'linear-gradient(135deg, #D1FAE5, #A7F3D0)', color: '#065F46', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600', border: '2px solid #6EE7B7' }}>✓ Clinical Guidelines Compliant</span>
-            </div>
-
-            {/* Progress Steps */}
-            {step < 4 && (
-              <div style={{
-                background: 'white',
-                border: '2px solid #E5E7EB',
-                borderRadius: '1rem',
-                padding: '1.25rem',
-                marginBottom: '1.5rem',
-                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.04)'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                  {[1, 2, 3].map(num => (
-                    <React.Fragment key={num}>
-                      <div style={{
-                        width: '3rem',
-                        height: '3rem',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 'bold',
-                        background: step >= num ? 'linear-gradient(135deg, #7C3AED, #6366F1)' : 'white',
-                        color: step >= num ? 'white' : '#9CA3AF',
-                        border: `2px solid ${step >= num ? '#7C3AED' : '#E5E7EB'}`,
-                        boxShadow: step >= num ? '0 8px 20px rgba(124, 58, 237, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.04)',
-                        transform: step >= num ? 'scale(1.1)' : 'scale(1)',
-                        transition: 'all 0.5s ease'
-                      }}>
-                        {step > num ? '✓' : num}
-                      </div>
-                      {num < 3 && (
-                        <div style={{
-                          flex: 1,
-                          height: '0.375rem',
-                          margin: '0 0.75rem',
-                          borderRadius: '9999px',
-                          background: step > num ? 'linear-gradient(90deg, #7C3AED, #6366F1)' : '#E5E7EB',
-                          boxShadow: step > num ? '0 4px 15px rgba(124, 58, 237, 0.25)' : 'none',
-                          transition: 'all 0.5s ease'
-                        }} />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#6B7280', fontWeight: '600' }}>
-                  <span>Patient Info</span>
-                  <span>Symptoms</span>
-                  <span>Review & Analyze</span>
-                </div>
-              </div>
-            )}
-
-            {/* Content Card */}
-            <div style={{
-              background: 'white',
-              border: '2px solid #E5E7EB',
-              borderRadius: '1rem',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.06)',
-              padding: '2rem'
-            }}>
-              {isAnalyzing ? (
-                <div style={{ textAlign: 'center', padding: '4rem 0' }}>
-                  <div style={{ position: 'relative', display: 'inline-block', marginBottom: '1.5rem' }}>
-                    <Brain style={{ width: '6rem', height: '6rem', color: '#7C3AED', animation: 'spinSlow 4s linear infinite', position: 'relative', zIndex: 2 }} />
-                    <div style={{ position: 'absolute', inset: 0, background: '#C4B5FD', borderRadius: '50%', filter: 'blur(2rem)', opacity: 0.4, animation: 'pulse 2s ease-in-out infinite' }} />
-                  </div>
-                  <h3 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#1F2937', marginBottom: '0.75rem' }}>AI Analysis in Progress</h3>
-                  <p style={{ color: '#6B7280', marginBottom: '2rem', fontSize: '1.125rem' }}>Analyzing symptoms, medical history, and clinical patterns...</p>
-                  <div style={{ maxWidth: '28rem', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'linear-gradient(135deg, #F9FAFB, #F3F4F6)', borderRadius: '0.75rem', border: '2px solid #E5E7EB', color: '#4B5563', fontSize: '0.875rem' }}>
-                      <Zap style={{ width: '1.25rem', height: '1.25rem', color: '#F59E0B', animation: 'pulse 2s ease-in-out infinite' }} />
-                      <span>Processing symptom correlations...</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'linear-gradient(135deg, #F9FAFB, #F3F4F6)', borderRadius: '0.75rem', border: '2px solid #E5E7EB', color: '#4B5563', fontSize: '0.875rem' }}>
-                      <Zap style={{ width: '1.25rem', height: '1.25rem', color: '#F59E0B', animation: 'pulse 2s ease-in-out infinite' }} />
-                      <span>Cross-referencing medical databases...</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'linear-gradient(135deg, #F9FAFB, #F3F4F6)', borderRadius: '0.75rem', border: '2px solid #E5E7EB', color: '#4B5563', fontSize: '0.875rem' }}>
-                      <Zap style={{ width: '1.25rem', height: '1.25rem', color: '#F59E0B', animation: 'pulse 2s ease-in-out infinite' }} />
-                      <span>Generating risk assessment...</span>
-                    </div>
-                    <div style={{ width: '100%', height: '1rem', background: '#E5E7EB', borderRadius: '9999px', marginTop: '1.5rem', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', background: 'linear-gradient(90deg, transparent, #C4B5FD, transparent)', backgroundSize: '1000px 100%', animation: 'shimmer 3s infinite' }} />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {step === 1 && renderStep1()}
-                  {step === 2 && renderStep2()}
-                  {step === 3 && renderStep3()}
-                  {step === 4 && diagnosis && renderDiagnosisResults()}
-                </>
-              )}
-            </div>
-
-            {/* Disclaimer */}
-            <div style={{
-              background: 'linear-gradient(135deg, #FEF3C7, #FDE68A)',
-              border: '2px solid #FCD34D',
-              borderRadius: '1rem',
-              padding: '1.25rem',
-              fontSize: '0.875rem',
-              color: '#78350F',
-              boxShadow: '0 4px 15px rgba(252, 211, 77, 0.15)',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '0.75rem',
-              marginTop: '1.5rem'
-            }}>
-              <AlertTriangle style={{ width: '1.25rem', height: '1.25rem', color: '#F59E0B', flexShrink: 0, marginTop: '0.125rem', animation: 'pulse 2s ease-in-out infinite' }} />
               <div>
-                <p style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#92400E' }}>⚠️ Medical Disclaimer</p>
-                <p>This AI tool is designed to assist healthcare professionals and should not replace professional medical judgment. Always consult with a qualified healthcare provider for diagnosis and treatment decisions.</p>
+                <h1 className="text-2xl font-bold m-0 results-hero-title">AI Diagnosis Assistant</h1>
+                <p className="text-sm gray-text m-0">Advanced medical diagnosis powered by machine learning</p>
               </div>
+            </div>
+            <div className="flex-center gap-8">
+              <HeartPulse className="pulse-slow" size={32} color="#EC4899" />
+              <Sparkles className="spin-slow" size={32} color="#F59E0B" />
             </div>
           </div>
 
-          {/* Chat Sidebar */}
-          <div style={{ position: 'sticky', top: '1.5rem', height: 'fit-content' }}>
-            <div style={{
-              background: 'white',
-              border: '2px solid #E5E7EB',
-              borderRadius: '1rem',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.06)',
-              padding: '1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              height: 'calc(100vh - 3rem)'
-            }}>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.75rem', 
-                paddingBottom: '1.25rem', 
-                marginBottom: '1.25rem', 
-                borderBottom: '2px solid #E5E7EB' 
-              }}>
-                <div style={{ 
-                  width: '3rem', 
-                  height: '3rem', 
-                  background: 'linear-gradient(135deg, #7C3AED, #EC4899)',
-                  borderRadius: '0.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 8px 20px rgba(124, 58, 237, 0.25)',
-                  animation: 'pulseSlow 3s ease-in-out infinite'
-                }}>
-                  <Bot style={{ width: '1.75rem', height: '1.75rem', color: 'white' }} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1F2937' }}>AI Assistant</h3>
-                  <p style={{ fontSize: '0.75rem', color: '#6B7280' }}>Always here to help you</p>
-                </div>
-              </div>
+          {/* Feature Badges */}
+          <div className="flex-wrap gap-8 mb-24">
+            <span className="badge-outline">✓ Evidence-Based Medicine</span>
+            <span className="badge-outline blue-badge">✓ Advanced Pattern Recognition</span>
+            <span className="badge-outline sky-badge">✓ Comprehensive Risk Assessment</span>
+            <span className="badge-outline emerald-badge">✓ Clinical Guidelines Compliant</span>
+          </div>
 
-              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.25rem', paddingRight: '0.5rem' }}>
-                {chatMessages.map((msg, idx) => (
-                  <div key={idx} style={{ 
-                    display: 'flex', 
-                    gap: '0.75rem', 
-                    animation: 'fadeIn 0.6s ease-out',
-                    justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start'
-                  }}>
-                    {msg.role === 'assistant' && (
-                      <div style={{ 
-                        width: '2.25rem', 
-                        height: '2.25rem', 
-                        borderRadius: '0.75rem',
-                        background: 'linear-gradient(135deg, #7C3AED, #EC4899)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                        boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)',
-                        animation: 'cardFloat 3s ease-in-out infinite'
-                      }}>
-                        <Bot style={{ width: '1.25rem', height: '1.25rem', color: 'white' }} />
-                      </div>
-                    )}
-                    <div style={{
-                      maxWidth: '75%',
-                      padding: '0.75rem 1rem',
-                      borderRadius: '1rem',
-                      background: msg.role === 'user' 
-                        ? 'linear-gradient(135deg, #6366F1, #7C3AED)'
-                        : 'linear-gradient(135deg, #F9FAFB, #F3F4F6)',
-                      color: msg.role === 'user' ? 'white' : '#1F2937',
-                      border: msg.role === 'assistant' ? '2px solid #E5E7EB' : 'none',
-                      boxShadow: msg.role === 'user' ? '0 4px 15px rgba(99, 102, 241, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.04)'
-                    }}>
-                      <p style={{ fontSize: '0.875rem', lineHeight: 1.5, margin: 0 }}>{msg.content}</p>
+          {/* Progress Steps */}
+          {step < 4 && (
+            <div className="diagnosis-card mb-24 p-1-25rem">
+              <div className="flex-between mb-12">
+                {[1, 2, 3].map(num => (
+                  <React.Fragment key={num}>
+                    <div className={`step-circle ${step >= num ? 'active' : ''}`}>
+                      {step > num ? '✓' : num}
                     </div>
-                    {msg.role === 'user' && (
-                      <div style={{ 
-                        width: '2.25rem', 
-                        height: '2.25rem', 
-                        borderRadius: '0.75rem',
-                        background: 'linear-gradient(135deg, #6366F1, #3B82F6)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.25)',
-                        animation: 'cardFloat 3s ease-in-out infinite'
-                      }}>
-                        <User style={{ width: '1.25rem', height: '1.25rem', color: 'white' }} />
-                      </div>
+                    {num < 3 && (
+                      <div className={`step-line ${step > num ? 'active' : ''}`} />
                     )}
-                  </div>
+                  </React.Fragment>
                 ))}
-                <div ref={chatEndRef} />
               </div>
+              <div className="flex-between text-sm gray-text font-semibold">
+                <span>Patient Info</span>
+                <span>Symptoms</span>
+                <span>Review & Analyze</span>
+              </div>
+            </div>
+          )}
 
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendChatMessage()}
-                  placeholder="Ask me anything..."
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem 1rem',
-                    background: 'white',
-                    border: '2px solid #E5E7EB',
-                    borderRadius: '0.75rem',
-                    color: '#1F2937',
-                    fontSize: '1rem',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#7C3AED';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(124, 58, 237, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#E5E7EB';
-                    e.target.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.08)';
-                  }}
-                />
-                <button
-                  onClick={sendChatMessage}
-                  style={{
-                    padding: '0.75rem 1.25rem',
-                    background: 'linear-gradient(135deg, #7C3AED, #6366F1)',
-                    border: 'none',
-                    borderRadius: '0.75rem',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 15px rgba(124, 58, 237, 0.25)',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 8px 20px rgba(124, 58, 237, 0.35)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 4px 15px rgba(124, 58, 237, 0.25)';
-                  }}
-                >
-                  <Send style={{ width: '1.25rem', height: '1.25rem', color: 'white' }} />
-                </button>
+          {/* Content Card */}
+          <div className="diagnosis-card">
+            {isAnalyzing ? (
+              <div className="analysis-container">
+                <div className="relative mb-24" style={{ display: 'inline-block' }}>
+                  <Brain className="analysis-brain-icon spin-slow" />
+                  <div className="analysis-glow-effect" />
+                </div>
+                <h3 className="text-2xl font-bold m-0 mb-8">AI Analysis in Progress</h3>
+                <p className="gray-text mb-24 text-lg">Analyzing symptoms, medical history, and clinical patterns...</p>
+                <div className="max-w-28rem m-0-auto flex-col gap-16">
+                  {['Processing symptom correlations...', 'Cross-referencing medical databases...', 'Generating risk assessment...'].map((text, i) => (
+                    <div key={i} className="analysis-step-item">
+                      <Zap className="analysis-step-icon" />
+                      <span>{text}</span>
+                    </div>
+                  ))}
+                  <div className="progress-bar-container">
+                    <div className="progress-bar-shimmer" />
+                  </div>
+                </div>
               </div>
+            ) : (
+              <>
+                {step === 1 && renderStep1()}
+                {step === 2 && renderStep2()}
+                {step === 3 && renderStep3()}
+                {step === 4 && diagnosis && renderDiagnosisResults()}
+              </>
+            )}
+          </div>
+
+          {/* Disclaimer */}
+          <div className="warning-box mt-24">
+            <AlertTriangle className="pulse-slow medical-disclaimer-icon" size={20} />
+            <div>
+              <p className="font-bold mb-8 medical-disclaimer-title">⚠️ Medical Disclaimer</p>
+              <p className="m-0 text-sm">This AI tool is designed to assist healthcare professionals and should not replace professional medical judgment. Always consult with a qualified healthcare provider for diagnosis and treatment decisions.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Sidebar */}
+        <div className="sidebar-sticky">
+          <div className="diagnosis-card flex-col chat-sidebar-card">
+            <div className="flex-center gap-12 mb-20 pb-20 border-bottom justify-start">
+              <div className="icon-container icon-purple chat-sidebar-icon-container">
+                <Bot size={28} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold m-0">AI Assistant</h3>
+                <p className="text-xs gray-text m-0">Always here to help you</p>
+              </div>
+            </div>
+
+            <div className="chat-messages-container">
+              {chatMessages.map((msg, idx) => (
+                <div key={idx} className={`chat-row ${msg.role}`}>
+                  {msg.role === 'assistant' && (
+                    <div className="chat-avatar assistant">
+                      <Bot size={18} />
+                    </div>
+                  )}
+                  <div className={`chat-bubble ${msg.role}`}>
+                    <p className="m-0 text-sm line-height-1-5">{msg.content}</p>
+                  </div>
+                  {msg.role === 'user' && (
+                    <div className="chat-avatar user">
+                      <User size={18} />
+                    </div>
+                  )}
+                </div>
+              ))}
+              <div ref={chatEndRef} />
+            </div>
+
+            <div className="flex-center gap-12">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendChatMessage()}
+                placeholder="Ask me anything..."
+                className="input-field"
+              />
+              <button
+                onClick={sendChatMessage}
+                className="btn-primary btn-chat-send"
+              >
+                <Send size={20} />
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

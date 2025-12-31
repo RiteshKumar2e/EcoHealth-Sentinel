@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sprout, Target, TrendingDown, Leaf, AlertCircle, Shield } from 'lucide-react';
-
+import './FertilizerRecommendations.css';
 
 export default function FertilizerRecommendations() {
   const [soilData, setSoilData] = useState({
@@ -128,58 +128,6 @@ export default function FertilizerRecommendations() {
     };
   }
 
-  function getNutrientStatus(current, optimal) {
-    const diff = ((current - optimal) / optimal) * 100;
-    if (diff < -20) return { status: 'Very Low', color: '#DC2626' };
-    if (diff < -10) return { status: 'Low', color: '#F97316' };
-    if (diff > 10) return { status: 'High', color: '#2563EB' };
-    return { status: 'Optimal', color: '#16A34A' };
-  }
-
-  // inline style objects
-  const styles = {
-    page: {
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f0fdf4 0%, #f7fee7 100%)',
-      padding: 24,
-      fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
-      color: '#0f172a'
-    },
-    container: { maxWidth: 1100, margin: '0 auto' },
-    headerCard: {
-      background: '#ffffff',
-      borderRadius: 12,
-      boxShadow: '0 10px 30px rgba(2,6,23,0.08)',
-      padding: 20,
-      marginBottom: 18,
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    },
-    grid: { display: 'grid', gridTemplateColumns: '1fr', gap: 20 },
-    responsiveTwoCols: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: 20
-    },
-    card: {
-      background: '#ffffff',
-      borderRadius: 12,
-      boxShadow: '0 8px 24px rgba(2,6,23,0.06)',
-      padding: 18,
-      transformStyle: 'preserve-3d',
-      transition: 'transform 300ms ease, box-shadow 300ms ease'
-    },
-    bigCallout: {
-      background: 'linear-gradient(90deg,#059669,#0369a1)',
-      borderRadius: 12,
-      color: '#fff',
-      padding: 18
-    },
-    slider: { width: '100%' },
-    controlRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }
-  };
-
   // tiny visualization: circular nutrient gauge using SVG
   const NutrientGauge = ({ label, value, max = 100 }) => {
     const radius = 44;
@@ -188,7 +136,7 @@ export default function FertilizerRecommendations() {
     const stroke = circumference * (1 - pct);
 
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="gauge-svg-wrapper">
         <svg width={110} height={110} viewBox="0 0 120 120">
           <defs>
             <linearGradient id={`g-${label}`} x1="0%" x2="100%">
@@ -209,10 +157,10 @@ export default function FertilizerRecommendations() {
               transform="rotate(-90)"
               style={{ transition: 'stroke-dashoffset 600ms ease' }}
             />
-            <text x="0" y="6" textAnchor="middle" fontSize={16} fontWeight={700} fill="#0f172a">
+            <text x="0" y="6" textAnchor="middle" fontSize={16} fontWeight={700} fill="#0f172a" className="gauge-text-val">
               {Math.round(value)}
             </text>
-            <text x="0" y="26" textAnchor="middle" fontSize={10} fill="#475569">
+            <text x="0" y="26" textAnchor="middle" fontSize={10} fill="#475569" className="gauge-text-val">
               {label}
             </text>
           </g>
@@ -222,92 +170,84 @@ export default function FertilizerRecommendations() {
   };
 
   return (
-    <div style={styles.page}>
-      {/* small internal stylesheet for keyframes & utility classes (keeps everything inside the file) */}
-      <style>{`
-        @keyframes floatUp { from { transform: translateY(6px); } to { transform: translateY(-6px); } }
-        .pulse { animation: floatUp 3s ease-in-out infinite alternate; }
-        .glass { backdrop-filter: blur(6px); }
-        .btn { cursor: pointer; }
-      `}</style>
-
-      <div style={styles.container}>
-        <div style={styles.headerCard}>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-            <Sprout style={{ width: 36, height: 36, color: '#059669' }} />
+    <div className="fertilizer-page">
+      <div className="fertilizer-container">
+        <div className="header-card">
+          <div className="header-content">
+            <Sprout className="header-icon" />
             <div>
-              <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>AI Fertilizer Recommendations</h1>
-              <p style={{ margin: 0, marginTop: 4, color: '#64748b', fontSize: 13 }}>Precision nutrition for optimal crop growth</p>
+              <h1 className="header-title">AI Fertilizer Recommendations</h1>
+              <p className="header-subtitle">Precision nutrition for optimal crop growth</p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#059669', fontSize: 13 }}>
-            <Shield style={{ width: 18, height: 18 }} />
+          <div className="eco-badge">
+            <Shield className="badge-icon" />
             <span>Eco-Friendly</span>
           </div>
         </div>
 
-        <div style={styles.responsiveTwoCols}>
+        <div className="two-cols-responsive">
           <div>
-            <div style={{ ...styles.card, marginBottom: 14 }} ref={cardRef}>
-              <h3 style={{ margin: 0, marginBottom: 10, fontSize: 16 }}>Soil Nutrient Levels</h3>
+            <div className="card card-tilt" ref={cardRef}>
+              <h3 className="card-heading">Soil Nutrient Levels</h3>
 
-              <div style={{ display: 'grid', gap: 12 }}>
+              <div className="soil-inputs">
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, color: '#334155' }}>Nitrogen (N)</label>
+                  <label className="input-label">Nitrogen (N)</label>
                   <input
-                    style={styles.slider}
+                    className="slider-input"
                     type="range"
                     min="0"
                     max="100"
                     value={soilData.nitrogen}
                     onChange={(e) => setSoilData({ ...soilData, nitrogen: parseInt(e.target.value) })}
                   />
-                  <div style={styles.controlRow}>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>0</span>
-                    <span style={{ fontWeight: 700 }}>{soilData.nitrogen} ppm</span>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>100</span>
+                  <div className="control-row">
+                    <span className="value-max">0</span>
+                    <span className="value-current">{soilData.nitrogen} ppm</span>
+                    <span className="value-max">100</span>
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, color: '#334155' }}>Phosphorus (P)</label>
+                  <label className="input-label">Phosphorus (P)</label>
                   <input
-                    style={styles.slider}
+                    className="slider-input"
                     type="range"
                     min="0"
                     max="100"
                     value={soilData.phosphorus}
                     onChange={(e) => setSoilData({ ...soilData, phosphorus: parseInt(e.target.value) })}
                   />
-                  <div style={styles.controlRow}>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>0</span>
-                    <span style={{ fontWeight: 700 }}>{soilData.phosphorus} ppm</span>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>100</span>
+                  <div className="control-row">
+                    <span className="value-max">0</span>
+                    <span className="value-current">{soilData.phosphorus} ppm</span>
+                    <span className="value-max">100</span>
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, color: '#334155' }}>Potassium (K)</label>
+                  <label className="input-label">Potassium (K)</label>
                   <input
-                    style={styles.slider}
+                    className="slider-input"
                     type="range"
                     min="0"
                     max="100"
                     value={soilData.potassium}
                     onChange={(e) => setSoilData({ ...soilData, potassium: parseInt(e.target.value) })}
                   />
-                  <div style={styles.controlRow}>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>0</span>
-                    <span style={{ fontWeight: 700 }}>{soilData.potassium} ppm</span>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>100</span>
+                  <div className="control-row">
+                    <span className="value-max">0</span>
+                    <span className="value-current">{soilData.potassium} ppm</span>
+                    <span className="value-max">100</span>
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, color: '#334155' }}>Soil pH</label>
+                  <label className="input-label">Soil pH</label>
                   <input
-                    style={styles.slider}
+                    className="slider-input"
                     type="range"
                     min="4"
                     max="9"
@@ -315,23 +255,23 @@ export default function FertilizerRecommendations() {
                     value={soilData.ph}
                     onChange={(e) => setSoilData({ ...soilData, ph: parseFloat(e.target.value) })}
                   />
-                  <div style={styles.controlRow}>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>4.0</span>
-                    <span style={{ fontWeight: 700 }}>{soilData.ph}</span>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>9.0</span>
+                  <div className="control-row">
+                    <span className="value-max">4.0</span>
+                    <span className="value-current">{soilData.ph}</span>
+                    <span className="value-max">9.0</span>
                   </div>
                 </div>
 
               </div>
             </div>
 
-            <div style={styles.card}>
-              <h3 style={{ margin: 0, marginBottom: 8, fontSize: 16 }}>Crop Information</h3>
+            <div className="card">
+              <h3 className="card-heading">Crop Information</h3>
 
-              <div style={{ display: 'grid', gap: 10 }}>
+              <div className="crop-inputs">
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, color: '#334155', marginBottom: 6 }}>Crop Type</label>
-                  <select value={cropType} onChange={(e) => setCropType(e.target.value)} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #e6eef6' }}>
+                  <label className="crop-label">Crop Type</label>
+                  <select value={cropType} onChange={(e) => setCropType(e.target.value)} className="select-input">
                     <option value="tomato">Tomato</option>
                     <option value="wheat">Wheat</option>
                     <option value="rice">Rice</option>
@@ -340,8 +280,8 @@ export default function FertilizerRecommendations() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, color: '#334155', marginBottom: 6 }}>Growth Stage</label>
-                  <select value={growthStage} onChange={(e) => setGrowthStage(e.target.value)} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #e6eef6' }}>
+                  <label className="crop-label">Growth Stage</label>
+                  <select value={growthStage} onChange={(e) => setGrowthStage(e.target.value)} className="select-input">
                     <option value="seedling">Seedling</option>
                     <option value="vegetative">Vegetative</option>
                     <option value="flowering">Flowering</option>
@@ -351,33 +291,32 @@ export default function FertilizerRecommendations() {
 
                 <button
                   onClick={generateRecommendations}
-                  className="btn"
-                  style={{ width: '100%', padding: 12, borderRadius: 10, fontWeight: 700, background: 'linear-gradient(90deg,#059669,#047857)', color: '#fff', border: 'none', marginTop: 4 }}
+                  className="btn-generate"
                 >
                   {loading ? 'Generating…' : 'Generate AI Recommendations'}
                 </button>
 
-                {error && <div style={{ color: '#b91c1c', fontSize: 13 }}>{error}</div>}
+                {error && <div className="error-text">{error}</div>}
 
               </div>
             </div>
           </div>
 
           {/* Results column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="results-column">
             {/* Live gauges */}
-            <div style={{ ...styles.card, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+            <div className="card gauges-card">
+              <div className="gauges-wrapper">
                 <NutrientGauge label="N" value={soilData.nitrogen} />
                 <NutrientGauge label="P" value={soilData.phosphorus} />
                 <NutrientGauge label="K" value={soilData.potassium} />
               </div>
 
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 12, color: '#475569' }}>pH</div>
-                <div style={{ fontSize: 18, fontWeight: 800 }}>{soilData.ph}</div>
-                <div style={{ marginTop: 8 }}>
-                  <div style={{ display: 'inline-block', padding: '6px 10px', background: '#ecfccb', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
+              <div className="ph-display">
+                <div className="ph-label">pH</div>
+                <div className="ph-value">{soilData.ph}</div>
+                <div>
+                  <div className="live-badge">
                     Live Preview
                   </div>
                 </div>
@@ -385,68 +324,68 @@ export default function FertilizerRecommendations() {
             </div>
 
             {/* Results box */}
-            <div style={{ ...styles.card, minHeight: 220 }}>
+            <div className={`card results-box`}>
               {recommendations ? (
                 <>
-                  <h3 style={{ marginTop: 0 }}>Synthetic Fertilizers</h3>
-                  <div style={{ display: 'grid', gap: 10 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 10, borderRadius: 8, background: '#f0f9ff' }}>
-                      <div style={{ fontWeight: 700 }}>Urea (46-0-0)</div>
-                      <div style={{ fontSize: 16, fontWeight: 800 }}>{recommendations.synthetic.urea} kg/hectare</div>
+                  <h3 className="results-heading">Synthetic Fertilizers</h3>
+                  <div className="synthetic-list">
+                    <div className="synthetic-item item-urea">
+                      <div className="item-name">Urea (46-0-0)</div>
+                      <div className="item-qty">{recommendations.synthetic.urea} kg/hectare</div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 10, borderRadius: 8, background: '#faf5ff' }}>
-                      <div style={{ fontWeight: 700 }}>DAP (18-46-0)</div>
-                      <div style={{ fontSize: 16, fontWeight: 800 }}>{recommendations.synthetic.dap} kg/hectare</div>
+                    <div className="synthetic-item item-dap">
+                      <div className="item-name">DAP (18-46-0)</div>
+                      <div className="item-qty">{recommendations.synthetic.dap} kg/hectare</div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 10, borderRadius: 8, background: '#ecfdf5' }}>
-                      <div style={{ fontWeight: 700 }}>MOP (0-0-60)</div>
-                      <div style={{ fontSize: 16, fontWeight: 800 }}>{recommendations.synthetic.mop} kg/hectare</div>
+                    <div className="synthetic-item item-mop">
+                      <div className="item-name">MOP (0-0-60)</div>
+                      <div className="item-qty">{recommendations.synthetic.mop} kg/hectare</div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 8, borderTop: '1px solid #eef2ff' }}>
-                      <div style={{ fontWeight: 800 }}>Estimated Cost</div>
-                      <div style={{ fontSize: 18, fontWeight: 900 }}>₹{recommendations.synthetic.cost}</div>
+                    <div className="cost-row">
+                      <div className="cost-label">Estimated Cost</div>
+                      <div className="cost-value">₹{recommendations.synthetic.cost}</div>
                     </div>
                   </div>
 
-                  <hr style={{ margin: '12px 0', border: 'none', borderTop: '1px solid #eef2ff' }} />
+                  <hr className="divider" />
 
-                  <h3 style={{ marginTop: 0 }}>Organic Alternatives</h3>
+                  <h3 className="results-heading">Organic Alternatives</h3>
                   {recommendations.organic.length > 0 ? (
-                    <div style={{ display: 'grid', gap: 8 }}>
+                    <div className="organic-list">
                       {recommendations.organic.map((opt, i) => (
-                        <div key={i} style={{ padding: 10, borderRadius: 8, background: '#f0fdf4', borderLeft: '4px solid #059669' }}>{opt}</div>
+                        <div key={i} className="organic-item">{opt}</div>
                       ))}
                     </div>
                   ) : (
-                    <div style={{ padding: 10, borderRadius: 8, background: '#ecfeff' }}>Current nutrient levels are adequate. Maintain with compost.</div>
+                    <div className="organic-empty">Current nutrient levels are adequate. Maintain with compost.</div>
                   )}
 
                 </>
               ) : (
-                <div style={{ textAlign: 'center', paddingTop: 28, color: '#94a3b8' }}>
-                  <Sprout style={{ width: 48, height: 48 }} className="pulse" />
-                  <div style={{ marginTop: 8 }}>Enter soil data and crop information.</div>
-                  <div style={{ fontSize: 12, marginTop: 6 }}>AI will generate personalized recommendations.</div>
+                <div className="loading-state">
+                  <Sprout className="pulse-icon" />
+                  <div className="loading-text">Enter soil data and crop information.</div>
+                  <div className="loading-sub">AI will generate personalized recommendations.</div>
                 </div>
               )}
             </div>
 
             {/* Environmental card with 3D tilt subtle gradient */}
-            <div style={{ ...styles.bigCallout, borderRadius: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="env-card">
+              <div className="env-content">
                 <div>
-                  <div style={{ fontWeight: 800, fontSize: 15, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <TrendingDown style={{ width: 18, height: 18 }} /> Environmental Impact
+                  <div className="env-heading">
+                    <TrendingDown className="env-icon" /> Environmental Impact
                   </div>
-                  <div style={{ marginTop: 8, fontSize: 13 }}>{recommendations ? `${recommendations.environmentalImpact.co2Saved} kg CO₂ saved (organic option)` : 'Switch to organic supplements to reduce emissions.'}</div>
+                  <div className="env-desc">{recommendations ? `${recommendations.environmentalImpact.co2Saved} kg CO₂ saved (organic option)` : 'Switch to organic supplements to reduce emissions.'}</div>
                 </div>
 
-                <div style={{ width: 90, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="env-visual">
                   {/* a small animated icon / globe substitute */}
-                  <div style={{ width: 52, height: 52, borderRadius: 10, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'rotate(10deg)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)' }}>
+                  <div className="visual-box">
                     🌱
                   </div>
                 </div>
@@ -457,19 +396,19 @@ export default function FertilizerRecommendations() {
         </div>
 
         {/* Benefits footer */}
-        <div style={{ marginTop: 18, padding: 16, borderRadius: 10, background: 'rgba(239,250,255,0.7)', border: '1px solid #e6f0ff' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+        <div className="benefits-footer">
+          <div className="benefits-grid">
             <div>
-              <div style={{ fontWeight: 800 }}>Precision Nutrition</div>
-              <div style={{ fontSize: 13, color: '#475569' }}>Apply exactly what crops need, when they need it</div>
+              <div className="benefit-title">Precision Nutrition</div>
+              <div className="benefit-desc">Apply exactly what crops need, when they need it</div>
             </div>
             <div>
-              <div style={{ fontWeight: 800 }}>Cost Savings</div>
-              <div style={{ fontSize: 13, color: '#475569' }}>Reduce fertilizer waste by 30-40%</div>
+              <div className="benefit-title">Cost Savings</div>
+              <div className="benefit-desc">Reduce fertilizer waste by 30-40%</div>
             </div>
             <div>
-              <div style={{ fontWeight: 800 }}>Environmental Protection</div>
-              <div style={{ fontSize: 13, color: '#475569' }}>Minimize runoff and groundwater contamination</div>
+              <div className="benefit-title">Environmental Protection</div>
+              <div className="benefit-desc">Minimize runoff and groundwater contamination</div>
             </div>
           </div>
         </div>

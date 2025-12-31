@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, Send, FileText, Download, Bot, User, Loader, CheckCircle, AlertCircle, TrendingUp, Droplet, Sun, DollarSign, X, Trash2, RefreshCw } from 'lucide-react';
+import './ReportsChatbot.css';
 
 const ReportsChatbot = () => {
   const [messages, setMessages] = useState([
@@ -10,7 +11,7 @@ const ReportsChatbot = () => {
       timestamp: new Date().toLocaleTimeString()
     }
   ]);
-  
+
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -18,7 +19,8 @@ const ReportsChatbot = () => {
   const [messageCount, setMessageCount] = useState(1);
   const messagesEndRef = useRef(null);
 
-  // Backend API configuration
+  // Backend API configuration (Placeholder)
+  // eslint-disable-next-line no-unused-vars
   const API_CONFIG = {
     baseURL: 'https://api.yourfarm.com/v1',
     endpoints: {
@@ -69,7 +71,7 @@ const ReportsChatbot = () => {
       
       return await response.json();
       */
-      
+
       // DEMO MODE: Simulated response
       return new Promise((resolve) => {
         setTimeout(() => {
@@ -217,7 +219,7 @@ const ReportsChatbot = () => {
 
       setMessages(prev => [...prev, botMsg]);
       setMessageCount(prev => prev + 1);
-      
+
       if (response.hasReport) {
         showNotification(`Report generated: ${response.reportType}`, 'success');
       }
@@ -258,34 +260,14 @@ const ReportsChatbot = () => {
 
   const handleDownloadReport = async (reportData) => {
     showNotification(`Preparing ${reportData.filename} for download...`, 'success');
-    
+
     try {
-      // PRODUCTION: Real API download
-      /*
-      const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.download}/${reportData.id}`, {
-        method: 'GET',
-        headers: API_CONFIG.headers
-      });
-      
-      if (!response.ok) throw new Error('Download failed');
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = reportData.filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      */
-      
       // DEMO MODE: Generate sample PDF
       setTimeout(() => {
         generateAndDownloadPDF(reportData);
         showNotification(`${reportData.filename} downloaded successfully!`, 'success');
       }, 1000);
-      
+
     } catch (error) {
       console.error('Download error:', error);
       showNotification('Download failed. Please try again.', 'error');
@@ -387,189 +369,49 @@ startxref
   ];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #EFF6FF, #F0FDF4)', padding: '24px' }}>
-      <style>{`
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-        }
-
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-
-        .message-enter {
-          animation: slideIn 0.3s ease-out;
-        }
-
-        .fade-in {
-          animation: fadeIn 0.3s ease-out;
-        }
-
-        .typing-dot {
-          animation: bounce 1.4s infinite ease-in-out;
-        }
-
-        .typing-dot:nth-child(2) {
-          animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-          animation-delay: 0.4s;
-        }
-
-        .status-pulse {
-          animation: pulse 2s infinite;
-        }
-
-        ::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-          background: #F3F4F6;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background: #10B981;
-          border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-          background: #059669;
-        }
-      `}</style>
-
+    <div className="reports-chatbot-container">
       {/* Notification */}
       {notification && (
-        <div className="fade-in" style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          zIndex: 1000,
-          background: notification.type === 'success' ? '#D1FAE5' : '#FEE2E2',
-          border: `2px solid ${notification.type === 'success' ? '#10B981' : '#EF4444'}`,
-          borderRadius: '12px',
-          padding: '14px 20px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          minWidth: '300px',
-          maxWidth: '400px'
-        }}>
+        <div className={`notification-toast fade-in ${notification.type === 'success' ? 'notif-success' : 'notif-error'}`}>
           {notification.type === 'success' ? (
             <CheckCircle style={{ width: '20px', height: '20px', color: '#10B981', flexShrink: 0 }} />
           ) : (
             <AlertCircle style={{ width: '20px', height: '20px', color: '#EF4444', flexShrink: 0 }} />
           )}
-          <span style={{ 
-            fontSize: '14px', 
-            fontWeight: '600',
-            color: notification.type === 'success' ? '#065F46' : '#991B1B',
-            flex: 1
-          }}>
+          <span className={`notif-text ${notification.type === 'success' ? 'notif-text-success' : 'notif-text-error'}`}>
             {notification.message}
           </span>
-          <button 
+          <button
             onClick={() => setNotification(null)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '4px',
-              display: 'flex'
-            }}
+            className="notif-close"
           >
             <X style={{ width: '16px', height: '16px', color: notification.type === 'success' ? '#065F46' : '#991B1B' }} />
           </button>
         </div>
       )}
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="chatbot-wrapper">
         {/* Header */}
-        <div style={{ 
-          background: 'white', 
-          borderRadius: '16px', 
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', 
-          padding: '24px', 
-          marginBottom: '20px' 
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ 
-                width: '56px', 
-                height: '56px', 
-                background: 'linear-gradient(135deg, #10B981, #059669)', 
-                borderRadius: '12px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center'
-              }}>
+        <div className="chat-header">
+          <div className="header-content">
+            <div className="header-title-section">
+              <div className="bot-avatar-large">
                 <Bot style={{ width: '32px', height: '32px', color: 'white' }} />
               </div>
               <div>
-                <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#111827', marginBottom: '4px' }}>
-                  AgriBot Assistant
-                </h1>
-                <p style={{ color: '#6B7280', fontSize: '14px' }}>
-                  AI-powered farming insights & reports
-                </p>
+                <h1 className="header-title">AgriBot Assistant</h1>
+                <p className="header-subtitle">AI-powered farming insights & reports</p>
               </div>
             </div>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px', 
-              padding: '8px 16px', 
-              background: isConnected ? '#D1FAE5' : '#FEE2E2',
-              borderRadius: '20px'
-            }}>
-              <div className={isConnected ? 'status-pulse' : ''} style={{ 
-                width: '8px', 
-                height: '8px', 
-                background: isConnected ? '#10B981' : '#EF4444', 
-                borderRadius: '50%'
-              }}></div>
+            <div className={`status-badge ${isConnected ? 'status-connected' : 'status-disconnected'}`}>
+              <div className={`status-dot ${isConnected ? 'status-pulse' : ''}`} style={{ background: isConnected ? '#10B981' : '#EF4444' }}></div>
               <span style={{ color: isConnected ? '#065F46' : '#991B1B', fontWeight: '600', fontSize: '13px' }}>
                 {isConnected ? 'Connected' : 'Disconnected'}
               </span>
             </div>
             <button
               onClick={handleClearChat}
-              style={{
-                padding: '8px 16px',
-                background: '#F3F4F6',
-                color: '#6B7280',
-                border: '1px solid #E5E7EB',
-                borderRadius: '8px',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => {
-                e.target.style.background = '#E5E7EB';
-                e.target.style.color = '#EF4444';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.background = '#F3F4F6';
-                e.target.style.color = '#6B7280';
-              }}
+              className="clear-chat-btn"
             >
               <Trash2 style={{ width: '14px', height: '14px' }} />
               Clear Chat
@@ -578,45 +420,16 @@ startxref
         </div>
 
         {/* Chat Container */}
-        <div style={{ 
-          background: 'white', 
-          borderRadius: '16px', 
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', 
-          overflow: 'hidden',
-          marginBottom: '20px'
-        }}>
+        <div className="chat-main-card">
           {/* Messages Area */}
-          <div style={{ 
-            height: '500px', 
-            overflowY: 'auto', 
-            padding: '20px', 
-            background: '#F9FAFB'
-          }}>
+          <div className="chat-scroll-area">
             {messages.map((msg, index) => (
               <div
                 key={msg.id}
-                className="message-enter"
-                style={{
-                  display: 'flex',
-                  alignItems: 'start',
-                  gap: '12px',
-                  marginBottom: '20px',
-                  flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row',
-                  animationDelay: `${index * 0.05}s`
-                }}
+                className={`message-enter message-row ${msg.sender === 'user' ? 'message-row-user' : 'message-row-bot'}`}
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <div style={{ 
-                  width: '40px', 
-                  height: '40px', 
-                  borderRadius: '10px',
-                  background: msg.sender === 'bot' 
-                    ? 'linear-gradient(135deg, #10B981, #059669)' 
-                    : '#6B7280',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}>
+                <div className={`avatar-small ${msg.sender === 'bot' ? 'avatar-bot' : 'avatar-user'}`}>
                   {msg.sender === 'bot' ? (
                     <Bot style={{ width: '22px', height: '22px', color: 'white' }} />
                   ) : (
@@ -624,44 +437,16 @@ startxref
                   )}
                 </div>
 
-                <div style={{ flex: 1, maxWidth: '70%', textAlign: msg.sender === 'user' ? 'right' : 'left' }}>
-                  <div style={{
-                    display: 'inline-block',
-                    padding: '12px 16px',
-                    borderRadius: msg.sender === 'bot' ? '12px 12px 12px 2px' : '12px 12px 2px 12px',
-                    background: msg.sender === 'bot' 
-                      ? (msg.isError ? '#FEE2E2' : 'white')
-                      : '#10B981',
-                    border: msg.sender === 'bot' ? '1px solid #E5E7EB' : 'none',
-                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-                    color: msg.sender === 'bot' ? (msg.isError ? '#991B1B' : '#111827') : 'white'
-                  }}>
-                    <p style={{ fontSize: '14px', lineHeight: '1.5', whiteSpace: 'pre-line', margin: 0 }}>
+                <div className={`message-bubble-wrapper ${msg.sender === 'user' ? 'wrapper-right' : 'wrapper-left'}`}>
+                  <div className={`message-bubble ${msg.sender === 'bot' ? (msg.isError ? 'bubble-bot-error' : 'bubble-bot') : 'bubble-user'}`}>
+                    <p className="message-text">
                       {msg.text}
                     </p>
-                    
+
                     {msg.hasReport && msg.reportData && (
-                      <button 
+                      <button
                         onClick={() => handleDownloadReport(msg.reportData)}
-                        style={{ 
-                          marginTop: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '10px 14px',
-                          background: '#3B82F6',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '8px',
-                          fontWeight: '600',
-                          fontSize: '13px',
-                          cursor: 'pointer',
-                          width: '100%',
-                          justifyContent: 'center',
-                          transition: 'background 0.2s'
-                        }}
-                        onMouseOver={(e) => e.target.style.background = '#2563EB'}
-                        onMouseOut={(e) => e.target.style.background = '#3B82F6'}
+                        className="download-btn"
                       >
                         <Download style={{ width: '16px', height: '16px' }} />
                         Download {msg.reportType}
@@ -669,7 +454,7 @@ startxref
                       </button>
                     )}
                   </div>
-                  <p style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '6px', fontWeight: '500' }}>
+                  <p className="timestamp">
                     {msg.timestamp}
                   </p>
                 </div>
@@ -677,29 +462,15 @@ startxref
             ))}
 
             {isTyping && (
-              <div className="message-enter" style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
-                <div style={{ 
-                  width: '40px', 
-                  height: '40px', 
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #10B981, #059669)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
+              <div className="message-enter message-row message-row-bot">
+                <div className="avatar-small avatar-bot">
                   <Bot style={{ width: '22px', height: '22px', color: 'white' }} />
                 </div>
-                <div style={{ 
-                  padding: '12px 16px',
-                  background: 'white',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '12px 12px 12px 2px',
-                  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
-                }}>
-                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                    <div className="typing-dot" style={{ width: '8px', height: '8px', background: '#10B981', borderRadius: '50%' }}></div>
-                    <div className="typing-dot" style={{ width: '8px', height: '8px', background: '#10B981', borderRadius: '50%' }}></div>
-                    <div className="typing-dot" style={{ width: '8px', height: '8px', background: '#10B981', borderRadius: '50%' }}></div>
+                <div className="typing-indicator-box">
+                  <div className="typing-dots-flex">
+                    <div className="typing-dot"></div>
+                    <div className="typing-dot"></div>
+                    <div className="typing-dot"></div>
                   </div>
                 </div>
               </div>
@@ -708,8 +479,8 @@ startxref
           </div>
 
           {/* Quick Actions */}
-          <div style={{ padding: '16px 20px', background: 'white', borderTop: '1px solid #E5E7EB' }}>
-            <p style={{ fontSize: '12px', fontWeight: '600', color: '#6B7280', marginBottom: '10px' }}>
+          <div className="quick-actions-area">
+            <p className="quick-actions-label">
               Quick Actions:
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -717,28 +488,7 @@ startxref
                 <button
                   key={idx}
                   onClick={() => setInputMessage(action.text)}
-                  style={{
-                    padding: '8px 14px',
-                    background: '#F3F4F6',
-                    color: '#374151',
-                    border: '1px solid #E5E7EB',
-                    borderRadius: '8px',
-                    fontSize: '13px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.background = '#E5E7EB';
-                    e.target.style.borderColor = '#10B981';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.background = '#F3F4F6';
-                    e.target.style.borderColor = '#E5E7EB';
-                  }}
+                  className="quick-action-btn"
                 >
                   <action.icon style={{ width: '14px', height: '14px' }} />
                   {action.text}
@@ -748,8 +498,8 @@ startxref
           </div>
 
           {/* Input Area */}
-          <div style={{ padding: '20px', background: 'white', borderTop: '1px solid #E5E7EB' }}>
-            <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="input-area">
+            <div className="input-flex">
               <input
                 type="text"
                 value={inputMessage}
@@ -757,76 +507,21 @@ startxref
                 onKeyPress={handleKeyPress}
                 placeholder="Ask about crops, reports, weather, market prices..."
                 disabled={!isConnected}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  border: '2px solid #E5E7EB',
-                  borderRadius: '10px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  transition: 'border-color 0.2s',
-                  fontFamily: 'inherit',
-                  background: isConnected ? 'white' : '#F9FAFB'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#10B981'}
-                onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
+                className="chat-input"
               />
               <button
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || !isConnected}
-                style={{
-                  padding: '12px 20px',
-                  background: (inputMessage.trim() && isConnected) 
-                    ? 'linear-gradient(135deg, #10B981, #059669)' 
-                    : '#D1D5DB',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  cursor: (inputMessage.trim() && isConnected) ? 'pointer' : 'not-allowed',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: '600',
-                  fontSize: '14px',
-                  transition: 'all 0.2s'
-                }}
+                className="send-btn"
               >
                 {isTyping ? (
-                  <Loader style={{ width: '20px', height: '20px', animation: 'spin 1s linear infinite' }} />
+                  <Loader className="spin-anim" style={{ width: '20px', height: '20px' }} />
                 ) : (
                   <Send style={{ width: '20px', height: '20px' }} />
                 )}
               </button>
             </div>
           </div>
-        </div>
-
-        {/* Features Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-          {[
-            { icon: FileText, title: 'Instant Reports', desc: 'Generate detailed farming reports on demand', color: '#3B82F6' },
-            { icon: MessageSquare, title: '24/7 Support', desc: 'Get farming advice anytime, in your language', color: '#10B981' },
-            { icon: Bot, title: 'AI Insights', desc: 'Data-driven recommendations for your farm', color: '#8B5CF6' }
-          ].map((feature, idx) => (
-            <div
-              key={idx}
-              style={{
-                background: 'white',
-                borderRadius: '12px',
-                padding: '20px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                borderLeft: `4px solid ${feature.color}`
-              }}
-            >
-              <feature.icon style={{ width: '32px', height: '32px', color: feature.color, marginBottom: '12px' }} />
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#111827', marginBottom: '8px' }}>
-                {feature.title}
-              </h3>
-              <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: '1.5' }}>
-                {feature.desc}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     </div>

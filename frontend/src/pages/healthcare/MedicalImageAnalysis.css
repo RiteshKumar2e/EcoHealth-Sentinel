@@ -1,0 +1,618 @@
+.mia-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e6f0ff 0%, #f6e8ff 50%, #ffeef6 100%);
+    padding: 24px;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    color: #111827;
+}
+
+.mia-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.three-d-container {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.12;
+    pointer-events: none;
+}
+
+.mia-header {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 20px 40px rgba(16, 24, 40, 0.12);
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.mia-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    color: #0f172a;
+    line-height: 1.05;
+}
+
+.mia-subtitle {
+    margin: 0;
+    color: #374151;
+    margin-top: 6px;
+}
+
+.header-icon {
+    width: 60px;
+    height: 60px;
+    color: #7c3aed;
+    opacity: 0.95;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.stat-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stat-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.mia-main-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.upload-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.card-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+
+.scan-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.scan-btn {
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid #e6e7eb;
+    background: #fff;
+    cursor: pointer;
+    text-align: center;
+    transition: all 180ms ease;
+}
+
+.scan-btn.active {
+    border-color: #7c3aed;
+    background: linear-gradient(90deg, #f3e8ff, #ffffff);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.scan-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    margin: 0 auto 8px;
+}
+
+.scan-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.upload-box {
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.upload-icon {
+    width: 56px;
+    height: 56px;
+    color: #9ca3af;
+    display: block;
+    margin: 0 auto 12px;
+}
+
+.upload-text-main {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 6px;
+}
+
+.upload-text-sub {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.upload-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: #e6e7eb;
+    color: #9ca3af;
+    border: none;
+    cursor: not-allowed;
+    font-weight: 700;
+}
+
+.btn-primary.enabled {
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+    color: #fff;
+    cursor: pointer;
+}
+
+.btn-demo {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #e6e7eb;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.progress-box {
+    background: #eef2ff;
+    border-left: 4px solid #6366f1;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.progress-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress-icon {
+    width: 18px;
+    height: 18px;
+    color: #4f46e5;
+}
+
+.progress-title {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.progress-subtitle {
+    font-size: 13px;
+    color: #4f46e5;
+}
+
+.progress-bar-bg {
+    margin-top: 10px;
+    height: 8px;
+    background: #e6eefc;
+    border-radius: 999px;
+}
+
+.progress-bar-fill {
+    width: var(--width, 0%);
+    height: 100%;
+    background: #4f46e5;
+    border-radius: 999px;
+    transition: width 600ms ease;
+}
+
+.analysis-box {
+    background: #ecfdf5;
+    border-left: 4px solid #10b981;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.analysis-header {
+    display: flex;
+    gap: 12px;
+}
+
+.analysis-icon {
+    width: 18px;
+    height: 18px;
+    color: #10b981;
+}
+
+.analysis-title {
+    font-weight: 800;
+    color: #065f46;
+}
+
+.analysis-confidence {
+    color: #065f46;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.findings-box {
+    margin-top: 10px;
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(16, 185, 129, 0.08);
+}
+
+.findings-text {
+    font-size: 14px;
+    color: #065f46;
+}
+
+.findings-disclaimer {
+    font-size: 12px;
+    color: #475569;
+    margin-top: 8px;
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.capabilities-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.section-sub {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.chat-box {
+    display: flex;
+    flex-direction: column;
+    height: 420px;
+}
+
+.chat-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chat-msg {
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 86%;
+    font-size: 14px;
+}
+
+.chat-msg-user {
+    align-self: flex-end;
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+    color: #fff;
+}
+
+.chat-msg-bot {
+    align-self: flex-start;
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.chat-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e6e7eb;
+    outline: none;
+}
+
+.chat-send-btn {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #111827;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.capabilities-list {
+    display: grid;
+    gap: 8px;
+}
+
+.capabilities-item {
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #faf5ff, #f0f9ff);
+    border: 1px solid rgba(124, 58, 237, 0.06);
+}
+
+.capability-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.capability-title {
+    font-weight: 800;
+}
+
+.capability-score {
+    font-weight: 800;
+    color: #6d28d9;
+}
+
+.capability-desc {
+    font-size: 12px;
+    color: #475569;
+    margin-top: 6px;
+}
+
+.capability-bar-bg {
+    margin-top: 8px;
+    height: 8px;
+    background: #eef2ff;
+    border-radius: 999px;
+}
+
+.capability-bar-fill {
+    width: var(--width, 0%);
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+}
+
+.recent-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    margin-bottom: 18px;
+}
+
+.recent-title {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.recent-list {
+    display: grid;
+    gap: 10px;
+}
+
+.recent-item {
+    border-radius: 10px;
+    padding: 12px;
+    background: linear-gradient(90deg, #f8fafc, #f1f5f9);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.recent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.recent-type {
+    font-weight: 800;
+}
+
+.recent-patient {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.priority-badge {
+    padding: 4px 8px;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.badge-high {
+    background-color: #ef4444;
+}
+
+.badge-medium {
+    background-color: #f59e0b;
+}
+
+.badge-normal {
+    background-color: #10b981;
+}
+
+.recent-findings {
+    margin-top: 8px;
+    color: #374151;
+}
+
+.recent-footer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.security-card {
+    border-radius: 12px;
+    padding: 18px;
+    background: linear-gradient(90deg, #111827, #374151);
+    color: #fff;
+}
+
+.security-content {
+    display: flex;
+    gap: 12px;
+}
+
+.security-icon {
+    width: 28px;
+    height: 28px;
+    color: #fff;
+}
+
+.security-title {
+    font-weight: 900;
+    font-size: 16px;
+}
+
+.security-text {
+    margin-top: 8px;
+    color: #e6e6e6;
+    font-size: 13px;
+}
+
+.security-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+.security-badge {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.badge-title {
+    font-weight: 800;
+}
+
+.badge-sub {
+    color: #d1d5db;
+}
+
+.footer-spacing {
+    height: 24px;
+}
+
+.mia-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-icon-dynamic {
+    color: var(--color, #374151);
+}
+
+.stat-value-dynamic {
+    color: var(--color, #111827);
+}
+
+.scan-icon-dynamic {
+    color: var(--color);
+}
+
+.hidden {
+    display: none;
+}
+
+.analysis-progress-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.analysis-header-right {
+    flex: 1;
+}
+
+.chat-send-icon {
+    width: 16px;
+    height: 16px;
+    color: #fff !important;
+}
+
+.capabilities-header-text {
+    margin: 8px 0 6px 0;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.recent-confidence {
+    font-weight: 700;
+}

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { AlertTriangle, CloudRain, Wind, Waves, Thermometer, MapPin, Shield, Clock, Download, RefreshCw, Share2, Bell, Activity, Users, Maximize2, Minimize2, Radio, Satellite, Zap, AlertCircle, CheckCircle, TrendingUp, BarChart3, Eye, EyeOff } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
+import { envService } from '../../services/api';
+import './DisasterPrediction.css';
+
 export default function DisasterPrediction() {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -26,7 +29,7 @@ export default function DisasterPrediction() {
   const [impactAnalysisData, setImpactAnalysisData] = useState([]);
   const [responseTimeData, setResponseTimeData] = useState([]);
 
-  //const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const API_BASE_URL = 'http://localhost:5000/api';
 
   useEffect(() => {
     fetchAllData();
@@ -56,11 +59,9 @@ export default function DisasterPrediction() {
 
   const fetchGraphData = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/environment/disaster-trends`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
+      const response = await envService.getDisasterTrends();
+      if (response.data) {
+        const data = response.data;
         setFloodHistoryData(data.floodHistory || []);
         setTemperatureTrendData(data.temperatureTrend || []);
         setRainfallPatternData(data.rainfallPattern || []);
@@ -259,7 +260,7 @@ export default function DisasterPrediction() {
     ]);
 
     setEarlyWarningSystem({ status: 'active', lastUpdate: '15 minutes ago', sensors: 127, coverage: 92, alertsSent: 45, responseTime: '12 min' });
-    
+
     setVulnerabilityAreas([
       { area: 'Low-lying riverside zones', risk: 'Very High', population: 45000, preparedness: 'Medium', color: '#ef4444' },
       { area: 'Urban flood-prone areas', risk: 'High', population: 68000, preparedness: 'High', color: '#f97316' },
@@ -304,12 +305,12 @@ export default function DisasterPrediction() {
   };
 
   const downloadReport = () => {
-    const report = { 
-      timestamp: new Date().toISOString(), 
-      activeDisasters, 
-      vulnerabilityAreas, 
-      preparedness: { completionRate: Math.round((preparednessChecklist.filter(i => i.completed).length / preparednessChecklist.length) * 100), checklist: preparednessChecklist }, 
-      responseTeams, 
+    const report = {
+      timestamp: new Date().toISOString(),
+      activeDisasters,
+      vulnerabilityAreas,
+      preparedness: { completionRate: Math.round((preparednessChecklist.filter(i => i.completed).length / preparednessChecklist.length) * 100), checklist: preparednessChecklist },
+      responseTeams,
       earlyWarningSystem,
       graphData: {
         floodHistory: floodHistoryData,
@@ -339,7 +340,7 @@ export default function DisasterPrediction() {
   const showToast = (msg) => {
     const toast = document.createElement('div');
     toast.textContent = msg;
-    toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,#ef4444,#f97316);color:white;padding:16px 24px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.2);z-index:10000;font-weight:600;animation:slideIn 0.3s';
+    toast.className = 'toast-message';
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
   };
@@ -347,527 +348,279 @@ export default function DisasterPrediction() {
   const completionRate = preparednessChecklist.length > 0 ? Math.round((preparednessChecklist.filter(i => i.completed).length / preparednessChecklist.length) * 100) : 0;
 
   return (
-    <>
-      <style>{`
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
-        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.3); } 50% { box-shadow: 0 0 40px rgba(239,68,68,0.6); } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .container { min-height: 100vh; background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 50%, #fefce8 100%); padding: ${isFullscreen ? '0' : '24px'}; animation: fadeIn 0.6s; }
-        .wrapper { max-width: ${isFullscreen ? '100%' : '1400px'}; margin: 0 auto; }
-        .card { background: white; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); padding: 32px; margin-bottom: 24px; animation: fadeIn 0.8s; transition: all 0.3s; }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.12); }
-        .graph-card { background: white; border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: all 0.3s; border: 1px solid #e2e8f0; }
-        .graph-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
-        .btn { padding: 12px 24px; border-radius: 12px; border: none; background: linear-gradient(135deg, #ef4444, #f97316); color: white; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239,68,68,0.4); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .loader { width: 60px; height: 60px; border: 5px solid #fef2f2; border-top-color: #ef4444; border-radius: 50%; animation: spin 1s linear infinite; }
-      `}</style>
-
-      <div className="container">
-        <div className="wrapper">
-          {/* Header */}
-          <div className="card">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #ef4444, #f97316)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'glow 3s infinite' }}>
-                  <AlertTriangle size={32} style={{ color: 'white', animation: 'float 3s infinite' }} />
-                </div>
-                <div>
-                  <h1 style={{ fontSize: '36px', fontWeight: '800', color: '#1e293b', margin: '0 0 8px 0' }}>AI Disaster Prediction</h1>
-                  <p style={{ color: '#64748b', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Satellite size={16} style={{ color: '#ef4444' }} />
-                    Real-time monitoring • AI predictions • 9 trend graphs
-                  </p>
-                </div>
+    <div className={`disaster-container ${isFullscreen ? 'fullscreen' : ''}`}>
+      <div className={`disaster-wrapper ${isFullscreen ? 'fullscreen' : ''}`}>
+        {/* Header */}
+        <div className="disaster-card">
+          <div className="disaster-header">
+            <div className="flex-center gap-12">
+              <div className="icon-box">
+                <AlertTriangle size={32} className="white-text float-icon" />
               </div>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                <button className="btn" onClick={handleShowGraphs} style={{ background: showGraphs ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)' : 'linear-gradient(135deg, #3b82f6, #2563eb)' }}>
-                  {showGraphs ? <EyeOff size={18} /> : <Eye size={18} />}
-                  {showGraphs ? 'Hide Graphs' : 'Show Graphs'}
-                </button>
-                <button className="btn" onClick={() => { setNotificationsEnabled(!notificationsEnabled); if (!notificationsEnabled && 'Notification' in window) Notification.requestPermission(); }} style={{ background: notificationsEnabled ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #6b7280, #4b5563)' }}>
-                  <Bell size={18} />
-                  {notificationsEnabled ? 'ON' : 'OFF'}
-                </button>
-                <button className="btn" onClick={handleRefresh} disabled={refreshing}>
-                  <RefreshCw size={18} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
-                  {refreshing ? 'Refreshing...' : 'Refresh'}
-                </button>
-                <button className="btn" onClick={downloadReport}>
-                  <Download size={18} />
-                  Download
-                </button>
-                <button className="btn" onClick={() => setIsFullscreen(!isFullscreen)} style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}>
-                  {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-                </button>
+              <div className="header-text-container">
+                <h1 className="disaster-title">AI Disaster Prediction</h1>
+                <p className="disaster-subtitle flex-center gap-8">
+                  <Satellite size={16} className="red-text" />
+                  Real-time monitoring • AI predictions
+                </p>
               </div>
             </div>
-          </div>
-
-          {/* Early Warning System */}
-          <div className="card" style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', animation: 'glow 4s infinite' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <Shield size={48} style={{ animation: 'float 3s infinite' }} />
-                <div>
-                  <h2 style={{ fontSize: '28px', fontWeight: '800', margin: '0 0 8px 0' }}>Early Warning System</h2>
-                  <p style={{ margin: 0, opacity: 0.9 }}>Status: {earlyWarningSystem.status?.toUpperCase() || 'ACTIVE'}</p>
-                </div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', textAlign: 'center' }}>
-                <div>
-                  <Activity size={24} style={{ margin: '0 auto 8px' }} />
-                  <p style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 4px 0' }}>{earlyWarningSystem.sensors || 127}</p>
-                  <p style={{ fontSize: '13px', opacity: 0.9, margin: 0 }}>Sensors</p>
-                </div>
-                <div>
-                  <Radio size={24} style={{ margin: '0 auto 8px' }} />
-                  <p style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 4px 0' }}>{earlyWarningSystem.coverage || 92}%</p>
-                  <p style={{ fontSize: '13px', opacity: 0.9, margin: 0 }}>Coverage</p>
-                </div>
-                <div>
-                  <Zap size={24} style={{ margin: '0 auto 8px' }} />
-                  <p style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 4px 0' }}>{earlyWarningSystem.alertsSent || 45}</p>
-                  <p style={{ fontSize: '13px', opacity: 0.9, margin: 0 }}>Alerts</p>
-                </div>
-                <div>
-                  <Clock size={24} style={{ margin: '0 auto 8px' }} />
-                  <p style={{ fontSize: '20px', fontWeight: '800', margin: '0 0 4px 0' }}>{earlyWarningSystem.responseTime || '12 min'}</p>
-                  <p style={{ fontSize: '13px', opacity: 0.9, margin: 0 }}>Response</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 9 Predictive Graphs */}
-          {showGraphs && (
-            <div style={{ marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#1e293b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <BarChart3 size={32} style={{ color: '#3b82f6' }} />
-                Historical Data & AI Predictions (9 Comprehensive Graphs)
-              </h2>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(550px, 1fr))', gap: '24px' }}>
-                {/* Graph 1: Flood History & Prediction */}
-                <div className="graph-card">
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Waves size={20} style={{ color: '#3b82f6' }} />
-                    1. Flood Events: Historical & Predicted (2020-2028)
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <ComposedChart data={floodHistoryData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="year" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <YAxis yAxisId="left" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <YAxis yAxisId="right" orientation="right" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
-                      <Legend />
-                      <Area yAxisId="left" type="monotone" dataKey="actual" fill="#3b82f680" stroke="#3b82f6" name="Historical Events" />
-                      <Line yAxisId="left" type="monotone" dataKey="predicted" stroke="#ef4444" strokeWidth={3} strokeDasharray="5 5" name="AI Prediction" dot={{ fill: '#ef4444', r: 5 }} />
-                      <Bar yAxisId="right" dataKey="severity" fill="#f59e0b" name="Severity Index" />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Graph 2: Temperature Trend */}
-                <div className="graph-card">
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Thermometer size={20} style={{ color: '#ef4444' }} />
-                    2. Temperature Trend: Historical vs AI Predicted (°C)
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={temperatureTrendData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="month" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
-                      <Legend />
-                      <Line type="monotone" dataKey="historical" stroke="#94a3b8" strokeWidth={2} name="Historical Avg" dot={{ r: 3 }} />
-                      <Line type="monotone" dataKey="current" stroke="#10b981" strokeWidth={2} name="Current" dot={{ fill: '#10b981', r: 4 }} />
-                      <Line type="monotone" dataKey="predicted" stroke="#ef4444" strokeWidth={3} strokeDasharray="5 5" name="AI Predicted" dot={{ fill: '#ef4444', r: 5 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Graph 3: Rainfall Pattern */}
-                <div className="graph-card">
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CloudRain size={20} style={{ color: '#3b82f6' }} />
-                    3. Rainfall Pattern: Historical vs Predicted (mm)
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={rainfallPatternData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="month" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
-                      <Legend />
-                      <Bar dataKey="historical" fill="#3b82f6" name="Historical Avg" />
-                      <Bar dataKey="predicted" fill="#8b5cf6" name="AI Predicted" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Graph 4: Disaster Frequency by Type */}
-                <div className="graph-card">
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <AlertTriangle size={20} style={{ color: '#f59e0b' }} />
-                    4. Disaster Frequency by Type (2020-2028 Trend)
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={disasterFrequencyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="year" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
-                      <Legend />
-                      <Area type="monotone" dataKey="floods" stackId="1" stroke="#3b82f6" fill="#3b82f680" name="Floods" />
-                      <Area type="monotone" dataKey="heatwaves" stackId="1" stroke="#ef4444" fill="#ef444480" name="Heatwaves" />
-                      <Area type="monotone" dataKey="storms" stackId="1" stroke="#8b5cf6" fill="#8b5cf680" name="Storms" />
-                      <Area type="monotone" dataKey="droughts" stackId="1" stroke="#f59e0b" fill="#f59e0b80" name="Droughts" />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Graph 5: Risk Assessment Radar */}
-                <div className="graph-card">
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <TrendingUp size={20} style={{ color: '#ef4444' }} />
-                    5. Multi-Hazard Risk Assessment by Area
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <RadarChart data={riskAssessmentData}>
-                      <PolarGrid stroke="#e2e8f0" />
-                      <PolarAngleAxis dataKey="area" style={{ fontSize: '12px' }} />
-                      <PolarRadiusAxis style={{ fontSize: '12px' }} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
-                      <Legend />
-                      <Radar name="Flood Risk" dataKey="flood" stroke="#3b82f6" fill="#3b82f680" />
-                      <Radar name="Heat Risk" dataKey="heat" stroke="#ef4444" fill="#ef444480" />
-                      <Radar name="Storm Risk" dataKey="storm" stroke="#8b5cf6" fill="#8b5cf680" />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Graph 6: Evacuation Readiness */}
-                <div className="graph-card">
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Shield size={20} style={{ color: '#10b981' }} />
-                    6. Evacuation Readiness by District
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <ComposedChart data={evacuationReadinessData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="district" stroke="#64748b" style={{ fontSize: '12px' }} angle={-15} textAnchor="end" height={80} />
-                      <YAxis yAxisId="left" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <YAxis yAxisId="right" orientation="right" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
-                      <Legend />
-                      <Bar yAxisId="left" dataKey="readiness" fill="#10b981" name="Readiness %" />
-                      <Line yAxisId="right" type="monotone" dataKey="drills" stroke="#3b82f6" strokeWidth={3} name="Drills Conducted" dot={{ fill: '#3b82f6', r: 5 }} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Graph 7: Seasonal Disaster Trends */}
-                <div className="graph-card">
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Wind size={20} style={{ color: '#8b5cf6' }} />
-                    7. Seasonal Disaster Trends & Patterns
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <RadarChart data={seasonalTrendsData}>
-                      <PolarGrid stroke="#e2e8f0" />
-                      <PolarAngleAxis dataKey="season" style={{ fontSize: '12px' }} />
-                      <PolarRadiusAxis style={{ fontSize: '12px' }} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
-                      <Legend />
-                      <Radar name="Floods" dataKey="floods" stroke="#3b82f6" fill="#3b82f680" />
-                      <Radar name="Heatwaves" dataKey="heatwaves" stroke="#ef4444" fill="#ef444480" />
-                      <Radar name="Storms" dataKey="storms" stroke="#8b5cf6" fill="#8b5cf680" />
-                      <Radar name="Droughts" dataKey="droughts" stroke="#f59e0b" fill="#f59e0b80" />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Graph 8: Impact Analysis */}
-                <div className="graph-card">
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <AlertCircle size={20} style={{ color: '#f59e0b' }} />
-                    8. Disaster Impact Analysis (Economic & Lives)
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <ComposedChart data={impactAnalysisData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="year" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <YAxis yAxisId="left" stroke="#64748b" style={{ fontSize: '12px' }} label={{ value: 'Billion $', angle: -90, position: 'insideLeft' }} />
-                      <YAxis yAxisId="right" orientation="right" stroke="#64748b" style={{ fontSize: '12px' }} label={{ value: 'Lives', angle: 90, position: 'insideRight' }} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
-                      <Legend />
-                      <Bar yAxisId="left" dataKey="economic" fill="#3b82f6" name="Economic Loss ($B)" />
-                      <Line yAxisId="right" type="monotone" dataKey="lives" stroke="#ef4444" strokeWidth={3} name="Lives Lost" dot={{ fill: '#ef4444', r: 5 }} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Graph 9: Response Time Improvement */}
-                <div className="graph-card">
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Clock size={20} style={{ color: '#10b981' }} />
-                    9. Response Time & Success Rate Evolution
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <ComposedChart data={responseTimeData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="year" stroke="#64748b" style={{ fontSize: '12px' }} />
-                      <YAxis yAxisId="left" stroke="#64748b" style={{ fontSize: '12px' }} label={{ value: 'Minutes', angle: -90, position: 'insideLeft' }} />
-                      <YAxis yAxisId="right" orientation="right" stroke="#64748b" style={{ fontSize: '12px' }} label={{ value: 'Success %', angle: 90, position: 'insideRight' }} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
-                      <Legend />
-                      <Bar yAxisId="left" dataKey="avgTime" fill="#ef4444" name="Avg Response Time (min)" />
-                      <Line yAxisId="right" type="monotone" dataKey="successRate" stroke="#10b981" strokeWidth={3} name="Success Rate %" dot={{ fill: '#10b981', r: 5 }} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Active Warnings */}
-          <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#1e293b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <AlertCircle size={32} style={{ color: '#ef4444' }} />
-              Active Warnings ({activeDisasters.length})
-            </h2>
-            {loading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
-                <div>
-                  <div className="loader"></div>
-                  <p style={{ marginTop: '16px', color: '#64748b', textAlign: 'center' }}>Loading...</p>
-                </div>
-              </div>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>
-                {activeDisasters.length > 0 ? activeDisasters.map((d) => {
-                  const Icon = d.icon;
-                  return (
-                    <div key={d.id} className="card" style={{ background: d.severity === 'high' ? '#fef2f2' : d.severity === 'medium' ? '#fff7ed' : '#fefce8', borderLeft: `4px solid ${d.color}`, padding: '24px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                        <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: `${d.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Icon size={32} style={{ color: d.color, animation: 'float 3s infinite' }} />
-                        </div>
-                        <span style={{ padding: '8px 16px', borderRadius: '20px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', background: d.color, color: 'white', animation: 'pulse 2s infinite' }}>
-                          {d.severity}
-                        </span>
-                      </div>
-                      <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#1e293b', marginBottom: '16px', textTransform: 'capitalize' }}>{d.type} Warning</h3>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px', fontSize: '14px', color: '#64748b' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <MapPin size={16} style={{ color: d.color }} />
-                          <span style={{ fontWeight: '600' }}>{d.location}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Clock size={16} style={{ color: d.color }} />
-                          <span>{d.timeframe}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Users size={16} style={{ color: d.color }} />
-                          <span><strong>{d.affectedPopulation.toLocaleString()}</strong> at risk</span>
-                        </div>
-                        {d.trend && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: d.color, fontWeight: '700' }}>
-                            <TrendingUp size={16} />
-                            <span>Risk +{d.trend}</span>
-                          </div>
-                        )}
-                      </div>
-                      <div style={{ marginBottom: '20px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                          <span style={{ fontSize: '13px', fontWeight: '700', color: '#64748b' }}>Probability</span>
-                          <span style={{ fontSize: '16px', fontWeight: '800', color: d.color }}>{d.probability}%</span>
-                        </div>
-                        <div style={{ width: '100%', height: '12px', background: '#e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
-                          <div style={{ width: `${d.probability}%`, height: '100%', background: d.color, borderRadius: '10px', transition: 'width 1s' }}></div>
-                        </div>
-                      </div>
-                      <button onClick={() => shareAlert(d)} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: d.color, color: 'white', fontWeight: '700', cursor: 'pointer' }}>
-                        Share Alert
-                      </button>
-                    </div>
-                  );
-                }) : (
-                  <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px' }}>
-                    <CheckCircle size={64} style={{ color: '#10b981', margin: '0 auto 16px' }} />
-                    <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>No Active Warnings</h3>
-                    <p style={{ color: '#64748b' }}>All clear!</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Vulnerability & Preparedness */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: '24px', marginBottom: '24px' }}>
-            <div className="card">
-              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', marginBottom: '20px' }}>Vulnerability Assessment</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {vulnerabilityAreas.map((a, i) => (
-                  <div key={i} style={{ background: `${a.color}10`, borderRadius: '12px', padding: '20px', borderLeft: `4px solid ${a.color}`, transition: 'all 0.3s', cursor: 'pointer' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateX(8px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateX(0)'}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                      <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b' }}>{a.area}</h3>
-                      <span style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '11px', fontWeight: '700', background: a.color, color: 'white' }}>{a.risk}</span>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <div>
-                        <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Population</p>
-                        <p style={{ fontSize: '20px', fontWeight: '800', color: '#1e293b' }}>{a.population.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Preparedness</p>
-                        <p style={{ fontSize: '20px', fontWeight: '800', color: a.color }}>{a.preparedness}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b' }}>Preparedness Checklist</h2>
-                <div style={{ padding: '8px 16px', borderRadius: '10px', background: completionRate === 100 ? '#dcfce7' : '#fef3c7', color: completionRate === 100 ? '#16a34a' : '#f59e0b', fontWeight: '700' }}>
-                  {completionRate}%
-                </div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {preparednessChecklist.map(item => (
-                  <div key={item.id} onClick={() => toggleChecklistItem(item.id)} style={{ padding: '16px', borderRadius: '12px', border: '2px solid', borderColor: item.completed ? '#10b981' : '#e2e8f0', background: item.completed ? '#f0fdf4' : '#f8fafc', cursor: 'pointer', transition: 'all 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateX(8px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateX(0)'}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', border: `3px solid ${item.completed ? '#10b981' : '#cbd5e1'}`, background: item.completed ? '#10b981' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {item.completed && <CheckCircle size={20} style={{ color: 'white' }} />}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <span style={{ fontSize: '15px', fontWeight: '700', color: item.completed ? '#16a34a' : '#1e293b' }}>{item.task}</span>
-                        {item.priority && (
-                          <span style={{ marginLeft: '8px', fontSize: '10px', padding: '4px 8px', borderRadius: '6px', background: item.priority === 'Critical' ? '#fef2f2' : item.priority === 'High' ? '#fff7ed' : '#fefce8', color: item.priority === 'Critical' ? '#dc2626' : item.priority === 'High' ? '#f97316' : '#f59e0b', fontWeight: '700' }}>
-                            {item.priority}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Response Teams */}
-          <div className="card">
-            <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', marginBottom: '20px' }}>Emergency Response Teams</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-              {responseTeams.map((t, i) => (
-                <div key={i} style={{ background: 'linear-gradient(135deg, #f0f9ff, #f0fdf4)', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0', transition: 'all 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <Shield size={32} style={{ color: '#3b82f6' }} />
-                    <span style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '11px', fontWeight: '700', background: t.status === 'Ready' ? '#10b981' : t.status === 'Deployed' ? '#3b82f6' : '#f59e0b', color: 'white' }}>{t.status}</span>
-                  </div>
-                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>{t.name}</h3>
-                  <div style={{ fontSize: '14px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span style={{ color: '#64748b' }}>Personnel:</span>
-                      <span style={{ fontWeight: '700' }}>{t.personnel}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span style={{ color: '#64748b' }}>Equipment:</span>
-                      <span style={{ fontWeight: '700' }}>{t.equipment}</span>
-                    </div>
-                    {t.location && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
-                        <MapPin size={14} style={{ color: '#64748b' }} />
-                        <span style={{ fontSize: '13px', color: '#64748b' }}>{t.location}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* AI Predictions */}
-          <div className="card">
-            <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', marginBottom: '20px' }}>AI Risk Analysis & Recommendations</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-              {aiPredictions.map((p, i) => (
-                <div key={i} style={{ background: 'linear-gradient(135deg, #faf5ff, #fef3c7)', borderRadius: '16px', padding: '24px', borderLeft: '4px solid #8b5cf6', transition: 'all 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#1e293b' }}>{p.title}</h3>
-                    {p.severity && (
-                      <span style={{ padding: '6px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: '700', background: p.severity === 'high' ? '#ef4444' : p.severity === 'medium' ? '#f97316' : '#f59e0b', color: 'white' }}>{p.severity.toUpperCase()}</span>
-                    )}
-                  </div>
-                  <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '16px', lineHeight: '1.6' }}>{p.description}</p>
-                  {p.timeframe && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '16px', fontSize: '13px', color: '#8b5cf6', fontWeight: '600' }}>
-                      <Clock size={14} />
-                      <span>{p.timeframe}</span>
-                    </div>
-                  )}
-                  <div style={{ marginBottom: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '12px', fontWeight: '700', color: '#64748b' }}>AI Confidence</span>
-                      <span style={{ fontSize: '14px', fontWeight: '800', color: '#8b5cf6' }}>{p.confidence}%</span>
-                    </div>
-                    <div style={{ width: '100%', height: '8px', background: '#e0e7ff', borderRadius: '10px', overflow: 'hidden' }}>
-                      <div style={{ width: `${p.confidence}%`, height: '100%', background: 'linear-gradient(90deg, #8b5cf6, #ec4899)', borderRadius: '10px', transition: 'width 1s' }}></div>
-                    </div>
-                  </div>
-                  <div style={{ padding: '16px', background: 'white', borderRadius: '10px', border: '1px solid #e0e7ff' }}>
-                    <p style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', marginBottom: '6px' }}>Recommended Action:</p>
-                    <p style={{ fontSize: '13px', color: '#1e293b', lineHeight: '1.6', margin: 0 }}>{p.recommendation}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Info */}
-          <div className="card" style={{ background: 'linear-gradient(135deg, #1e293b, #0f172a)', color: 'white' }}>
-            <h3 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px' }}>AI Technology for Social Impact</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '24px' }}>
-              <div>
-                <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#10b981', marginBottom: '12px' }}>Machine Learning Models</h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.9)', lineHeight: '1.8' }}>
-                  <li>• Deep neural networks trained on 50+ years historical data</li>
-                  <li>• Real-time satellite imagery analysis (NASA/NOAA)</li>
-                  <li>• Advanced weather pattern recognition algorithms</li>
-                  <li>• AI-powered vulnerability assessment systems</li>
-                  <li>• 9 comprehensive predictive analytics graphs</li>
-                </ul>
-              </div>
-              <div>
-                <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#3b82f6', marginBottom: '12px' }}>Data Sources & Security</h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.9)', lineHeight: '1.8' }}>
-                  <li>• Encrypted meteorological department feeds</li>
-                  <li>• 127 active IoT sensor networks across regions</li>
-                  <li>• Real-time satellite remote sensing data</li>
-                  <li>• Privacy-protected demographic information</li>
-                  <li>• Continuous model auditing & bias detection</li>
-                </ul>
-              </div>
-            </div>
-            <div style={{ padding: '20px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px' }}>
-              <p style={{ fontSize: '13px', lineHeight: '1.8', margin: 0, color: 'rgba(255,255,255,0.95)' }}>
-                <strong style={{ color: '#fbbf24' }}>Responsible AI Commitment:</strong> All predictions reviewed by disaster management experts. Personal data encrypted and used solely for public safety. Models regularly audited for bias and accuracy. Our mission: Protect lives through ethical, transparent AI deployment.
-              </p>
+            <div className="header-actions">
+              <button className={`disaster-btn ${showGraphs ? 'btn-purple' : 'btn-blue'}`} onClick={handleShowGraphs}>
+                {showGraphs ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showGraphs ? 'Hide Graphs' : 'Show Graphs'}
+              </button>
+              <button className={`disaster-btn ${notificationsEnabled ? 'btn-green' : 'btn-gray'}`} onClick={() => { setNotificationsEnabled(!notificationsEnabled); if (!notificationsEnabled && 'Notification' in window) Notification.requestPermission(); }}>
+                <Bell size={18} />
+                {notificationsEnabled ? 'ON' : 'OFF'}
+              </button>
+              <button className="disaster-btn" onClick={handleRefresh} disabled={refreshing}>
+                <RefreshCw size={18} className={refreshing ? 'spin-animation' : ''} />
+                {refreshing ? 'Refreshing...' : 'Refresh'}
+              </button>
+              <button className="disaster-btn" onClick={downloadReport}>
+                <Download size={18} />
+                Download
+              </button>
+              <button className="disaster-btn btn-blue" onClick={() => setIsFullscreen(!isFullscreen)}>
+                {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Early Warning System */}
+        <div className="disaster-card early-warning-banner p-24">
+          <div className="flex-between flex-wrap gap-24">
+            <div className="flex-center gap-16">
+              <Shield size={48} className="float-icon" />
+              <div>
+                <h2 className="disaster-title white-text m-0">Early Warning System</h2>
+                <p className="m-0 white-text opacity-9">Status: {earlyWarningSystem.status?.toUpperCase() || 'ACTIVE'}</p>
+              </div>
+            </div>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <Activity size={24} className="m-auto mb-8" />
+                <p className="stat-value">{earlyWarningSystem.sensors || 127}</p>
+                <p className="stat-label">Sensors</p>
+              </div>
+              <div className="stat-item">
+                <Radio size={24} className="m-auto mb-8" />
+                <p className="stat-value">{earlyWarningSystem.coverage || 92}%</p>
+                <p className="stat-label">Coverage</p>
+              </div>
+              <div className="stat-item">
+                <Zap size={24} className="m-auto mb-8" />
+                <p className="stat-value">{earlyWarningSystem.alertsSent || 45}</p>
+                <p className="stat-label">Alerts</p>
+              </div>
+              <div className="stat-item">
+                <Clock size={24} className="m-auto mb-8" />
+                <p className="stat-value small">{earlyWarningSystem.responseTime || '12 min'}</p>
+                <p className="stat-label">Response</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 9 Predictive Graphs */}
+        {showGraphs && (
+          <div className="mb-24">
+            <h2 className="disaster-title flex-center gap-12">
+              <BarChart3 size={32} className="blue-text" />
+              Historical Data & AI Predictions (Overview)
+            </h2>
+
+            <div className="grid-large">
+              {/* Graph 1: Flood History */}
+              <div className="graph-card">
+                <h3 className="graph-header">
+                  <Waves size={20} className="blue-text" />
+                  1. Flood Events Trend
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <ComposedChart data={floodHistoryData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="year" stroke="#64748b" tick={{ fontSize: 12 }} />
+                    <YAxis yAxisId="left" stroke="#64748b" tick={{ fontSize: 12 }} />
+                    <YAxis yAxisId="right" orientation="right" stroke="#64748b" tick={{ fontSize: 12 }} />
+                    <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
+                    <Legend />
+                    <Area yAxisId="left" type="monotone" dataKey="actual" fill="#3b82f680" stroke="#3b82f6" name="Historical" />
+                    <Line yAxisId="left" type="monotone" dataKey="predicted" stroke="#ef4444" strokeWidth={3} strokeDasharray="5 5" name="AI Prediction" />
+                    <Bar yAxisId="right" dataKey="severity" fill="#f59e0b" name="Severity" />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Graph 2: Temperature */}
+              <div className="graph-card">
+                <h3 className="graph-header">
+                  <Thermometer size={20} className="red-text" />
+                  2. Temperature Trend (°C)
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={temperatureTrendData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="month" stroke="#64748b" tick={{ fontSize: 12 }} />
+                    <YAxis stroke="#64748b" tick={{ fontSize: 12 }} />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="historical" stroke="#94a3b8" />
+                    <Line type="monotone" dataKey="current" stroke="#10b981" />
+                    <Line type="monotone" dataKey="predicted" stroke="#ef4444" strokeDasharray="5 5" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Graph 3: Rainfall */}
+              <div className="graph-card">
+                <h3 className="graph-header">
+                  <CloudRain size={20} className="blue-text" />
+                  3. Rainfall Pattern (mm)
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={rainfallPatternData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="month" stroke="#64748b" tick={{ fontSize: 12 }} />
+                    <YAxis stroke="#64748b" tick={{ fontSize: 12 }} />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="historical" fill="#3b82f6" />
+                    <Bar dataKey="predicted" fill="#8b5cf6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Graph 4: Risk Radar */}
+              <div className="graph-card">
+                <h3 className="graph-header">
+                  <TrendingUp size={20} className="red-text" />
+                  4. Multi-Hazard Risk Assessment
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <RadarChart data={riskAssessmentData}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="area" />
+                    <PolarRadiusAxis />
+                    <Radar name="Flood" dataKey="flood" stroke="#3b82f6" fill="#3b82f680" />
+                    <Radar name="Heat" dataKey="heat" stroke="#ef4444" fill="#ef444480" />
+                    <Radar name="Storm" dataKey="storm" stroke="#8b5cf6" fill="#8b5cf680" />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Active Warnings */}
+        <div className="mb-24">
+          <h2 className="disaster-title flex-center gap-12">
+            <AlertCircle size={32} style={{ color: '#ef4444' }} />
+            Active Warnings ({activeDisasters.length})
+          </h2>
+          {loading ? (
+            <div className="flex-center w-full p-24 justify-center">
+              <div className="disaster-loader"></div>
+            </div>
+          ) : (
+            <div className="grid-2">
+              {activeDisasters.map((d) => {
+                const Icon = d.icon;
+                return (
+                  <div key={d.id} className="disaster-card pos-relative overflow-hidden" style={{ background: d.severity === 'high' ? '#fef2f2' : '#fff7ed', borderLeft: `8px solid ${d.color}` }}>
+                    <div className="flex-between mb-16">
+                      <div className="icon-box w-56 h-56 br-12" style={{ background: `${d.color}15` }}>
+                        <Icon size={32} style={{ color: d.color }} className="float-icon" />
+                      </div>
+                      <span className="badge p-6-12 br-8 font-800 text-small" style={{ background: d.color, color: 'white' }}>{d.severity.toUpperCase()}</span>
+                    </div>
+                    <h3 className="text-24 font-800 m-0 mb-12">{d.type.charAt(0).toUpperCase() + d.type.slice(1)} Warning</h3>
+                    <div className="flex-col gap-8 mb-20 gray-text">
+                      <div className="flex-center gap-8"><MapPin size={16} /> {d.location}</div>
+                      <div className="flex-center gap-8"><Clock size={16} /> {d.timeframe}</div>
+                      <div className="flex-center gap-8"><Users size={16} /> {d.affectedPopulation.toLocaleString()} affected</div>
+                    </div>
+                    <div className="mb-20">
+                      <div className="flex-between mb-8">
+                        <span className="font-800">Probability</span>
+                        <span className="font-800" style={{ color: d.color }}>{d.probability}%</span>
+                      </div>
+                      <div className="progress-bg h-12">
+                        <div className="progress-bar h-full" style={{ width: `${d.probability}%`, background: d.color }}></div>
+                      </div>
+                    </div>
+                    <button className="disaster-btn w-full flex-center justify-center" style={{ background: d.color }} onClick={() => shareAlert(d)}>
+                      <Share2 size={18} /> Share Alert
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Vulnerability & Preparedness */}
+        <div className="grid-2-even mb-24">
+          <div className="disaster-card">
+            <h2 className="text-24 font-800 mb-20">Vulnerability Assessment</h2>
+            <div className="flex-col gap-16">
+              {vulnerabilityAreas.map((a, i) => (
+                <div key={i} className="vulnerability-item" style={{ background: `${a.color}10`, borderLeft: `4px solid ${a.color}` }}>
+                  <div className="flex-between mb-8">
+                    <h3 className="m-0 text-18 font-800">{a.area}</h3>
+                    <span className="badge p-4-8 br-6 text-10" style={{ background: a.color, color: 'white' }}>{a.risk}</span>
+                  </div>
+                  <div className="flex-between">
+                    <span className="gray-text">Population: {a.population.toLocaleString()}</span>
+                    <span className="font-800" style={{ color: a.color }}>{a.preparedness} Prepared</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="disaster-card">
+            <div className="flex-between mb-20">
+              <h2 className="text-24 font-800 m-0">Preparedness Checklist</h2>
+              <div className="badge p-8-16 br-12 font-800" style={{ background: '#dcfce7', color: '#16a34a' }}>{completionRate}%</div>
+            </div>
+            <div className="flex-col gap-12">
+              {preparednessChecklist.map(item => (
+                <div key={item.id} className="checklist-item" onClick={() => toggleChecklistItem(item.id)} style={{ background: item.completed ? '#f0fdf4' : '#f8fafc', borderColor: item.completed ? '#10b981' : '#e2e8f0' }}>
+                  <div className="flex-center gap-12">
+                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '2px solid #cbd5e1', background: item.completed ? '#10b981' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {item.completed && <CheckCircle size={14} color="white" />}
+                    </div>
+                    <span style={{ fontWeight: 600, color: item.completed ? '#16a34a' : '#1e293b' }}>{item.task}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Response Teams */}
+        <div className="disaster-card">
+          <h2 className="text-24 font-800 mb-20">Emergency Response Teams</h2>
+          <div className="grid-3">
+            {responseTeams.map((t, i) => (
+              <div key={i} className="response-team-card">
+                <div className="flex-between mb-16">
+                  <Shield size={32} color="#3b82f6" />
+                  <span className="badge p-4-8 br-6 text-10" style={{ background: t.status === 'Ready' ? '#10b981' : '#3b82f6', color: 'white' }}>{t.status}</span>
+                </div>
+                <h3 className="m-0 mb-8">{t.name}</h3>
+                <div className="gray-text text-14">
+                  <div>Personnel: <strong>{t.personnel}</strong></div>
+                  <div>Location: <strong>{t.location}</strong></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

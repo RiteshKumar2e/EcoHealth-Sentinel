@@ -1,0 +1,578 @@
+/* SmartIrrigation.css */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes wave {
+
+    0%,
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+
+    25% {
+        transform: translateY(-5px) translateX(5px);
+    }
+
+    50% {
+        transform: translateY(0) translateX(10px);
+    }
+
+    75% {
+        transform: translateY(5px) translateX(5px);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.irrigation-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0f2fe 0%, #a5f3fc 50%, #dbeafe 100%);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.irrigation-wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+.irrigation-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.8s ease-out forwards;
+}
+
+.float-animation {
+    animation: float 4s ease-in-out infinite;
+}
+
+.pulse-animation {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.wave-animation {
+    animation: wave 3s ease-in-out infinite;
+}
+
+.spin-animation {
+    animation: spin 1s linear infinite;
+}
+
+.card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.icon-hover {
+    transition: all 0.3s ease;
+}
+
+.icon-hover:hover {
+    transform: translateY(-2px) scale(1.1);
+    filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.4));
+}
+
+.button-hover {
+    transition: all 0.3s ease;
+}
+
+.button-hover:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.glow-effect {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.progress-bar-container {
+    width: 100%;
+    background: #e5e7eb;
+    border-radius: 9999px;
+    height: 8px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    transition: width 0.5s ease;
+    height: 100%;
+    border-radius: 9999px;
+}
+
+.shimmer-bg {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.3) 50%, rgba(59, 130, 246, 0.1) 100%);
+    background-size: 1000px 100%;
+    animation: shimmer 3s infinite;
+}
+
+.water-ripple {
+    position: relative;
+}
+
+.water-ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.3);
+    transform: translate(-50%, -50%);
+    animation: ripple 2s ease-out infinite;
+}
+
+.stagger-1 {
+    animation-delay: 0.1s;
+}
+
+.stagger-2 {
+    animation-delay: 0.2s;
+}
+
+.stagger-3 {
+    animation-delay: 0.3s;
+}
+
+.stagger-4 {
+    animation-delay: 0.4s;
+}
+
+.stagger-5 {
+    animation-delay: 0.5s;
+}
+
+.bg-circle-1 {
+    position: absolute;
+    top: 80px;
+    left: 40px;
+    width: 120px;
+    height: 120px;
+    background: rgba(147, 197, 253, 0.3);
+    border-radius: 50%;
+    animation: float 4s ease-in-out infinite;
+}
+
+.bg-circle-2 {
+    position: absolute;
+    bottom: 80px;
+    right: 40px;
+    width: 160px;
+    height: 160px;
+    background: rgba(165, 243, 252, 0.3);
+    border-radius: 50%;
+    animation: float 5s ease-in-out infinite 1s;
+}
+
+.badge {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-weight: 600;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 6px 12px;
+    border-radius: 9999px;
+}
+
+.mode-button {
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid #d1d5db;
+    background: white;
+    cursor: pointer;
+    text-align: left;
+}
+
+.mode-button.active {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #dbeafe, #e0f2fe);
+}
+
+.schedule-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: rgba(249, 250, 251, 0.8);
+    border-radius: 12px;
+}
+
+.impact-card {
+    background: linear-gradient(135deg, #16a34a, #2563eb, #06b6d4);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Urgency Cards */
+.urgency-high {
+    background: rgb(254, 226, 226);
+    color: rgb(185, 28, 28);
+    border-left: 4px solid rgb(239, 68, 68) !important;
+}
+
+.urgency-medium {
+    background: rgb(254, 243, 199);
+    color: rgb(180, 83, 9);
+    border-left: 4px solid rgb(249, 115, 22) !important;
+}
+
+.urgency-low {
+    background: rgb(220, 252, 231);
+    color: rgb(22, 163, 74);
+    border-left: 4px solid rgb(34, 197, 94) !important;
+}
+
+/* Header & Controls */
+.header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.header-title-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1f2937;
+    margin: 0;
+}
+
+.header-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.controls-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Indicators */
+.indicator-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.indicator-connected {
+    color: #16a34a;
+}
+
+.indicator-disconnected {
+    color: #dc2626;
+}
+
+.auto-refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.refresh-manual-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: white;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    padding: 8px 16px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.refresh-manual-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Metric Cards */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.metric-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.metric-label {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 4px 0;
+}
+
+.metric-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1f2937;
+    margin: 0;
+}
+
+.metric-subtext {
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 4px 0 0 0;
+}
+
+.metric-positive {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+/* AI Recommendation */
+.rec-title {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rec-text {
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.rec-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.action-btn-primary {
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+}
+
+.action-btn-danger {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.action-btn-secondary {
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: 2px solid #3b82f6;
+    background: white;
+    color: #3b82f6;
+    cursor: pointer;
+}
+
+.no-irrigation-msg {
+    font-size: 14px;
+    color: #16a34a;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+/* Sidebar Widgets */
+.weather-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.weather-forecast-box {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #1e40af;
+}
+
+.impact-row {
+    margin-bottom: 16px;
+}
+
+.impact-value {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+}
+
+.impact-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.feature-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.feature-item {
+    font-size: 14px;
+    color: #374151;
+    display: flex;
+    align-items: start;
+    gap: 8px;
+}
+
+.main-content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.left-panel {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+@media (max-width: 1024px) {
+    .left-panel {
+        grid-column: span 1;
+    }
+}

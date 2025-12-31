@@ -1,0 +1,314 @@
+/* Settings.css */
+
+@keyframes slideInFromTop {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.settings-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 50%, #fce7f3 100%);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* Floating Orbs */
+.settings-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    mix-blend-mode: multiply;
+    animation: pulse 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.orb-1 {
+    top: 80px;
+    left: 40px;
+    width: 288px;
+    height: 288px;
+    background: #d8b4fe;
+}
+
+.orb-2 {
+    top: 160px;
+    right: 40px;
+    width: 288px;
+    height: 288px;
+    background: #93c5fd;
+    animation-delay: 2s;
+}
+
+.orb-3 {
+    bottom: -32px;
+    left: 80px;
+    width: 288px;
+    height: 288px;
+    background: #fbcfe8;
+    animation-delay: 4s;
+}
+
+.settings-max-width {
+    max-width: 896px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+/* Glass Card */
+.settings-glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+    box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.15), 0 15px 15px -5px rgba(0, 0, 0, 0.06);
+}
+
+.hover-scale-sm:hover {
+    transform: scale(1.02);
+}
+
+/* Header */
+.settings-header-icon-box {
+    padding: 12px;
+    background: linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%);
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease;
+}
+
+.settings-header-icon-box:hover {
+    transform: rotate(180deg);
+}
+
+.settings-page-title {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    background: linear-gradient(to right, #2563eb, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 0;
+}
+
+/* Typography */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 0;
+}
+
+.section-icon-box {
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-gradient {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Forms */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.settings-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.settings-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.settings-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Buttons */
+.settings-btn-primary {
+    padding: 12px 32px;
+    background: linear-gradient(to right, #2563eb, #4f46e5);
+    color: white;
+    border-radius: 12px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+/* Toggles */
+.notification-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: linear-gradient(to right, #f9fafb, #f3f4f6);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.notification-row:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+}
+
+.toggle-switch {
+    position: relative;
+    width: 56px;
+    height: 28px;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.toggle-active {
+    background: linear-gradient(to right, #4ade80, #16a34a);
+}
+
+.toggle-inactive {
+    background: #d1d5db;
+}
+
+.toggle-knob {
+    position: absolute;
+    top: 2px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.knob-active {
+    transform: translateX(28px);
+}
+
+.knob-inactive {
+    transform: translateX(2px);
+}
+
+/* Security Badge */
+.security-badge {
+    margin-top: 24px;
+    padding: 20px;
+    background: linear-gradient(to right, #dbeafe, #e0e7ff);
+    border: 2px solid #93c5fd;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #1e40af;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.security-badge:hover {
+    transform: scale(1.02);
+}
+
+/* Toast */
+.settings-toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 50;
+    animation: slideInFromTop 0.3s ease-out;
+}
+
+.toast-inner {
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.3s ease;
+}
+
+.toast-inner:hover {
+    transform: scale(1.05);
+}
+
+.sc-bg-pulse {
+    animation: pulse 4s ease-in-out infinite;
+}
+
+.sc-spin-slow {
+    animation: spin 8s linear infinite;
+}

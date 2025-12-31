@@ -1,0 +1,401 @@
+@keyframes floatUp {
+    from {
+        transform: translateY(6px);
+    }
+
+    to {
+        transform: translateY(-6px);
+    }
+}
+
+.fertilizer-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0fdf4 0%, #f7fee7 100%);
+    padding: 24px;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    color: #0f172a;
+}
+
+.fertilizer-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.header-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+    padding: 20px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-content {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.header-icon {
+    width: 36px;
+    height: 36px;
+    color: #059669;
+}
+
+.header-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.header-subtitle {
+    margin: 0;
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.eco-badge {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #059669;
+    font-size: 13px;
+}
+
+.badge-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.two-cols-responsive {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.06);
+    padding: 18px;
+}
+
+.card-tilt {
+    transform-style: preserve-3d;
+    transition: transform 300ms ease, box-shadow 300ms ease;
+    margin-bottom: 14px;
+}
+
+.card-heading {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.soil-inputs {
+    display: grid;
+    gap: 12px;
+}
+
+.control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.input-label {
+    display: block;
+    font-size: 13px;
+    color: #334155;
+}
+
+.slider-input {
+    width: 100%;
+}
+
+.value-max {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.value-current {
+    font-weight: 700;
+}
+
+.crop-inputs {
+    display: grid;
+    gap: 10px;
+}
+
+.crop-label {
+    display: block;
+    font-size: 13px;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.select-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e6eef6;
+}
+
+.btn-generate {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #059669, #047857);
+    color: #fff;
+    border: none;
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+.error-text {
+    color: #b91c1c;
+    font-size: 13px;
+}
+
+.results-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gauges-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gauges-wrapper {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.ph-display {
+    text-align: right;
+}
+
+.ph-label {
+    font-size: 12px;
+    color: #475569;
+}
+
+.ph-value {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.live-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    background: #ecfccb;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 8px;
+}
+
+.results-box {
+    min-height: 220px;
+}
+
+.results-heading {
+    margin-top: 0;
+}
+
+.synthetic-list {
+    display: grid;
+    gap: 10px;
+}
+
+.synthetic-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.item-urea {
+    background: #f0f9ff;
+}
+
+.item-dap {
+    background: #faf5ff;
+}
+
+.item-mop {
+    background: #ecfdf5;
+}
+
+.item-name {
+    font-weight: 700;
+}
+
+.item-qty {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid #eef2ff;
+}
+
+.cost-label {
+    font-weight: 800;
+}
+
+.cost-value {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.divider {
+    margin: 12px 0;
+    border: none;
+    border-top: 1px solid #eef2ff;
+}
+
+.organic-list {
+    display: grid;
+    gap: 8px;
+}
+
+.organic-item {
+    padding: 10px;
+    border-radius: 8px;
+    background: #f0fdf4;
+    border-left: 4px solid #059669;
+}
+
+.organic-empty {
+    padding: 10px;
+    border-radius: 8px;
+    background: #ecfeff;
+}
+
+.loading-state {
+    text-align: center;
+    padding-top: 28px;
+    color: #94a3b8;
+}
+
+.pulse-icon {
+    width: 48px;
+    height: 48px;
+    animation: floatUp 3s ease-in-out infinite alternate;
+}
+
+.loading-text {
+    margin-top: 8px;
+}
+
+.loading-sub {
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.env-card {
+    background: linear-gradient(90deg, #059669, #0369a1);
+    border-radius: 12px;
+    color: #fff;
+    padding: 18px;
+}
+
+.env-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.env-heading {
+    font-weight: 800;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.env-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.env-desc {
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.env-visual {
+    width: 90px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.visual-box {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(10deg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.benefits-footer {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 10px;
+    background: rgba(239, 250, 255, 0.7);
+    border: 1px solid #e6f0ff;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.benefit-title {
+    font-weight: 800;
+}
+
+.benefit-desc {
+    font-size: 13px;
+    color: #475569;
+}
+
+.gauge-svg-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.gauge-text-val {
+    font-family: inherit;
+}
+
+@media (max-width: 768px) {
+
+    .two-cols-responsive,
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+}

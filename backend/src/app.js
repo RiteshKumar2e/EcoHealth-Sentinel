@@ -12,6 +12,7 @@ import healthcareRoutes from './routes/healthcareRoutes.js';
 import chatbotRoutes from './routes/chatbotRoutes.js';
 import agriRoutes from './routes/agriRoutes.js';
 import envRoutes from './routes/envRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/api/healthcare', healthcareRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/agriculture', agriRoutes);
 app.use('/api/environment', envRoutes);
+app.use('/api/auth', authRoutes);
 
 // Keep legacy routes compatibility if needed
 app.use('/api', emergencyRoutes); // Default to emergency for root /api calls if any

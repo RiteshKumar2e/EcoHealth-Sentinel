@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Cloud, Sun, CloudRain, Wind, Droplets, AlertTriangle, TrendingUp, Shield, Loader, MapPin } from 'lucide-react';
+import { Cloud, Sun, CloudRain, Wind, Droplets, AlertTriangle, TrendingUp, Shield, Loader, MapPin, X } from 'lucide-react';
+import './WeatherForecast.css';
 
 const WeatherForecast = () => {
   const [currentWeather, setCurrentWeather] = useState(null);
@@ -49,29 +50,6 @@ const WeatherForecast = () => {
   const API_KEY = 'bd5e378503939ddaee76f12ad7a97608'; // Get free key from https://openweathermap.org/api
   const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-  const [hoverStates, setHoverStates] = useState({
-    header: false,
-    currentWeather: false,
-    forecastCards: {},
-    alertCards: {},
-    recCards: {},
-    aiFeatures: {},
-    closeButton: false,
-    submitButton: false,
-    locationButton: false
-  });
-
-  const setHover = (key, value, index = null) => {
-    if (index !== null) {
-      setHoverStates(prev => ({
-        ...prev,
-        [key]: { ...prev[key], [index]: value }
-      }));
-    } else {
-      setHoverStates(prev => ({ ...prev, [key]: value }));
-    }
-  };
-
   // Fetch weather data from OpenWeatherMap API
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -83,7 +61,7 @@ const WeatherForecast = () => {
         const currentResponse = await fetch(
           `${BASE_URL}/weather?q=${location.city},${location.state},${location.country}&units=metric&appid=${API_KEY}`
         );
-        
+
         if (!currentResponse.ok) {
           throw new Error('Failed to fetch weather data. Please check your API key.');
         }
@@ -156,10 +134,11 @@ const WeatherForecast = () => {
     };
 
     fetchWeatherData();
-    
+
     // Refresh data every 10 minutes
     const interval = setInterval(fetchWeatherData, 600000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
   // Convert OpenWeather condition to local icon type
@@ -328,378 +307,32 @@ const WeatherForecast = () => {
     }
   };
 
-  const styles = {
-    container: {
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #eff6ff 0%, #e0f2fe 50%, #e0f2fe 100%)',
-      padding: '24px',
-      position: 'relative',
-      overflow: 'hidden'
-    },
-    backgroundBlob1: {
-      position: 'absolute',
-      top: '50px',
-      left: '-100px',
-      width: '400px',
-      height: '400px',
-      background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
-      borderRadius: '50%',
-      filter: 'blur(60px)',
-      animation: 'float 8s ease-in-out infinite',
-      pointerEvents: 'none'
-    },
-    backgroundBlob2: {
-      position: 'absolute',
-      top: '200px',
-      right: '-150px',
-      width: '500px',
-      height: '500px',
-      background: 'radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%)',
-      borderRadius: '50%',
-      filter: 'blur(60px)',
-      animation: 'float 10s ease-in-out infinite 2s',
-      pointerEvents: 'none'
-    },
-    backgroundBlob3: {
-      position: 'absolute',
-      bottom: '-100px',
-      left: '40%',
-      width: '450px',
-      height: '450px',
-      background: 'radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%)',
-      borderRadius: '50%',
-      filter: 'blur(60px)',
-      animation: 'float 12s ease-in-out infinite 4s',
-      pointerEvents: 'none'
-    },
-    maxWidth: {
-      maxWidth: '1280px',
-      margin: '0 auto',
-      position: 'relative',
-      zIndex: 10
-    },
-    card: {
-      background: 'rgba(255, 255, 255, 0.85)',
-      backdropFilter: 'blur(20px)',
-      borderRadius: '16px',
-      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-      padding: '24px',
-      marginBottom: '24px',
-      border: '1px solid rgba(255, 255, 255, 0.3)',
-      transition: 'all 0.3s ease'
-    },
-    cardHover: {
-      transform: 'translateY(-4px)',
-      boxShadow: '0 25px 35px -5px rgba(0, 0, 0, 0.15), 0 15px 15px -5px rgba(0, 0, 0, 0.06)'
-    },
-    header: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      flexWrap: 'wrap',
-      gap: '16px'
-    },
-    headerLeft: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px'
-    },
-    iconGlow: {
-      position: 'relative',
-      display: 'inline-block'
-    },
-    iconGlowInner: {
-      position: 'absolute',
-      inset: 0,
-      borderRadius: '50%',
-      filter: 'blur(15px)',
-      opacity: 0.5,
-      animation: 'pulse 2s ease-in-out infinite'
-    },
-    title: {
-      fontSize: '30px',
-      fontWeight: 'bold',
-      background: 'linear-gradient(to right, #2563eb, #06b6d4)',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      backgroundClip: 'text',
-      margin: 0
-    },
-    subtitle: {
-      fontSize: '14px',
-      color: '#4b5563',
-      marginTop: '4px'
-    },
-    currentWeatherCard: {
-      background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
-      borderRadius: '16px',
-      boxShadow: '0 25px 50px -12px rgba(59, 130, 246, 0.4)',
-      padding: '32px',
-      marginBottom: '24px',
-      color: 'white',
-      position: 'relative',
-      overflow: 'hidden',
-      transition: 'all 0.3s ease'
-    },
-    currentWeatherHover: {
-      transform: 'scale(1.02)',
-      boxShadow: '0 30px 60px -15px rgba(59, 130, 246, 0.5)'
-    },
-    currentWeatherOverlay: {
-      position: 'absolute',
-      inset: 0,
-      background: 'radial-gradient(circle at top right, rgba(255, 255, 255, 0.1) 0%, transparent 60%)',
-      pointerEvents: 'none'
-    },
-    grid: {
-      display: 'grid',
-      gap: '16px'
-    },
-    tempDisplay: {
-      fontSize: '60px',
-      fontWeight: 'bold',
-      margin: 0
-    },
-    statCard: {
-      background: 'rgba(255, 255, 255, 0.2)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '12px',
-      padding: '16px',
-      transition: 'all 0.3s ease'
-    },
-    statCardHover: {
-      background: 'rgba(255, 255, 255, 0.3)',
-      transform: 'scale(1.05)'
-    },
-    alertCard: {
-      borderLeftWidth: '4px',
-      borderLeftStyle: 'solid',
-      borderRadius: '8px',
-      padding: '16px',
-      marginBottom: '12px',
-      transition: 'all 0.3s ease',
-      border: '1px solid transparent'
-    },
-    alertCardHover: {
-      transform: 'translateX(4px)',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-    },
-    forecastCard: {
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      padding: '16px',
-      textAlign: 'center',
-      transition: 'all 0.3s ease',
-      background: 'white'
-    },
-    forecastCardHover: {
-      borderColor: '#3b82f6',
-      transform: 'translateY(-4px)',
-      boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.2)'
-    },
-    recCard: {
-      border: '1px solid #e5e7eb',
-      borderRadius: '12px',
-      padding: '20px',
-      transition: 'all 0.3s ease',
-      background: 'white'
-    },
-    recCardHover: {
-      boxShadow: '0 10px 20px -5px rgba(0, 0, 0, 0.1)',
-      transform: 'translateY(-4px)',
-      borderColor: '#10b981'
-    },
-    iconBox: {
-      width: '40px',
-      height: '40px',
-      background: '#dcfce7',
-      borderRadius: '8px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    aiFeatureCard: {
-      background: 'linear-gradient(135deg, #059669 0%, #2563eb 100%)',
-      borderRadius: '16px',
-      boxShadow: '0 25px 50px -12px rgba(5, 150, 105, 0.4)',
-      padding: '24px',
-      color: 'white',
-      position: 'relative',
-      overflow: 'hidden'
-    },
-    aiStatCard: {
-      background: 'rgba(255, 255, 255, 0.2)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '12px',
-      padding: '16px',
-      transition: 'all 0.3s ease'
-    },
-    aiStatCardHover: {
-      background: 'rgba(255, 255, 255, 0.3)',
-      transform: 'scale(1.05)'
-    },
-    loadingContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '400px',
-      gap: '16px'
-    },
-    errorContainer: {
-      background: '#fef2f2',
-      border: '2px solid #ef4444',
-      borderRadius: '12px',
-      padding: '24px',
-      textAlign: 'center'
-    },
-    modal: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      padding: '20px'
-    },
-    modalContent: {
-      background: 'white',
-      borderRadius: '16px',
-      padding: '32px',
-      maxWidth: '500px',
-      width: '100%',
-      maxHeight: '90vh',
-      overflow: 'auto',
-      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-    },
-    modalHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: '24px'
-    },
-    modalTitle: {
-      fontSize: '24px',
-      fontWeight: 'bold',
-      color: '#1f2937',
-      margin: 0
-    },
-    closeButton: {
-      background: 'transparent',
-      border: 'none',
-      fontSize: '24px',
-      cursor: 'pointer',
-      color: '#6b7280',
-      padding: '4px',
-      width: '32px',
-      height: '32px',
-      borderRadius: '8px',
-      transition: 'all 0.2s ease'
-    },
-    closeButtonHover: {
-      background: '#f3f4f6',
-      color: '#1f2937'
-    },
-    formGroup: {
-      marginBottom: '20px'
-    },
-    label: {
-      display: 'block',
-      fontSize: '14px',
-      fontWeight: 600,
-      color: '#374151',
-      marginBottom: '8px'
-    },
-    select: {
-      width: '100%',
-      padding: '12px',
-      border: '2px solid #e5e7eb',
-      borderRadius: '8px',
-      fontSize: '14px',
-      color: '#1f2937',
-      background: 'white',
-      cursor: 'pointer',
-      transition: 'border-color 0.2s ease'
-    },
-    selectFocus: {
-      borderColor: '#3b82f6',
-      outline: 'none'
-    },
-    button: {
-      width: '100%',
-      padding: '12px 24px',
-      borderRadius: '8px',
-      fontSize: '16px',
-      fontWeight: 600,
-      border: 'none',
-      cursor: 'pointer',
-      transition: 'all 0.3s ease'
-    },
-    buttonPrimary: {
-      background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
-      color: 'white',
-      boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.3)'
-    },
-    buttonPrimaryHover: {
-      boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.4)',
-      transform: 'translateY(-2px)'
-    },
-    locationButton: {
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '6px',
-      padding: '8px 16px',
-      background: 'rgba(59, 130, 246, 0.1)',
-      border: '1px solid rgba(59, 130, 246, 0.3)',
-      borderRadius: '8px',
-      fontSize: '14px',
-      color: '#2563eb',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      fontWeight: 500
-    },
-    locationButtonHover: {
-      background: 'rgba(59, 130, 246, 0.2)',
-      borderColor: '#3b82f6'
-    }
-  };
-
   if (loading) {
     return (
-      <>
-        <style>{`
-          @keyframes spin { to { transform: rotate(360deg); } }
-          @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
-        `}</style>
-        <div style={styles.container}>
-          <div style={styles.maxWidth}>
-            <div style={styles.card}>
-              <div style={styles.loadingContainer}>
-                <Loader style={{ width: '48px', height: '48px', color: '#3b82f6', animation: 'spin 1s linear infinite' }} />
-                <p style={{ fontSize: '18px', color: '#374151', fontWeight: 600 }}>Loading weather data...</p>
-                <p style={{ fontSize: '14px', color: '#6b7280' }}>Fetching real-time data from OpenWeatherMap</p>
-              </div>
+      <div className="weather-container">
+        <div className="weather-content-wrapper">
+          <div className="weather-card">
+            <div className="loading-box">
+              <Loader className="spin-anim" style={{ width: '48px', height: '48px', color: '#3b82f6' }} />
+              <p style={{ fontSize: '18px', color: '#374151', fontWeight: 600 }}>Loading weather data...</p>
+              <p style={{ fontSize: '14px', color: '#6b7280' }}>Fetching real-time data from OpenWeatherMap</p>
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <div style={styles.container}>
-        <div style={styles.maxWidth}>
-          <div style={styles.errorContainer}>
+      <div className="weather-container">
+        <div className="weather-content-wrapper">
+          <div className="error-box">
             <AlertTriangle style={{ width: '48px', height: '48px', color: '#ef4444', margin: '0 auto 16px' }} />
             <h2 style={{ color: '#991b1b', marginBottom: '8px' }}>Error Loading Weather Data</h2>
             <p style={{ color: '#7f1d1d', marginBottom: '16px' }}>{error}</p>
             <p style={{ fontSize: '14px', color: '#991b1b' }}>
-              Please ensure you have a valid OpenWeatherMap API key.<br/>
+              Please ensure you have a valid OpenWeatherMap API key.<br />
               Get a free key at: <a href="https://openweathermap.org/api" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>openweathermap.org/api</a>
             </p>
           </div>
@@ -709,405 +342,264 @@ const WeatherForecast = () => {
   }
 
   return (
-    <>
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 0.8; }
-        }
-        @keyframes float {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -30px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        @media (min-width: 768px) {
-          .grid-md-2 { grid-template-columns: repeat(2, 1fr); }
-          .grid-md-3 { grid-template-columns: repeat(3, 1fr); }
-          .grid-md-4 { grid-template-columns: repeat(4, 1fr); }
-          .grid-md-7 { grid-template-columns: repeat(7, 1fr); }
-        }
-      `}</style>
-      
-      <div style={styles.container}>
-        <div style={styles.backgroundBlob1}></div>
-        <div style={styles.backgroundBlob2}></div>
-        <div style={styles.backgroundBlob3}></div>
+    <div className="weather-container">
+      {/* Background Blobs */}
+      <div className="weather-blob blob-1"></div>
+      <div className="weather-blob blob-2"></div>
+      <div className="weather-blob blob-3"></div>
 
-        <div style={styles.maxWidth}>
-          {/* Header */}
-          <div 
-            style={{
-              ...styles.card,
-              ...(hoverStates.header ? styles.cardHover : {})
-            }}
-            onMouseEnter={() => setHover('header', true)}
-            onMouseLeave={() => setHover('header', false)}
-          >
-            <div style={styles.header}>
-              <div style={styles.headerLeft}>
-                <div style={styles.iconGlow}>
-                  <div style={{...styles.iconGlowInner, background: '#3b82f6'}}></div>
-                  <Cloud style={{ width: '32px', height: '32px', color: '#2563eb', position: 'relative', zIndex: 10 }} />
-                </div>
-                <div>
-                  <h1 style={styles.title}>Weather Forecast</h1>
-                  <p style={styles.subtitle}>AI-powered predictions for smart farming</p>
-                </div>
+      <div className="weather-content-wrapper">
+        {/* Header */}
+        <div className="weather-card">
+          <div className="weather-header">
+            <div className="header-left">
+              <div className="icon-glow-container">
+                <div className="icon-glow-inner"></div>
+                <Cloud style={{ width: '32px', height: '32px', color: '#2563eb', position: 'relative', zIndex: 10 }} />
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <button
-                  style={{
-                    ...styles.locationButton,
-                    ...(hoverStates.locationButton ? styles.locationButtonHover : {})
-                  }}
-                  onMouseEnter={() => setHover('locationButton', true)}
-                  onMouseLeave={() => setHover('locationButton', false)}
-                  onClick={() => setShowLocationModal(true)}
-                >
-                  <MapPin style={{ width: '14px', height: '14px' }} />
-                  {location.city}, {location.state}
-                </button>
-                <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>Updated just now</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Current Weather */}
-          {currentWeather && (
-            <div 
-              style={{
-                ...styles.currentWeatherCard,
-                ...(hoverStates.currentWeather ? styles.currentWeatherHover : {})
-              }}
-              onMouseEnter={() => setHover('currentWeather', true)}
-              onMouseLeave={() => setHover('currentWeather', false)}
-            >
-              <div style={styles.currentWeatherOverlay}></div>
-              <div style={{ ...styles.grid, position: 'relative', zIndex: 10 }} className="grid-md-2">
-                <div>
-                  <p style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Current Weather</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-                    <div style={styles.tempDisplay}>{currentWeather.temperature}°C</div>
-                    <Cloud style={{ width: '64px', height: '64px' }} />
-                  </div>
-                  <p style={{ fontSize: '20px', marginBottom: '8px', margin: 0, textTransform: 'capitalize' }}>{currentWeather.description}</p>
-                  <p style={{ fontSize: '14px', opacity: 0.9, margin: 0 }}>Feels like {currentWeather.feelsLike}°C</p>
-                </div>
-
-                <div style={{ ...styles.grid, gridTemplateColumns: 'repeat(2, 1fr)' }}>
-                  <div 
-                    style={{
-                      ...styles.statCard,
-                      ...(hoverStates.stat1 ? styles.statCardHover : {})
-                    }}
-                    onMouseEnter={() => setHover('stat1', true)}
-                    onMouseLeave={() => setHover('stat1', false)}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <Droplets style={{ width: '20px', height: '20px' }} />
-                      <span style={{ fontSize: '14px' }}>Humidity</span>
-                    </div>
-                    <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{currentWeather.humidity}%</p>
-                  </div>
-                  <div 
-                    style={{
-                      ...styles.statCard,
-                      ...(hoverStates.stat2 ? styles.statCardHover : {})
-                    }}
-                    onMouseEnter={() => setHover('stat2', true)}
-                    onMouseLeave={() => setHover('stat2', false)}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <Wind style={{ width: '20px', height: '20px' }} />
-                      <span style={{ fontSize: '14px' }}>Wind Speed</span>
-                    </div>
-                    <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{currentWeather.windSpeed} km/h</p>
-                  </div>
-                  <div 
-                    style={{
-                      ...styles.statCard,
-                      ...(hoverStates.stat3 ? styles.statCardHover : {})
-                    }}
-                    onMouseEnter={() => setHover('stat3', true)}
-                    onMouseLeave={() => setHover('stat3', false)}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <CloudRain style={{ width: '20px', height: '20px' }} />
-                      <span style={{ fontSize: '14px' }}>Rainfall</span>
-                    </div>
-                    <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{currentWeather.rainfall} mm</p>
-                  </div>
-                  <div 
-                    style={{
-                      ...styles.statCard,
-                      ...(hoverStates.stat4 ? styles.statCardHover : {})
-                    }}
-                    onMouseEnter={() => setHover('stat4', true)}
-                    onMouseLeave={() => setHover('stat4', false)}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <Sun style={{ width: '20px', height: '20px' }} />
-                      <span style={{ fontSize: '14px' }}>Pressure</span>
-                    </div>
-                    <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{currentWeather.pressure} hPa</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Weather Alerts */}
-          {alerts.length > 0 && (
-            <div style={styles.card}>
-              <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <AlertTriangle style={{ width: '20px', height: '20px', color: '#ea580c' }} />
-                Weather Alerts & AI Advisories
-              </h2>
               <div>
-                {alerts.map((alert, idx) => (
-                  <div 
-                    key={idx} 
-                    style={{
-                      ...styles.alertCard,
-                      borderLeftColor: getAlertColor(alert.severity).border,
-                      background: getAlertColor(alert.severity).bg,
-                      ...(hoverStates.alertCards[idx] ? styles.alertCardHover : {})
-                    }}
-                    onMouseEnter={() => setHover('alertCards', true, idx)}
-                    onMouseLeave={() => setHover('alertCards', false, idx)}
-                  >
-                    <h3 style={{ fontWeight: 600, color: '#1f2937', marginBottom: '4px' }}>{alert.title}</h3>
-                    <p style={{ fontSize: '14px', color: '#374151', marginBottom: '8px' }}>{alert.message}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af' }}>Action: {alert.action}</span>
-                      <span style={{ fontSize: '12px', padding: '4px 12px', background: 'white', borderRadius: '9999px', textTransform: 'capitalize', color: '#374151' }}>{alert.severity} Priority</span>
-                    </div>
-                  </div>
-                ))}
+                <h1 className="weather-title">Weather Forecast</h1>
+                <p className="weather-subtitle">AI-powered predictions for smart farming</p>
               </div>
             </div>
-          )}
-
-          {/* 7-Day Forecast */}
-          {forecast.length > 0 && (
-            <div style={styles.card}>
-              <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>7-Day Forecast</h2>
-              <div style={{ ...styles.grid, gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))' }}>
-                {forecast.map((day, idx) => (
-                  <div 
-                    key={idx} 
-                    style={{
-                      ...styles.forecastCard,
-                      ...(hoverStates.forecastCards[idx] ? styles.forecastCardHover : {})
-                    }}
-                    onMouseEnter={() => setHover('forecastCards', true, idx)}
-                    onMouseLeave={() => setHover('forecastCards', false, idx)}
-                  >
-                    <p style={{ fontSize: '14px', fontWeight: 600, color: '#1f2937', marginBottom: '4px' }}>{day.day}</p>
-                    <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '12px' }}>{day.date}</p>
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-                      {getWeatherIcon(day.icon)}
-                    </div>
-                    <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: '8px 0' }}>{day.temp}°C</p>
-                    <p style={{ fontSize: '12px', color: '#4b5563', marginBottom: '8px', textTransform: 'capitalize' }}>{day.description}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '12px', color: '#3b82f6' }}>
-                      <CloudRain style={{ width: '12px', height: '12px' }} />
-                      <span>{day.rain}%</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div style={{ textAlign: 'right' }}>
+              <button
+                className="location-btn"
+                onClick={() => setShowLocationModal(true)}
+              >
+                <MapPin style={{ width: '14px', height: '14px' }} />
+                {location.city}, {location.state}
+              </button>
+              <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>Updated just now</p>
             </div>
-          )}
+          </div>
+        </div>
 
-          {/* AI Recommendations */}
-          {recommendations.length > 0 && (
-            <div style={styles.card}>
-              <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Shield style={{ width: '20px', height: '20px', color: '#059669' }} />
-                AI Farming Recommendations
-              </h2>
-              <div style={{ ...styles.grid }} className="grid-md-3">
-                {recommendations.map((rec, idx) => {
-                  const Icon = rec.icon;
-                  return (
-                    <div 
-                      key={idx} 
-                      style={{
-                        ...styles.recCard,
-                        ...(hoverStates.recCards[idx] ? styles.recCardHover : {})
-                      }}
-                      onMouseEnter={() => setHover('recCards', true, idx)}
-                      onMouseLeave={() => setHover('recCards', false, idx)}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                        <div style={styles.iconBox}>
-                          <Icon style={{ width: '20px', height: '20px', color: '#059669' }} />
-                        </div>
-                        <h3 style={{ fontWeight: 600, color: '#1f2937', margin: 0 }}>{rec.title}</h3>
-                      </div>
-                      <p style={{ fontSize: '14px', color: '#374151', marginBottom: '8px' }}>{rec.advice}</p>
-                      <p style={{ fontSize: '12px', color: '#15803d', fontWeight: 600 }}>💡 {rec.impact}</p>
-                    </div>
-                  );
-                })}
+        {/* Current Weather */}
+        {currentWeather && (
+          <div className="current-weather-main">
+            <div className="current-overlay"></div>
+            <div className="weather-grid grid-md-2" style={{ position: 'relative', zIndex: 10 }}>
+              <div>
+                <p style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>Current Weather</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                  <div className="temp-display">{currentWeather.temperature}°C</div>
+                  <Cloud style={{ width: '64px', height: '64px' }} />
+                </div>
+                <p style={{ fontSize: '20px', marginBottom: '8px', margin: 0, textTransform: 'capitalize' }}>{currentWeather.description}</p>
+                <p style={{ fontSize: '14px', opacity: 0.9, margin: 0 }}>Feels like {currentWeather.feelsLike}°C</p>
               </div>
-            </div>
-          )}
 
-          {/* AI Features */}
-          <div style={styles.aiFeatureCard}>
-            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.1) 0%, transparent 60%)', pointerEvents: 'none' }}></div>
-            <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px', position: 'relative', zIndex: 10 }}>AI Weather Intelligence</h3>
-            <div style={{ ...styles.grid, position: 'relative', zIndex: 10 }} className="grid-md-4">
-              <div 
-                style={{
-                  ...styles.aiStatCard,
-                  ...(hoverStates.aiFeatures[0] ? styles.aiStatCardHover : {})
-                }}
-                onMouseEnter={() => setHover('aiFeatures', true, 0)}
-                onMouseLeave={() => setHover('aiFeatures', false, 0)}
-              >
-                <p style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '4px', margin: 0 }}>95%</p>
-                <p style={{ fontSize: '14px', margin: 0 }}>Forecast Accuracy</p>
-              </div>
-              <div 
-                style={{
-                  ...styles.aiStatCard,
-                  ...(hoverStates.aiFeatures[1] ? styles.aiStatCardHover : {})
-                }}
-                onMouseEnter={() => setHover('aiFeatures', true, 1)}
-                onMouseLeave={() => setHover('aiFeatures', false, 1)}
-              >
-                <p style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '4px', margin: 0 }}>7 Days</p>
-                <p style={{ fontSize: '14px', margin: 0 }}>Advance Prediction</p>
-              </div>
-              <div 
-                style={{
-                  ...styles.aiStatCard,
-                  ...(hoverStates.aiFeatures[2] ? styles.aiStatCardHover : {})
-                }}
-                onMouseEnter={() => setHover('aiFeatures', true, 2)}
-                onMouseLeave={() => setHover('aiFeatures', false, 2)}
-              >
-                <p style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '4px', margin: 0 }}>Real-time</p>
-                <p style={{ fontSize: '14px', margin: 0 }}>Data Updates</p>
-              </div>
-              <div 
-                style={{
-                  ...styles.aiStatCard,
-                  ...(hoverStates.aiFeatures[3] ? styles.aiStatCardHover : {})
-                }}
-                onMouseEnter={() => setHover('aiFeatures', true, 3)}
-                onMouseLeave={() => setHover('aiFeatures', false, 3)}
-              >
-                <p style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '4px', margin: 0 }}>Live API</p>
-                <p style={{ fontSize: '14px', margin: 0 }}>OpenWeatherMap</p>
+              <div className="weather-grid weather-grid-2">
+                <div className="weather-stat-card">
+                  <p style={{ fontSize: '12px', opacity: 0.8, marginBottom: '4px' }}>Humidity</p>
+                  <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{currentWeather.humidity}%</p>
+                  <Droplets style={{ width: '16px', height: '16px', opacity: 0.8 }} />
+                </div>
+                <div className="weather-stat-card">
+                  <p style={{ fontSize: '12px', opacity: 0.8, marginBottom: '4px' }}>Wind</p>
+                  <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{currentWeather.windSpeed} km/h</p>
+                  <Wind style={{ width: '16px', height: '16px', opacity: 0.8 }} />
+                </div>
+                <div className="weather-stat-card">
+                  <p style={{ fontSize: '12px', opacity: 0.8, marginBottom: '4px' }}>Visibility</p>
+                  <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{currentWeather.visibility} km</p>
+                  <Sun style={{ width: '16px', height: '16px', opacity: 0.8 }} />
+                </div>
+                <div className="weather-stat-card">
+                  <p style={{ fontSize: '12px', opacity: 0.8, marginBottom: '4px' }}>Rainfall</p>
+                  <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{currentWeather.rainfall} mm</p>
+                  <CloudRain style={{ width: '16px', height: '16px', opacity: 0.8 }} />
+                </div>
               </div>
             </div>
           </div>
+        )}
 
-          {/* API Info */}
-          <div style={{ ...styles.card, background: 'rgba(239, 246, 255, 0.85)', border: '2px solid #93c5fd' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1e40af', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Cloud style={{ width: '20px', height: '20px' }} />
-              Real-Time Weather Data
-            </h3>
-            <p style={{ fontSize: '14px', color: '#1e3a8a', marginBottom: '8px' }}>
-              This app fetches live weather data from <strong>OpenWeatherMap API</strong> and updates automatically every 10 minutes.
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '13px', color: '#1e40af' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span>✓</span> Current weather conditions
+        <div className="weather-grid grid-md-3">
+          {/* 7-Day Forecast */}
+          <div className="weather-card" style={{ gridColumn: 'span 2' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px', color: '#1f2937' }}>
+              7-Day Forecast
+            </h2>
+            <div className="weather-grid grid-md-7" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))' }}>
+              {forecast.map((day, index) => (
+                <div key={index} className="forecast-card">
+                  <p style={{ fontWeight: 600, color: '#374151', fontSize: '14px', marginBottom: '8px' }}>{day.day}</p>
+                  <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '8px' }}>{day.date}</p>
+                  <div style={{ margin: '8px 0' }}>
+                    {getWeatherIcon(day.icon)}
+                  </div>
+                  <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', margin: '4px 0' }}>{day.temp}°</p>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '12px', color: '#4b5563' }}>
+                    <Droplets style={{ width: '10px', height: '10px' }} />
+                    {day.rain}%
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Smart Alerts */}
+          <div className="weather-card">
+            <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#1f2937' }}>
+              <AlertTriangle style={{ width: '20px', height: '20px', color: '#ea580c' }} />
+              Smart Alerts
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {alerts.map((alert, index) => {
+                const colors = getAlertColor(alert.severity);
+                return (
+                  <div
+                    key={index}
+                    className="alert-card"
+                    style={{
+                      borderColor: colors.border,
+                      backgroundColor: colors.bg
+                    }}
+                  >
+                    <p style={{ fontWeight: 'bold', color: '#374151', fontSize: '14px', marginBottom: '4px' }}>
+                      {alert.title}
+                    </p>
+                    <p style={{ fontSize: '13px', color: '#4b5563', marginBottom: '8px', lineHeight: '1.4' }}>
+                      {alert.message}
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ea580c', fontWeight: 600 }}>
+                      <TrendingUp style={{ width: '12px', height: '12px' }} />
+                      Action: {alert.action}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* AI Recommendations */}
+        <div style={{ marginTop: '24px' }} className="weather-card">
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: '#1f2937' }}>
+            <Shield style={{ width: '24px', height: '24px', color: '#059669' }} />
+            AI Farming Recommendations
+          </h2>
+          <div className="weather-grid grid-md-3">
+            {recommendations.map((rec, index) => (
+              <div
+                key={index}
+                className="rec-card"
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                  <div className="icon-box-rec">
+                    <rec.icon style={{ width: '20px', height: '20px', color: '#059669' }} />
+                  </div>
+                  <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>
+                    {rec.title}
+                  </h3>
+                </div>
+                <p style={{ fontSize: '14px', color: '#4b5563', marginBottom: '12px', lineHeight: '1.5' }}>
+                  {rec.advice}
+                </p>
+                <div style={{ fontSize: '13px', color: '#059669', fontWeight: 600, paddingTop: '12px', borderTop: '1px solid #f3f4f6' }}>
+                  Impact: {rec.impact}
+                </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span>✓</span> 7-day forecast
+            ))}
+          </div>
+        </div>
+
+        {/* AI Features Highlight */}
+        <div className="ai-feature-card">
+          <div className="weather-grid grid-md-2" style={{ alignItems: 'center' }}>
+            <div>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', margin: 0 }}>
+                Powered by Advanced AI
+              </h2>
+              <p style={{ opacity: 0.9, lineHeight: '1.6', marginBottom: '24px' }}>
+                Our system analyzes satellite data, historical patterns, and real-time sensors to provide hyper-local forecasts tailored for your farm.
+              </p>
+              <button style={{
+                padding: '10px 20px',
+                background: 'white',
+                color: '#2563eb',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                border: 'none',
+                cursor: 'pointer'
+              }}>
+                Learn More
+              </button>
+            </div>
+            <div className="weather-grid weather-grid-2">
+              <div className="ai-stat-card">
+                <p style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '4px', margin: 0 }}>94%</p>
+                <p style={{ fontSize: '12px', opacity: 0.9 }}>Forecast Accuracy</p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span>✓</span> AI-powered recommendations
+              <div className="ai-stat-card">
+                <p style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '4px', margin: 0 }}>24/7</p>
+                <p style={{ fontSize: '12px', opacity: 0.9 }}>Real-time Monitoring</p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span>✓</span> Smart farming alerts
+              <div className="ai-stat-card">
+                <p style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '4px', margin: 0 }}>15+</p>
+                <p style={{ fontSize: '12px', opacity: 0.9 }}>Data Parameters</p>
+              </div>
+              <div className="ai-stat-card">
+                <p style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '4px', margin: 0 }}>30%</p>
+                <p style={{ fontSize: '12px', opacity: 0.9 }}>Water Saved</p>
               </div>
             </div>
-            <p style={{ fontSize: '12px', color: '#3b82f6', marginTop: '12px', padding: '8px', background: 'white', borderRadius: '6px' }}>
-              <strong>Note:</strong> Replace 'YOUR_OPENWEATHERMAP_API_KEY' in the code with your actual API key from <a href="https://openweathermap.org/api" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>openweathermap.org</a>
-            </p>
           </div>
         </div>
       </div>
 
-      {/* Location Selection Modal */}
+      {/* Location Modal */}
       {showLocationModal && (
-        <div style={styles.modal} onClick={() => setShowLocationModal(false)}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <h2 style={styles.modalTitle}>Select Location</h2>
+        <div className="location-modal-overlay">
+          <div className="location-modal-content">
+            <div className="modal-header">
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>Select Location</h2>
               <button
-                style={{
-                  ...styles.closeButton,
-                  ...(hoverStates.closeButton ? styles.closeButtonHover : {})
-                }}
-                onMouseEnter={() => setHover('closeButton', true)}
-                onMouseLeave={() => setHover('closeButton', false)}
+                className="modal-close-btn"
                 onClick={() => setShowLocationModal(false)}
               >
-                ×
+                <X style={{ width: '24px', height: '24px' }} />
               </button>
             </div>
 
-            <form onSubmit={(e) => { e.preventDefault(); handleLocationChange(); }}>
-              <div style={styles.formGroup}>
-                <label style={styles.label}>State</label>
-                <select
-                  style={styles.select}
-                  value={tempLocation.state}
-                  onChange={handleStateChange}
-                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                >
-                  {Object.keys(indianStates).sort().map(state => (
-                    <option key={state} value={state}>{state}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>City</label>
-                <select
-                  style={styles.select}
-                  value={tempLocation.city}
-                  onChange={(e) => setTempLocation({ ...tempLocation, city: e.target.value })}
-                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                >
-                  {indianStates[tempLocation.state]?.map(city => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                style={{
-                  ...styles.button,
-                  ...styles.buttonPrimary,
-                  ...(hoverStates.submitButton ? styles.buttonPrimaryHover : {})
-                }}
-                onMouseEnter={() => setHover('submitButton', true)}
-                onMouseLeave={() => setHover('submitButton', false)}
+            <div className="form-group">
+              <label className="form-label">State</label>
+              <select
+                className="form-select"
+                value={tempLocation.state}
+                onChange={handleStateChange}
               >
-                Update Location
-              </button>
-            </form>
-
-            <div style={{ marginTop: '16px', padding: '12px', background: '#eff6ff', borderRadius: '8px', fontSize: '13px', color: '#1e40af' }}>
-              <strong>Note:</strong> Weather data will be fetched for the selected location from OpenWeatherMap API.
+                {Object.keys(indianStates).map(state => (
+                  <option key={state} value={state}>{state}</option>
+                ))}
+              </select>
             </div>
+
+            <div className="form-group">
+              <label className="form-label">City / District</label>
+              <select
+                className="form-select"
+                value={tempLocation.city}
+                onChange={(e) => setTempLocation({ ...tempLocation, city: e.target.value })}
+              >
+                {indianStates[tempLocation.state]?.map(city => (
+                  <option key={city} value={city}>{city}</option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              className="modal-submit-btn"
+              onClick={handleLocationChange}
+            >
+              Update Location
+            </button>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

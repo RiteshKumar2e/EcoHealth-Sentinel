@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, 
+import {
+  BarChart, Bar, PieChart, Pie, Cell, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ComposedChart, RadialBarChart, RadialBar
 } from 'recharts';
-import { 
-  Trash2, Recycle, TrendingUp, MapPin, AlertCircle, Leaf, Package, 
-  MessageCircle, Send, X, Loader, RefreshCw, Plus, Eye, Edit, Bell, 
+import {
+  Trash2, Recycle, TrendingUp, MapPin, AlertCircle, Leaf, Package,
+  MessageCircle, Send, X, Loader, RefreshCw, Plus, Eye, Edit, Bell,
   Sparkles, Zap, Calendar, Filter, Search, Download, Share2, Target,
   Activity, DollarSign, Users, Truck, Clock, Award, TrendingDown,
   BarChart3, PieChart as PieChartIcon, Map, Shield, ArrowUp, Settings,
   FileText, Upload, Database, Wifi, WifiOff, CheckCircle, XCircle,
   AlertTriangle, Info, ChevronUp, Menu, Maximize2, Minimize2
 } from 'lucide-react';
+import './WasteManagement.css';
 
 export default function WasteManagement() {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -32,11 +33,9 @@ export default function WasteManagement() {
   const [connectionStatus, setConnectionStatus] = useState('connected');
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  
+
   const ws = useRef(null);
   const chatEndRef = useRef(null);
- // const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-  //const WS_URL = process.env.REACT_APP_WS_URL || 'ws://localhost:5000';
 
   // Comprehensive Data
   const wasteStats = [
@@ -131,13 +130,13 @@ export default function WasteManagement() {
   // Initialize
   useEffect(() => {
     initializeWebSocket();
-    
+
     const handleScroll = () => {
       setShowScrollTop(window.pageYOffset > 300);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       if (ws.current) ws.current.close();
@@ -157,6 +156,7 @@ export default function WasteManagement() {
   }, [autoRefresh]);
 
   const initializeWebSocket = () => {
+    const WS_URL = 'ws://localhost:5000';
     try {
       ws.current = new WebSocket(WS_URL);
       ws.current.onopen = () => {
@@ -191,7 +191,7 @@ export default function WasteManagement() {
     setTimeout(() => {
       let botResponse = '';
       const lowerQuery = query.toLowerCase();
-      
+
       if (lowerQuery.includes('kpi') || lowerQuery.includes('metric')) {
         botResponse = '📊 **Key Performance Indicators:**\n\n✅ Collection Rate: 95.2% (+2.3%)\n⏱️ Response Time: 42 min (-8 min)\n💰 Cost per Ton: $124 (-$12)\n♻️ Recycling: 84% (+6%)\n⭐ Satisfaction: 4.7/5\n\nAll metrics trending positively!';
       } else if (lowerQuery.includes('predict')) {
@@ -201,7 +201,7 @@ export default function WasteManagement() {
       } else {
         botResponse = '👋 I can help with:\n\n📊 KPI Analysis\n🔮 Predictions\n🚛 Route Optimization\n♻️ Recycling Stats\n💰 Cost Analysis\n🗺️ Zone Performance\n\nWhat would you like to explore?';
       }
-      
+
       setChatMessages(prev => [...prev, { text: botResponse, sender: 'bot', timestamp: new Date().toISOString() }]);
       setChatLoading(false);
     }, 1000);
@@ -245,552 +245,43 @@ export default function WasteManagement() {
 
   return (
     <>
-      <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          font-family: 'Inter', sans-serif;
-        }
-
-        html {
-          scroll-behavior: smooth;
-        }
-
-        .waste-container {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 50%, #e0f2fe 100%);
-          padding: 1rem;
-        }
-
-        .top-navbar {
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 1rem;
-          padding: 1rem 1.5rem;
-          margin-bottom: 1.5rem;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 1rem;
-        }
-
-        .nav-left {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-
-        .menu-btn {
-          padding: 0.625rem;
-          background: #f3f4f6;
-          border: none;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .menu-btn:hover {
-          background: #e5e7eb;
-          transform: scale(1.05);
-        }
-
-        .nav-title {
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #111827;
-        }
-
-        .connection-status {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-          font-size: 0.875rem;
-          font-weight: 600;
-        }
-
-        .status-connected {
-          background: #d1fae5;
-          color: #059669;
-        }
-
-        .status-disconnected {
-          background: #fee2e2;
-          color: #dc2626;
-        }
-
-        .nav-actions {
-          display: flex;
-          gap: 0.5rem;
-          align-items: center;
-        }
-
-        .icon-btn {
-          padding: 0.625rem;
-          background: #f3f4f6;
-          border: none;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .icon-btn:hover {
-          background: #e5e7eb;
-          transform: scale(1.05);
-        }
-
-        .icon-btn-primary {
-          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-          color: white;
-        }
-
-        .icon-btn-primary:hover {
-          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-        }
-
-        .notification-btn {
-          position: relative;
-          padding: 0.625rem;
-          background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-          border: none;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
-        }
-
-        .notification-badge {
-          position: absolute;
-          top: -6px;
-          right: -6px;
-          background: #ef4444;
-          color: white;
-          font-size: 0.7rem;
-          min-width: 20px;
-          height: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          font-weight: 700;
-          animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-        }
-
-        .container-wrapper {
-          max-width: 1800px;
-          margin: 0 auto;
-        }
-
-        .kpi-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 1rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .kpi-card {
-          background: white;
-          border-radius: 1rem;
-          padding: 1.25rem;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-          transition: all 0.3s ease;
-          border-top: 3px solid;
-        }
-
-        .kpi-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .kpi-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 0.5rem;
-        }
-
-        .kpi-icon {
-          width: 36px;
-          height: 36px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 0.5rem;
-          opacity: 0.2;
-        }
-
-        .kpi-label {
-          font-size: 0.75rem;
-          color: #6b7280;
-          margin-bottom: 0.25rem;
-        }
-
-        .kpi-value {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #111827;
-        }
-
-        .kpi-change {
-          font-size: 0.75rem;
-          font-weight: 600;
-          padding: 0.25rem 0.5rem;
-          border-radius: 0.5rem;
-          margin-top: 0.5rem;
-          display: inline-block;
-        }
-
-        .kpi-change.positive {
-          background: #d1fae5;
-          color: #059669;
-        }
-
-        .kpi-change.negative {
-          background: #fee2e2;
-          color: #dc2626;
-        }
-
-        .charts-grid {
-          display: grid;
-          grid-template-columns: repeat(12, 1fr);
-          gap: 1.5rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .chart-card {
-          background: white;
-          border-radius: 1.5rem;
-          padding: 1.5rem;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-          transition: all 0.3s ease;
-        }
-
-        .chart-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .chart-title {
-          font-size: 1.125rem;
-          font-weight: 700;
-          color: #111827;
-          margin-bottom: 1rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .col-span-8 { grid-column: span 8; }
-        .col-span-6 { grid-column: span 6; }
-        .col-span-4 { grid-column: span 4; }
-        .col-span-12 { grid-column: span 12; }
-
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-          background: white;
-          border-radius: 1rem;
-          padding: 1.5rem;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-          border-left: 4px solid;
-          transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-          transform: translateY(-5px) scale(1.02);
-          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .collection-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 1rem;
-        }
-
-        .collection-card {
-          background: white;
-          border-radius: 1rem;
-          padding: 1.25rem;
-          border: 2px solid #e5e7eb;
-          transition: all 0.3s ease;
-        }
-
-        .collection-card:hover {
-          border-color: #3b82f6;
-          transform: translateY(-3px);
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .priority-urgent { border-left: 4px solid #ef4444; }
-        .priority-high { border-left: 4px solid #f59e0b; }
-        .priority-medium { border-left: 4px solid #3b82f6; }
-        .priority-low { border-left: 4px solid #10b981; }
-
-        .schedule-btn {
-          width: 100%;
-          margin-top: 1rem;
-          padding: 0.625rem;
-          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-          color: white;
-          font-weight: 600;
-          border: none;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-        }
-
-        .schedule-btn:hover {
-          transform: scale(1.02);
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-        }
-
-        .scroll-to-top {
-          position: fixed;
-          bottom: 6rem;
-          right: 2rem;
-          padding: 1rem;
-          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-          color: white;
-          border: none;
-          border-radius: 50%;
-          cursor: pointer;
-          box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5);
-          z-index: 40;
-          transition: all 0.3s ease;
-          animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .scroll-to-top:hover {
-          transform: scale(1.1);
-          box-shadow: 0 12px 48px rgba(16, 185, 129, 0.7);
-        }
-
-        .chat-fab {
-          position: fixed;
-          bottom: 2rem;
-          right: 2rem;
-          padding: 1.25rem;
-          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-          color: white;
-          border: none;
-          border-radius: 50%;
-          cursor: pointer;
-          box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5);
-          z-index: 40;
-          animation: float 3s infinite ease-in-out;
-        }
-
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-
-        .chat-fab:hover {
-          transform: scale(1.1);
-        }
-
-        .chat-panel {
-          position: fixed;
-          bottom: 2rem;
-          right: 8rem;
-          width: 450px;
-          height: 700px;
-          background: white;
-          border-radius: 1.5rem;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-          display: flex;
-          flex-direction: column;
-          z-index: 50;
-          animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-          from { transform: translateX(400px); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-
-        .chat-header {
-          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-          padding: 1.25rem;
-          border-radius: 1.5rem 1.5rem 0 0;
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .chat-messages {
-          flex: 1;
-          overflow-y: auto;
-          padding: 1.5rem;
-          background: #f9fafb;
-        }
-
-        .chat-message {
-          margin-bottom: 1rem;
-          animation: messageSlide 0.3s ease;
-        }
-
-        @keyframes messageSlide {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-
-        .message-bubble-user {
-          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-          color: white;
-          padding: 1rem 1.25rem;
-          border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
-          margin-left: auto;
-          max-width: 80%;
-          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .message-bubble-bot {
-          background: white;
-          color: #111827;
-          padding: 1rem 1.25rem;
-          border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
-          max-width: 80%;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          border: 1px solid #e5e7eb;
-          white-space: pre-wrap;
-        }
-
-        .chat-input-wrapper {
-          padding: 1rem;
-          border-top: 1px solid #e5e7eb;
-        }
-
-        .chat-input-container {
-          display: flex;
-          gap: 0.75rem;
-        }
-
-        .chat-input {
-          flex: 1;
-          padding: 0.875rem 1rem;
-          border: 2px solid #e5e7eb;
-          border-radius: 0.75rem;
-          outline: none;
-          transition: all 0.3s ease;
-        }
-
-        .chat-input:focus {
-          border-color: #10b981;
-          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .loading-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(255, 255, 255, 0.9);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 100;
-        }
-
-        .spinner {
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-
-        ::-webkit-scrollbar {
-          width: 12px;
-          height: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-          background: #f1f5f9;
-          border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, #10b981, #059669);
-          border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(180deg, #059669, #047857);
-        }
-
-        @media (max-width: 1024px) {
-          .col-span-8, .col-span-6, .col-span-4 { grid-column: span 12; }
-          .chat-panel { right: 1rem; width: calc(100% - 2rem); }
-        }
-      `}</style>
-
       <div className="waste-container">
         {/* Top Navigation */}
         <div className="top-navbar">
           <div className="nav-left">
             <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
-              <Menu style={{ width: '20px', height: '20px' }} />
+              <Menu className="icon-20" />
             </button>
             <h2 className="nav-title">🌍 Smart Waste Management</h2>
           </div>
-          
+
           <div className={`connection-status ${connectionStatus === 'connected' ? 'status-connected' : 'status-disconnected'}`}>
-            {connectionStatus === 'connected' ? <Wifi style={{ width: '16px', height: '16px' }} /> : <WifiOff style={{ width: '16px', height: '16px' }} />}
+            {connectionStatus === 'connected' ? <Wifi className="icon-16" /> : <WifiOff className="icon-16" />}
             {connectionStatus === 'connected' ? 'Connected' : 'Disconnected'}
           </div>
 
           <div className="nav-actions">
             <button className="icon-btn" onClick={() => setAutoRefresh(!autoRefresh)} title={autoRefresh ? 'Disable Auto-refresh' : 'Enable Auto-refresh'}>
-              <RefreshCw style={{ width: '18px', height: '18px', animation: autoRefresh ? 'spin 2s linear infinite' : 'none' }} />
+              <RefreshCw className={`icon-18 ${autoRefresh ? 'animate-spin-2s' : ''}`} />
             </button>
             <button className="icon-btn" onClick={toggleFullscreen}>
-              {isFullscreen ? <Minimize2 style={{ width: '18px', height: '18px' }} /> : <Maximize2 style={{ width: '18px', height: '18px' }} />}
+              {isFullscreen ? <Minimize2 className="icon-18" /> : <Maximize2 className="icon-18" />}
             </button>
             <button className="icon-btn" onClick={exportData}>
-              <Download style={{ width: '18px', height: '18px' }} />
+              <Download className="icon-18" />
             </button>
             <button className="notification-btn" onClick={() => setNotifications(0)}>
-              <Bell style={{ width: '18px', height: '18px', color: 'white' }} />
+              <Bell className="icon-18 text-white" />
               {notifications > 0 && <span className="notification-badge">{notifications}</span>}
             </button>
             <button className="icon-btn icon-btn-primary" onClick={optimizeRoute} disabled={loading}>
-              {loading ? <Loader className="spinner" style={{ width: '18px', height: '18px' }} /> : <Zap style={{ width: '18px', height: '18px' }} />}
+              {loading ? <Loader className="spinner icon-18" /> : <Zap className="icon-18" />}
             </button>
           </div>
         </div>
 
         <div className="container-wrapper">
-          
+
           {/* KPI Metrics */}
           <div className="kpi-grid">
             {kpiMetrics.map((kpi, index) => {
@@ -799,8 +290,8 @@ export default function WasteManagement() {
               return (
                 <div key={index} className="kpi-card" style={{ borderTopColor: kpi.color }}>
                   <div className="kpi-header">
-                    <div className="kpi-icon" style={{ backgroundColor: kpi.color }}>
-                      <Icon style={{ width: '20px', height: '20px', color: kpi.color }} />
+                    <div className="kpi-icon-container" style={{ backgroundColor: kpi.color + '20' }}>
+                      <Icon className="icon-20" style={{ color: kpi.color }} />
                     </div>
                   </div>
                   <p className="kpi-label">{kpi.label}</p>
@@ -816,13 +307,13 @@ export default function WasteManagement() {
           {/* Main Charts */}
           <div className="charts-grid">
             <div className="chart-card col-span-8">
-              <h3 className="chart-title"><TrendingUp style={{ width: '24px', height: '24px', color: '#10b981' }} />Monthly Collection Trends</h3>
+              <h3 className="chart-title"><TrendingUp className="icon-24 text-green-500" />Monthly Collection Trends</h3>
               <ResponsiveContainer width="100%" height={320}>
                 <AreaChart data={monthlyTrends}>
                   <defs>
                     <linearGradient id="colorRecyclable" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -838,7 +329,7 @@ export default function WasteManagement() {
             </div>
 
             <div className="chart-card col-span-4">
-              <h3 className="chart-title"><Target style={{ width: '24px', height: '24px', color: '#3b82f6' }} />Performance Metrics</h3>
+              <h3 className="chart-title"><Target className="icon-24 text-blue-500" />Performance Metrics</h3>
               <ResponsiveContainer width="100%" height={320}>
                 <RadarChart data={performanceMetrics}>
                   <PolarGrid stroke="#e5e7eb" />
@@ -851,7 +342,7 @@ export default function WasteManagement() {
             </div>
 
             <div className="chart-card col-span-6">
-              <h3 className="chart-title"><DollarSign style={{ width: '24px', height: '24px', color: '#f59e0b' }} />Cost vs Revenue</h3>
+              <h3 className="chart-title"><DollarSign className="icon-24 text-orange-500" />Cost vs Revenue</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <ComposedChart data={monthlyTrends}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -867,7 +358,7 @@ export default function WasteManagement() {
             </div>
 
             <div className="chart-card col-span-6">
-              <h3 className="chart-title"><PieChartIcon style={{ width: '24px', height: '24px', color: '#8b5cf6' }} />Waste Composition</h3>
+              <h3 className="chart-title"><PieChartIcon className="icon-24 text-purple-500" />Waste Composition</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -889,13 +380,13 @@ export default function WasteManagement() {
             </div>
 
             <div className="chart-card col-span-12">
-              <h3 className="chart-title"><Clock style={{ width: '24px', height: '24px', color: '#ec4899' }} />Hourly Collection Pattern</h3>
+              <h3 className="chart-title"><Clock className="icon-24 text-pink-500" />Hourly Collection Pattern</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={hourlyData}>
                   <defs>
                     <linearGradient id="hourlyGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ec4899" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#ec4899" stopOpacity={0.1}/>
+                      <stop offset="5%" stopColor="#ec4899" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#ec4899" stopOpacity={0.1} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -914,35 +405,35 @@ export default function WasteManagement() {
               const Icon = stat.icon;
               return (
                 <div key={index} className="stat-card" style={{ borderLeftColor: stat.color }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <div style={{ padding: '0.75rem', backgroundColor: stat.color + '20', borderRadius: '0.75rem' }}>
-                      <Icon style={{ width: '32px', height: '32px', color: stat.color }} />
+                  <div className="flex-between mb-16">
+                    <div className="stat-icon-container" style={{ backgroundColor: stat.color + '20' }}>
+                      <Icon className="icon-32" style={{ color: stat.color }} />
                     </div>
-                    <span style={{ padding: '0.375rem 0.75rem', backgroundColor: stat.color, color: 'white', borderRadius: '9999px', fontSize: '0.875rem', fontWeight: 700 }}>
+                    <span className="badge badge-white" style={{ backgroundColor: stat.color }}>
                       {stat.percentage}%
                     </span>
                   </div>
-                  <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '0.75rem' }}>{stat.type} Waste</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.875rem', marginBottom: '1rem' }}>
+                  <h3 className="text-lg font-bold mb-12">{stat.type} Waste</h3>
+                  <div className="grid-2 gap-8 text-sm mb-16">
                     <div>
-                      <p style={{ color: '#6b7280' }}>Collected</p>
-                      <p style={{ fontWeight: 600 }}>{stat.collected} kg</p>
+                      <p className="text-gray-500">Collected</p>
+                      <p className="font-semibold">{stat.collected} kg</p>
                     </div>
                     <div>
-                      <p style={{ color: '#6b7280' }}>Processed</p>
-                      <p style={{ fontWeight: 600 }}>{stat.recycled} kg</p>
+                      <p className="text-gray-500">Processed</p>
+                      <p className="font-semibold">{stat.recycled} kg</p>
                     </div>
                     <div>
-                      <p style={{ color: '#6b7280' }}>Cost</p>
-                      <p style={{ fontWeight: 600 }}>{stat.cost}</p>
+                      <p className="text-gray-500">Cost</p>
+                      <p className="font-semibold">{stat.cost}</p>
                     </div>
                     <div>
-                      <p style={{ color: '#6b7280' }}>Revenue</p>
-                      <p style={{ fontWeight: 600, color: '#10b981' }}>{stat.revenue}</p>
+                      <p className="text-gray-500">Revenue</p>
+                      <p className="font-semibold text-green-500">{stat.revenue}</p>
                     </div>
                   </div>
-                  <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '9999px', overflow: 'hidden' }}>
-                    <div style={{ width: `${stat.percentage}%`, height: '100%', backgroundColor: stat.color, borderRadius: '9999px', transition: 'width 0.5s ease' }} />
+                  <div className="progress-container">
+                    <div className="progress-fill" style={{ width: `${stat.percentage}%`, backgroundColor: stat.color }} />
                   </div>
                 </div>
               );
@@ -951,42 +442,33 @@ export default function WasteManagement() {
 
           {/* Collection Points */}
           <div className="chart-card">
-            <h3 className="chart-title"><MapPin style={{ width: '24px', height: '24px', color: '#3b82f6' }} />Collection Points Status</h3>
+            <h3 className="chart-title"><MapPin className="icon-24 text-blue-500" />Collection Points Status</h3>
             <div className="collection-grid">
               {collectionPoints.map((point) => (
                 <div key={point.id} className={`collection-card priority-${point.priority}`}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <MapPin style={{ width: '24px', height: '24px', color: '#3b82f6' }} />
-                    <span style={{
-                      padding: '0.25rem 0.75rem',
-                      borderRadius: '9999px',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      color: 'white',
-                      backgroundColor: point.status === 'operational' ? '#10b981' : point.status === 'full' ? '#ef4444' : '#f59e0b'
-                    }}>
+                  <div className="flex-between mb-16">
+                    <MapPin className="icon-24 text-blue-500" />
+                    <span className="badge badge-white" style={{ backgroundColor: point.status === 'operational' ? '#10b981' : point.status === 'full' ? '#ef4444' : '#f59e0b' }}>
                       {point.status.toUpperCase()}
                     </span>
                   </div>
-                  <h4 style={{ fontWeight: 700, marginBottom: '0.25rem' }}>{point.name}</h4>
-                  <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1rem' }}>{point.location}</p>
-                  <div style={{ marginBottom: '0.75rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
-                      <span style={{ color: '#6b7280' }}>Capacity</span>
-                      <span style={{ fontWeight: 600 }}>{point.capacity}%</span>
+                  <h4 className="font-bold mb-4">{point.name}</h4>
+                  <p className="text-sm text-gray-500 mb-16">{point.location}</p>
+                  <div className="mb-12">
+                    <div className="flex-between text-xs mb-8">
+                      <span className="text-gray-500">Capacity</span>
+                      <span className="font-semibold">{point.capacity}%</span>
                     </div>
-                    <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '9999px' }}>
-                      <div style={{
+                    <div className="progress-container">
+                      <div className="progress-fill" style={{
                         width: `${point.capacity}%`,
-                        height: '100%',
-                        backgroundColor: point.capacity > 80 ? '#ef4444' : point.capacity > 60 ? '#f59e0b' : '#10b981',
-                        borderRadius: '9999px'
+                        backgroundColor: point.capacity > 80 ? '#ef4444' : point.capacity > 60 ? '#f59e0b' : '#10b981'
                       }} />
                     </div>
                   </div>
-                  <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' }}>Last: {point.lastCollection}</p>
+                  <p className="text-xs text-gray-500 mb-8">Last: {point.lastCollection}</p>
                   <button className="schedule-btn" onClick={() => scheduleCollection(point.id)}>
-                    <Calendar style={{ width: '16px', height: '16px' }} />
+                    <Calendar className="icon-16" />
                     Schedule Collection
                   </button>
                 </div>
@@ -995,42 +477,30 @@ export default function WasteManagement() {
           </div>
 
           {/* Recycling Programs */}
-          <div className="chart-card" style={{ marginBottom: '1.5rem' }}>
-            <h3 className="chart-title"><Recycle style={{ width: '24px', height: '24px', color: '#059669' }} />Recycling Programs</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+          <div className="chart-card mb-24">
+            <h3 className="chart-title"><Recycle className="icon-24 text-green-500" />Recycling Programs</h3>
+            <div className="collection-grid">
               {recyclingPrograms.map((program, index) => (
-                <div key={index} style={{
-                  background: 'linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%)',
-                  borderRadius: '1rem',
-                  padding: '1.5rem',
-                  borderLeft: '4px solid #10b981'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <h4 style={{ fontWeight: 700 }}>{program.name}</h4>
-                    <span style={{
-                      padding: '0.375rem 0.75rem',
-                      borderRadius: '9999px',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      backgroundColor: program.status === 'Active' ? '#10b981' : '#f59e0b',
-                      color: 'white'
-                    }}>
+                <div key={index} className="program-card">
+                  <div className="flex-between mb-16">
+                    <h4 className="font-bold">{program.name}</h4>
+                    <span className="badge badge-white" style={{ backgroundColor: program.status === 'Active' ? '#10b981' : '#f59e0b' }}>
                       {program.status}
                     </span>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.875rem', marginBottom: '1rem' }}>
+                  <div className="grid-2 gap-16 text-sm mb-16">
                     <div>
-                      <p style={{ color: '#6b7280' }}>Processed</p>
-                      <p style={{ fontWeight: 600 }}>{program.processed.toLocaleString()} {program.unit}</p>
+                      <p className="text-gray-500">Processed</p>
+                      <p className="font-semibold">{program.processed.toLocaleString()} {program.unit}</p>
                     </div>
                     <div>
-                      <p style={{ color: '#6b7280' }}>Participants</p>
-                      <p style={{ fontWeight: 600 }}>{program.participants}</p>
+                      <p className="text-gray-500">Participants</p>
+                      <p className="font-semibold">{program.participants}</p>
                     </div>
                   </div>
-                  <div style={{ padding: '1rem', background: 'white', borderRadius: '0.5rem', border: '2px solid #10b981' }}>
-                    <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>Impact:</p>
-                    <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#10b981' }}>{program.impact}</p>
+                  <div className="p-16 bg-white br-8 border-2 border-green-500">
+                    <p className="text-xs text-gray-500">Impact:</p>
+                    <p className="text-sm font-semibold text-green-500">{program.impact}</p>
                   </div>
                 </div>
               ))}
@@ -1039,33 +509,14 @@ export default function WasteManagement() {
 
           {/* Tips */}
           <div className="chart-card">
-            <h3 className="chart-title"><Info style={{ width: '24px', height: '24px', color: '#6366f1' }} />Waste Reduction Tips</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+            <h3 className="chart-title"><Info className="icon-24 text-indigo-500" />Waste Reduction Tips</h3>
+            <div className="collection-grid">
               {tips.map((tip, index) => (
-                <div key={index} style={{
-                  background: 'linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%)',
-                  borderRadius: '0.75rem',
-                  padding: '1rem',
-                  borderLeft: '4px solid #10b981',
-                  display: 'flex',
-                  gap: '0.75rem'
-                }}>
-                  <span style={{
-                    background: '#10b981',
-                    color: 'white',
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.875rem',
-                    fontWeight: 700,
-                    flexShrink: 0
-                  }}>
+                <div key={index} className="tip-card">
+                  <span className="tip-number">
                     {index + 1}
                   </span>
-                  <p style={{ fontSize: '0.875rem', color: '#374151', lineHeight: 1.5 }}>{tip}</p>
+                  <p className="text-sm text-gray-700 line-height-1-5">{tip}</p>
                 </div>
               ))}
             </div>
@@ -1075,28 +526,28 @@ export default function WasteManagement() {
         {/* Scroll to Top */}
         {showScrollTop && (
           <button className="scroll-to-top" onClick={scrollToTop}>
-            <ArrowUp style={{ width: '24px', height: '24px' }} />
+            <ArrowUp className="icon-24" />
           </button>
         )}
 
         {/* Chat FAB */}
         <button onClick={() => setChatOpen(!chatOpen)} className="chat-fab">
-          <MessageCircle style={{ width: '28px', height: '28px' }} />
+          <MessageCircle className="icon-28" />
         </button>
 
         {/* Chat Panel */}
         {chatOpen && (
           <div className="chat-panel">
             <div className="chat-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <Sparkles style={{ width: '28px', height: '28px' }} />
+              <div className="flex-center gap-12">
+                <Sparkles className="icon-28" />
                 <div>
-                  <h3 style={{ fontWeight: 700 }}>Waste AI Assistant</h3>
-                  <p style={{ fontSize: '0.875rem', opacity: 0.9 }}>Online • Analytics</p>
+                  <h3 className="font-bold">Waste AI Assistant</h3>
+                  <p className="text-sm opacity-0-9">Online • Analytics</p>
                 </div>
               </div>
-              <button onClick={() => setChatOpen(false)} style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '0.5rem', color: 'white', cursor: 'pointer' }}>
-                <X style={{ width: '20px', height: '20px' }} />
+              <button onClick={() => setChatOpen(false)} className="p-8 bg-trans-white-2 border-none br-8 text-white cursor-pointer">
+                <X className="icon-20" />
               </button>
             </div>
 
@@ -1104,8 +555,8 @@ export default function WasteManagement() {
               {chatMessages.map((msg, index) => (
                 <div key={index} className="chat-message">
                   <div className={msg.sender === 'user' ? 'message-bubble-user' : 'message-bubble-bot'}>
-                    <p style={{ fontSize: '0.875rem', lineHeight: 1.6 }}>{msg.text}</p>
-                    <p style={{ fontSize: '0.75rem', opacity: 0.7, marginTop: '0.5rem' }}>
+                    <p className="text-sm line-height-1-6">{msg.text}</p>
+                    <p className="text-xs opacity-0-7 mt-8">
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -1114,10 +565,10 @@ export default function WasteManagement() {
               {chatLoading && (
                 <div className="chat-message">
                   <div className="message-bubble-bot">
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <div style={{ width: '8px', height: '8px', background: '#9ca3af', borderRadius: '50%', animation: 'pulse 1.4s infinite' }} />
-                      <div style={{ width: '8px', height: '8px', background: '#9ca3af', borderRadius: '50%', animation: 'pulse 1.4s infinite 0.2s' }} />
-                      <div style={{ width: '8px', height: '8px', background: '#9ca3af', borderRadius: '50%', animation: 'pulse 1.4s infinite 0.4s' }} />
+                    <div className="flex-center gap-8">
+                      <div className="typing-dot" style={{ animationDelay: '0s' }} />
+                      <div className="typing-dot" style={{ animationDelay: '0.2s' }} />
+                      <div className="typing-dot" style={{ animationDelay: '0.4s' }} />
                     </div>
                   </div>
                 </div>
@@ -1135,15 +586,8 @@ export default function WasteManagement() {
                   placeholder="Ask about KPIs, predictions, costs..."
                   className="chat-input"
                 />
-                <button onClick={sendChatMessage} disabled={chatLoading} style={{
-                  padding: '0.875rem 1rem',
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.75rem',
-                  cursor: 'pointer'
-                }}>
-                  <Send style={{ width: '20px', height: '20px' }} />
+                <button onClick={sendChatMessage} disabled={chatLoading} className="p-16 br-12 border-none cursor-pointer text-white" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
+                  <Send className="icon-20" />
                 </button>
               </div>
             </div>
@@ -1152,7 +596,7 @@ export default function WasteManagement() {
 
         {loading && (
           <div className="loading-overlay">
-            <Loader className="spinner" style={{ width: '64px', height: '64px', color: '#10b981' }} />
+            <Loader className="spinner icon-64 text-green-500" />
           </div>
         )}
       </div>
