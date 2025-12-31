@@ -1,4 +1,3 @@
-// src/services/api.js
 import axios from 'axios';
 import { API_BASE_URL } from '../config/api';
 
@@ -10,7 +9,7 @@ const api = axios.create({
   }
 });
 
-// Add token to requests
+// Interceptors
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -19,13 +18,12 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-// Handle errors
 api.interceptors.response.use(
   response => response,
   error => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      // window.location.href = '/login';
     }
     return Promise.reject(error);
   }
@@ -33,24 +31,32 @@ api.interceptors.response.use(
 
 export default api;
 
-// Usage
-import api from './services/api';
-
-// Login
-const login = async (email, password) => {
-  const { data } = await api.post('/auth/login', { email, password });
-  localStorage.setItem('token', data.token);
-  return data;
+// Admin Services
+export const adminService = {
+  getUsers: (params) => api.get('/admin/access-control/users', { params }),
+  updateUserStatus: (userId, status) => api.patch(`/admin/access-control/users/${userId}/status`, { status }),
+  deleteUser: (userId) => api.delete(`/admin/access-control/users/${userId}`),
+  getLogs: () => api.get('/admin/access-control/logs')
 };
 
-// Get dashboard
-const getDashboard = async () => {
-  const { data } = await api.get('/agriculture/dashboard');
-  return data;
+// Emergency Services
+export const emergencyService = {
+  getMetrics: () => api.get('/emergency/metrics'),
+  getPredictions: (params) => api.get('/emergency/predictions', { params }),
+  getHistoricalData: () => api.get('/emergency/historical'),
+  getNotifications: () => api.get('/emergency/notifications')
 };
 
-// Chatbot
-const sendMessage = async (domain, message) => {
-  const { data } = await api.post(`/chatbot/${domain}`, { message });
-  return data;
+// Healthcare Services
+export const healthcareService = {
+  getDashboard: () => api.get('/healthcare/dashboard'),
+  getAppointments: (params) => api.get('/healthcare/appointments', { params }),
+  scheduleAppointment: (data) => api.post('/healthcare/appointments', data),
+  submitVitals: (data) => api.post('/healthcare/remote-monitoring', data),
+  getAiDiagnosis: (data) => api.post('/healthcare/diagnosis-assistant', data)
+};
+
+// Chatbot Service
+export const chatbotService = {
+  sendMessage: (message, domain, sessionId) => api.post('/chatbot', { message, domain, sessionId })
 };

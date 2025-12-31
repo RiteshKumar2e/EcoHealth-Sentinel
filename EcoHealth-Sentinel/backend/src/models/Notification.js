@@ -1,0 +1,12 @@
+import mongoose from 'mongoose';
+
+const notificationSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    message: { type: String, required: true },
+    priority: { type: String, enum: ['low', 'medium', 'high'], default: 'low' },
+    read: { type: Boolean, default: false },
+    timestamp: { type: Date, default: Date.now },
+});
+
+const Notification = mongoose.model('Notification', notificationSchema);
+export default Notification;
