@@ -16,53 +16,10 @@
     }
 }
 
-.detection-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%);
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-}
-
-.background-blob {
-    position: absolute;
-    border-radius: 50%;
-    mix-blend-mode: multiply;
-    filter: blur(64px);
-    opacity: 0.3;
-    pointer-events: none;
-}
-
-.blob1 {
-    top: 80px;
-    left: 40px;
-    width: 288px;
-    height: 288px;
-    background: #bbf7d0;
-    animation: pulse 3s ease-in-out infinite;
-}
-
-.blob2 {
-    top: 160px;
-    right: 40px;
-    width: 384px;
-    height: 384px;
-    background: #d1fae5;
-    animation: pulse 3s ease-in-out infinite 2s;
-}
-
-.blob3 {
-    bottom: -80px;
-    left: 33%;
-    width: 320px;
-    height: 320px;
-    background: #99f6e4;
-    animation: pulse 3s ease-in-out infinite 4s;
-}
+/* Background blobs removed to fit layout */
 
 .max-width-wrapper {
-    max-width: 1152px;
-    margin: 0 auto;
+    width: 100%;
     position: relative;
     z-index: 10;
 }

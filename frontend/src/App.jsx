@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/landing/Landing.jsx";  
+import LandingPage from "./pages/landing/Landing.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 // Import Admin Pages
@@ -11,7 +11,7 @@ import Reports from "./pages/admin/Reports.jsx";
 import Users from "./pages/admin/Users.jsx";
 import AdLogin from "./pages/admin/AdLogin.jsx";
 
-import AdSettings from "./pages/admin/AdSettings.jsx"; 
+import AdSettings from "./pages/admin/AdSettings.jsx";
 
 
 
@@ -23,6 +23,7 @@ import MainDashboard from "./pages/auth/MainDashboard.jsx";
 
 
 // Import Agriculture Modules
+import AgricultureLayout from "./pages/agriculture/AgricultureLayout.jsx";
 import FarmDashboard from "./pages/agriculture/Dashboard.jsx";
 import CropDiseaseDetection from "./pages/agriculture/CropDiseaseDetection.jsx";
 import WeatherForecast from "./pages/agriculture/WeatherForecast.jsx";
@@ -78,13 +79,13 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/chat" element={<ChatPage />} />
-        
+
         {/* Auth Routes */}
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-        <Route path="/auth/dashboard" element={<MainDashboard/>} />
-        
+        <Route path="/auth/dashboard" element={<MainDashboard />} />
+
         {/* Admin Routes */}
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/admin/login" element={<AdLogin />} />
@@ -93,21 +94,23 @@ const App = () => {
         <Route path="/admin/reports" element={<Reports />} />
         <Route path="/admin/users" element={<Users />} />
         <Route path="/admin/access-control" element={<AccessControl />} />
-        <Route path="/admin/settings" element={<AdSettings />} /> 
-        
+        <Route path="/admin/settings" element={<AdSettings />} />
+
         {/* Agriculture Routes */}
-      <Route path="/agriculture/dashboard" element={<FarmDashboard />} />
-<Route path="/agriculture/community" element={<CommunityHub />} />
-<Route path="/agriculture/crop-disease" element={<CropDiseaseDetection />} />
-<Route path="/agriculture/automation" element={<FarmAutomation />} />
-<Route path="/agriculture/fertilizer" element={<FertilizerRecommendations />} />
-<Route path="/agriculture/market" element={<MarketForecast />} />
-<Route path="/agriculture/pest-control" element={<PestControl />} />
-<Route path="/agriculture/chatbot" element={<ReportsChatbot />} />
-<Route path="/agriculture/irrigation" element={<SmartIrrigation />} />
-<Route path="/agriculture/supply-chain" element={<SupplyChain />} />
-<Route path="/agriculture/weather" element={<WeatherForecast />} />
-<Route path="/agriculture/settings" element={<Settings />} />
+        <Route path="/agriculture" element={<AgricultureLayout />}>
+          <Route path="dashboard" element={<FarmDashboard />} />
+          <Route path="community" element={<CommunityHub />} />
+          <Route path="crop-disease" element={<CropDiseaseDetection />} />
+          <Route path="automation" element={<FarmAutomation />} />
+          <Route path="fertilizer" element={<FertilizerRecommendations />} />
+          <Route path="market" element={<MarketForecast />} />
+          <Route path="pest-control" element={<PestControl />} />
+          <Route path="chatbot" element={<ReportsChatbot />} />
+          <Route path="irrigation" element={<SmartIrrigation />} />
+          <Route path="supply-chain" element={<SupplyChain />} />
+          <Route path="weather" element={<WeatherForecast />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
 
 
         {/* Environment Routes */}

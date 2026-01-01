@@ -92,11 +92,7 @@ const CropDiseaseDetection = () => {
   };
 
   return (
-    <div className="detection-container">
-      <div className="background-blob blob1"></div>
-      <div className="background-blob blob2"></div>
-      <div className="background-blob blob3"></div>
-
+    <>
       <div className="max-width-wrapper">
         {/* Header */}
         <div className="header-card">
@@ -315,7 +311,7 @@ const CropDiseaseDetection = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

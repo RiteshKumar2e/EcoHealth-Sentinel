@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Mail, ArrowRight, AlertCircle, CheckCircle, ArrowLeft, KeyRound } from 'lucide-react';
+import { Mail, ArrowRight, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import emailjs from 'emailjs-com';
+import Logo from '../../components/Logo';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -35,20 +36,23 @@ export default function ForgotPassword() {
     }
   };
 
-  const handleResend = () => handleSubmit({ preventDefault: () => {} });
+  const handleResend = () => handleSubmit({ preventDefault: () => { } });
 
+  // Light Theme Styles
   const styles = {
-    container: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: 'linear-gradient(to bottom right, #0f172a, #064e3b, #0f172a)' },
-    card: { width: '100%', maxWidth: '550px', backgroundColor: 'rgba(30,41,59,0.8)', borderRadius: '16px', padding: '2rem', border: '1px solid #334155', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' },
-    input: (hasError) => ({ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '8px', border: `1px solid ${hasError ? '#f87171' : '#475569'}`, backgroundColor: 'rgba(51,65,85,0.5)', color: '#fff' }),
-    label: { display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', color: '#cbd5e1' },
-    icon: { position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' },
-    error: { display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.5rem', color: '#f87171', fontSize: '0.875rem' },
-    button: { width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'linear-gradient(to right, #10b981, #059669)', color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', border: 'none', cursor: 'pointer' },
-    infoBox: { backgroundColor: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '8px', padding: '1rem', display: 'flex', gap: '0.75rem' },
-    footer: { textAlign: 'center', marginTop: '1.5rem', color: '#cbd5e1', fontSize: '0.8rem' },
-    resendButton: { color: '#10b981', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: '500' },
-    link: { color: '#cbd5e1', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }
+    container: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: '#f8fafc' },
+    card: { width: '100%', maxWidth: '500px', backgroundColor: '#ffffff', borderRadius: '16px', padding: '2.5rem', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' },
+    input: (hasError) => ({ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '8px', border: `1px solid ${hasError ? '#ef4444' : '#cbd5e1'}`, backgroundColor: '#ffffff', color: '#1e293b', fontSize: '0.95rem', boxSizing: 'border-box', outline: 'none', transition: 'all 0.2s' }),
+    label: { display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem', color: '#334155' },
+    icon: { position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', width: '20px', height: '20px' },
+    error: { display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.5rem', color: '#ef4444', fontSize: '0.8rem' },
+    button: { width: '100%', padding: '0.875rem', borderRadius: '8px', background: '#2563eb', color: '#fff', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', border: 'none', cursor: 'pointer', fontSize: '1rem', transition: 'background-color 0.2s', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' },
+    infoBox: { backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '1rem', display: 'flex', gap: '0.75rem' },
+    footer: { textAlign: 'center', marginTop: '2rem', color: '#94a3b8', fontSize: '0.8rem' },
+    resendButton: { color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: '500' },
+    link: { color: '#2563eb', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' },
+    title: { color: '#0f172a', fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', marginTop: 0 },
+    subtitle: { color: '#64748b', fontSize: '1rem', margin: 0 }
   };
 
   if (emailSent) {
@@ -56,15 +60,15 @@ export default function ForgotPassword() {
       <div style={styles.container}>
         <div style={styles.card}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ display: 'inline-block', padding: '1rem', backgroundColor: 'rgba(5,150,105,0.2)', borderRadius: '50%', marginBottom: '1.5rem' }}>
-              <CheckCircle style={{ width: '64px', height: '64px', color: '#34d399' }} />
+            <div style={{ display: 'inline-block', padding: '1rem', backgroundColor: '#ecfdf5', borderRadius: '50%', marginBottom: '1.5rem' }}>
+              <CheckCircle style={{ width: '64px', height: '64px', color: '#10b981' }} />
             </div>
-            <h1 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Check Your Email</h1>
-            <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>We've sent password reset instructions to:</p>
-            <p style={{ color: '#34d399', fontWeight: '600', marginBottom: '1rem' }}>{email}</p>
+            <h1 style={{ ...styles.title, fontSize: '1.5rem' }}>Check Your Email</h1>
+            <p style={{ ...styles.subtitle, marginBottom: '1rem' }}>We've sent password reset instructions to:</p>
+            <p style={{ color: '#0f172a', fontWeight: '600', marginBottom: '1rem' }}>{email}</p>
 
-            <div style={{ backgroundColor: 'rgba(51,65,85,0.5)', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' }}>
-              <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Didn't receive the email? Check your spam folder or</p>
+            <div style={{ backgroundColor: '#f8fafc', borderRadius: '8px', padding: '1rem', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
+              <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Didn't receive the email? Check your spam folder or</p>
               <button style={styles.resendButton} onClick={handleResend} disabled={isLoading}>
                 {isLoading ? 'Sending...' : 'Resend email'}
               </button>
@@ -75,7 +79,7 @@ export default function ForgotPassword() {
             </Link>
           </div>
 
-          <div style={styles.footer}>© 2025 AI Solutions. All rights reserved.</div>
+          <div style={styles.footer}>© 2025 EcoHealth Sentinel. All rights reserved.</div>
         </div>
       </div>
     );
@@ -85,11 +89,11 @@ export default function ForgotPassword() {
     <div style={styles.container}>
       <div style={styles.card}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'inline-block', padding: '1rem', backgroundColor: 'rgba(5,150,105,0.2)', borderRadius: '16px', marginBottom: '1rem' }}>
-            <KeyRound style={{ width: '48px', height: '48px', color: '#34d399' }} />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <Logo />
           </div>
-          <h1 style={{ color: '#fff', fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Forgot Password?</h1>
-          <p style={{ color: '#94a3b8' }}>No worries, we'll send you reset instructions</p>
+          <h1 style={styles.title}>Forgot Password?</h1>
+          <p style={styles.subtitle}>No worries, we'll send you reset instructions</p>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -110,10 +114,10 @@ export default function ForgotPassword() {
           </div>
 
           <div style={styles.infoBox}>
-            <Mail style={{ width: '20px', height: '20px', color: '#34d399', marginTop: '2px' }} />
+            <Mail style={{ width: '20px', height: '20px', color: '#3b82f6', marginTop: '2px', flexShrink: 0 }} />
             <div>
-              <h3 style={{ color: '#34d399', fontWeight: '600', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Reset Link Delivery</h3>
-              <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>We'll send you a secure link to reset your password. The link will be valid for 1 hour.</p>
+              <h3 style={{ color: '#1e293b', fontWeight: '600', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Reset Link Delivery</h3>
+              <p style={{ color: '#64748b', fontSize: '0.875rem', margin: 0, lineHeight: 1.5 }}>We'll send you a secure link to reset your password. The link will be valid for 1 hour.</p>
             </div>
           </div>
 
@@ -138,13 +142,13 @@ export default function ForgotPassword() {
           </Link>
         </div>
 
-        <div style={{ marginTop: '1.5rem', backgroundColor: 'rgba(30,41,59,0.3)', borderRadius: '8px', padding: '1rem', border: '1px solid #334155', backdropFilter: 'blur(8px)' }}>
-          <p style={{ color: '#94a3b8', textAlign: 'center', fontSize: '0.875rem' }}>
-            Need help? <a href="mailto:support@aisolutions.com" style={{ color: '#10b981', textDecoration: 'none' }}>Contact Support</a>
+        <div style={{ marginTop: '1.5rem', backgroundColor: '#f8fafc', borderRadius: '8px', padding: '1rem', border: '1px solid #e2e8f0' }}>
+          <p style={{ color: '#64748b', textAlign: 'center', fontSize: '0.875rem', margin: 0 }}>
+            Need help? <a href="mailto:support@ecohealth.com" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}>Contact Support</a>
           </p>
         </div>
 
-        <div style={styles.footer}>© 2025 AI Solutions. All rights reserved.</div>
+        <div style={styles.footer}>© 2025 EcoHealth Sentinel. All rights reserved.</div>
       </div>
 
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>

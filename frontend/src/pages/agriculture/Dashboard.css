@@ -2,24 +2,40 @@
 
 .dashboard-page-container {
     display: flex;
+    width: 100vw;
     min-height: 100vh;
-    background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 25%, #e0e7ff 50%, #ddd6fe 75%, #e9d5ff 100%);
+    background: #f8fafc;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Common gradient background to be used across pages if needed, but keeping it subtle */
+.agri-bg-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: linear-gradient(135deg, #f0f9ff 0%, #f1f5f9 50%, #f5f3ff 100%);
 }
 
 .sidebar {
     width: 280px;
-    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-    color: white;
+    background: #b40404;
+    /* Clean white background */
+    color: #334155;
+    /* Dark slate text */
     padding: 24px 0;
     position: fixed;
     height: 100vh;
     left: 0;
     top: 0;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+    /* Softer shadow for light theme */
     overflow-y: auto;
+    border-right: 1px solid #e2e8f0;
 }
 
 .sidebar.hidden {
@@ -27,120 +43,204 @@
 }
 
 .sidebar-header {
-    padding: 0 24px 24px 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px 24px 20px 24px;
     margin-bottom: 24px;
+    position: relative;
+}
+
+.sidebar-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 24px;
+    right: 24px;
+    height: 1px;
+    background: #f1f5f9;
+    /* Subtle divider for light theme */
 }
 
 .sidebar-logo {
-    font-size: 1.75rem;
+    font-size: 2.25rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #10b981, #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 4px;
+    color: #4f46e5;
+    /* Professional indigo for logo */
+    margin-bottom: 12px;
     margin-top: 0;
+    letter-spacing: -0.5px;
 }
 
 .sidebar-tagline {
-    font-size: 0.75rem;
-    color: #94a3b8;
+    font-size: 0.85rem;
+    color: #64748b;
+    /* Slate-grey tagline */
     font-weight: 500;
     margin: 0;
+    opacity: 0.9;
 }
 
 .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 0 12px;
+    gap: 8px;
+    padding: 0 16px;
 }
 
 .sidebar-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 12px;
+    gap: 16px;
+    padding: 14px 20px;
+    border-radius: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #cbd5e1;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #64748b;
+    /* Slate-grey text */
     background: transparent;
 }
 
+.sidebar-item svg {
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
 .sidebar-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    transform: translateX(4px);
+    color: #4f46e5;
+    background: #f8fafc;
+}
+
+.sidebar-item:hover svg {
+    opacity: 1;
 }
 
 .sidebar-item.active {
-    color: white;
-    background: linear-gradient(135deg, #10b981, #059669);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    color: #3b82f6;
+    background: #f0f4ff;
+    /* Light/White background as in image */
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    position: relative;
+}
+
+.sidebar-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 4px;
+    background: #4f46e5;
+    border-radius: 0 4px 4px 0;
+}
+
+.sidebar-item.active svg {
+    color: #3b82f6;
+    opacity: 1;
 }
 
 .menu-toggle {
     position: fixed;
-    top: 24px;
-    z-index: 1001;
-    background: white;
+    top: 20px;
+    z-index: 1100;
+    background: #ffffff;
     border: none;
     border-radius: 12px;
-    padding: 12px;
+    width: 48px;
+    height: 48px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    left: 24px;
-    /* Default closed state */
+    outline: none;
 }
 
 .menu-toggle.open {
-    left: 304px;
+    left: 200px;
+    /* Inside sidebar area (sidebar is 280px wide) */
+    background: rgb(255, 7, 7);
+    /* Subtle on dark sidebar */
+}
+
+.menu-toggle.open svg {
+    color: white !important;
 }
 
 .menu-toggle.closed {
-    left: 24px;
-    background: #1f2937;
-    /* Dark background when closed for contrast */
+    left: 20px;
 }
 
-.menu-toggle.closed svg {
-    color: white;
-    /* Light icon when closed on dark bg if needed, or stick to white for button */
+.menu-toggle svg {
+    color: #1f2937 !important;
 }
 
-/* Actually, simpler to keep white background */
-.menu-toggle.closed {
-    background: white;
+.menu-toggle:hover {
+    transform: scale(1.1);
+    background: #f8fafc;
 }
 
+.dashboard-content {
+    animation: fadeIn 0.5s ease-out;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 .main-content {
     flex: 1;
     min-height: 100vh;
-    padding: 24px;
-    transition: all 0.3s ease;
+    padding: 32px 60px 60px 350px;
+    /* Aggressive right shift for premium centered feel */
+    padding-top: 100px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     margin-left: 0;
-    /* Default closed state */
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content-inner {
+    width: 100% !important;
+    max-width: 1400px !important;
+    /* Proper reading width */
+    margin: 0 !important;
 }
 
 .main-content.sidebar-open {
     margin-left: 280px;
+    width: calc(100% - 280px);
+    /* Exactly fill remaining width */
 }
 
 .main-content.sidebar-closed {
     margin-left: 0;
+    width: 100%;
 }
 
-.main-content-inner {
-    max-width: 1400px;
-    margin: 0 auto;
+.main-content-inner,
+.dashboard-content,
+.max-width-wrapper,
+.weather-content-wrapper,
+.irrigation-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
 }
 
 .page-header {
@@ -152,6 +252,7 @@
     font-weight: 800;
     background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 8px;
     letter-spacing: -0.5px;

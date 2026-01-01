@@ -342,12 +342,7 @@ const WeatherForecast = () => {
   }
 
   return (
-    <div className="weather-container">
-      {/* Background Blobs */}
-      <div className="weather-blob blob-1"></div>
-      <div className="weather-blob blob-2"></div>
-      <div className="weather-blob blob-3"></div>
-
+    <>
       <div className="weather-content-wrapper">
         {/* Header */}
         <div className="weather-card">
@@ -599,7 +594,7 @@ const WeatherForecast = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

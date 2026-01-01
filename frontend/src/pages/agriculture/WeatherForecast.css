@@ -38,53 +38,10 @@
     }
 }
 
-.weather-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 50%, #e0f2fe 100%);
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-}
-
-/* Background Blobs */
-.weather-blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    pointer-events: none;
-}
-
-.blob-1 {
-    top: 50px;
-    left: -100px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
-    animation: float 8s ease-in-out infinite;
-}
-
-.blob-2 {
-    top: 200px;
-    right: -150px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
-    animation: float 10s ease-in-out infinite 2s;
-}
-
-.blob-3 {
-    bottom: -100px;
-    left: 40%;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
-    animation: float 12s ease-in-out infinite 4s;
-}
+/* Weather Container styles removed for Agriculture Layout */
 
 .weather-content-wrapper {
-    max-width: 1280px;
-    margin: 0 auto;
+    width: 100%;
     position: relative;
     z-index: 10;
 }

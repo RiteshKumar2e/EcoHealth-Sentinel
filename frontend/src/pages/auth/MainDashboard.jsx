@@ -12,7 +12,7 @@ export default function Dashboard() {
       id: 'agriculture',
       title: 'Agriculture',
       icon: Sprout,
-      description: 'Smart farming solutions with AI-powered crop monitoring, yield prediction, and resource optimization',
+      description: 'Smart farming solutions with AI-powered crop monitoring, yield prediction, and resources',
       color: '#10b981',
       bgGradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%)',
       stats: { projects: 145, users: '2.3K', growth: '+23%' }
@@ -45,7 +45,7 @@ export default function Dashboard() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
       padding: '2rem 1rem'
     }}>
       {/* Header */}
@@ -61,16 +61,14 @@ export default function Dashboard() {
           <h1 style={{
             fontSize: '3rem',
             fontWeight: 'bold',
-            background: 'linear-gradient(to right, #60a5fa, #a78bfa, #ec4899)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            color: '#0f172a',
             marginBottom: '0.75rem'
           }}>
             Choose Your Domain
           </h1>
           <p style={{
             fontSize: '1.125rem',
-            color: '#94a3b8',
+            color: '#64748b',
             maxWidth: '600px',
             margin: '0 auto'
           }}>
@@ -92,28 +90,28 @@ export default function Dashboard() {
             { icon: TrendingUp, label: 'Avg Growth', value: '+24%' }
           ].map((stat, idx) => (
             <div key={idx} style={{
-              backgroundColor: 'rgba(51, 65, 85, 0.5)',
-              borderRadius: '12px',
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
               padding: '1.25rem',
-              border: '1px solid #334155',
-              backdropFilter: 'blur(8px)',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
               display: 'flex',
               alignItems: 'center',
               gap: '1rem'
             }}>
               <div style={{
-                backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                borderRadius: '8px',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderRadius: '12px',
                 padding: '0.75rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <stat.icon style={{ width: '24px', height: '24px', color: '#60a5fa' }} />
+                <stat.icon style={{ width: '24px', height: '24px', color: '#2563eb' }} />
               </div>
               <div>
-                <div style={{ fontSize: '0.875rem', color: '#94a3b8' }}>{stat.label}</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#fff' }}>{stat.value}</div>
+                <div style={{ fontSize: '0.875rem', color: '#64748b' }}>{stat.label}</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0f172a' }}>{stat.value}</div>
               </div>
             </div>
           ))}
@@ -140,16 +138,15 @@ export default function Dashboard() {
               onMouseLeave={() => setHoveredCard(null)}
               style={{
                 position: 'relative',
-                backgroundColor: 'rgba(51, 65, 85, 0.6)',
-                borderRadius: '20px',
-                padding: '2rem',
-                border: `2px solid ${isHovered || isSelected ? domain.color : '#334155'}`,
-                backdropFilter: 'blur(8px)',
+                backgroundColor: '#ffffff',
+                borderRadius: '24px',
+                padding: '2.5rem',
+                border: '1px solid #e2e8f0',
                 cursor: 'pointer',
                 transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
-                transition: 'all 0.3s ease',
-                boxShadow: isHovered ? `0 20px 40px ${domain.color}33` : 'none',
-                background: isHovered ? domain.bgGradient : 'rgba(51, 65, 85, 0.6)'
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: isHovered ? `0 20px 25px -5px ${domain.color}22` : '0 10px 15px -3px rgba(0, 0, 0, 0.05)',
+                background: isHovered ? domain.bgGradient.replace('rgba', 'rgba').replace('0.2', '0.05') : '#ffffff'
               }}
             >
               {/* Selection Indicator */}
@@ -182,14 +179,14 @@ export default function Dashboard() {
               <h2 style={{
                 fontSize: '1.75rem',
                 fontWeight: 'bold',
-                color: '#fff',
+                color: '#0f172a',
                 marginBottom: '0.75rem'
               }}>
                 {domain.title}
               </h2>
-              
+
               <p style={{
-                color: '#cbd5e1',
+                color: '#64748b',
                 fontSize: '0.95rem',
                 lineHeight: '1.6',
                 marginBottom: '1.5rem'
@@ -204,24 +201,24 @@ export default function Dashboard() {
                 gap: '1rem',
                 marginBottom: '1.5rem',
                 paddingTop: '1.5rem',
-                borderTop: '1px solid #475569'
+                borderTop: '1px solid #f1f5f9'
               }}>
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Projects</div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#fff' }}>{domain.stats.projects}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.25rem' }}>Projects</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#0f172a' }}>{domain.stats.projects}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Users</div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#fff' }}>{domain.stats.users}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.25rem' }}>Users</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#0f172a' }}>{domain.stats.users}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Growth</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.25rem' }}>Growth</div>
                   <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: domain.color }}>{domain.stats.growth}</div>
                 </div>
               </div>
 
               {/* Action Button */}
-              <button 
+              <button
                 onClick={() => handleDomainSelect(domain.id)}
                 style={{
                   width: '100%',
@@ -243,8 +240,8 @@ export default function Dashboard() {
                 }}
               >
                 <span>Explore {domain.title}</span>
-                <ArrowRight style={{ 
-                  width: '20px', 
+                <ArrowRight style={{
+                  width: '20px',
                   height: '20px',
                   transform: isHovered ? 'translateX(4px)' : 'translateX(0)',
                   transition: 'transform 0.2s ease'

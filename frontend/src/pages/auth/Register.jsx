@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Building, Phone } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Building2, Phone, Camera, X, ShieldCheck, FileText } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import Logo from '../../components/Logo'; // Ensure this path is correct
 import './Register.css';
 
 export default function Register() {
@@ -8,259 +10,317 @@ export default function Register() {
 
   const [formData, setFormData] = useState({
     fullName: '',
+    phone: '',
     email: '',
     organization: '',
-    phone: '',
     password: '',
     confirmPassword: '',
-    role: 'user',
     agreeToTerms: false
   });
 
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const fileInputRef = useState(null); // I'll use useRef instead
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
-  // Form Validation
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.fullName.trim()) newErrors.fullName = 'Full name is required';
-    if (!formData.email) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-    if (!formData.organization.trim()) newErrors.organization = 'Organization is required';
-    if (!formData.password) newErrors.password = 'Password is required';
-    else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-    else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password))
-      newErrors.password = 'Password must contain uppercase, lowercase, and number';
-    if (!formData.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
-    else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms and conditions';
-    return newErrors;
-  };
-
-  // Success Handler: Add user to global storage + Navigate Dashboard
-  const handleRegisterSuccess = async (userData) => {
-    if (window.UserStorage) {
-      window.UserStorage.addUser({
-        id: Date.now(),
-        name: userData.fullName,
-        email: userData.email,
-        role: userData.role,
-        domain: userData.organization,
-        phone: userData.phone || '',
-        location: userData.location || '',
-        projects: 0,
-        status: 'active',
-        joinDate: new Date().toISOString().split('T')[0],
-        avatar: userData.fullName.split(' ').map(n => n[0]).join('').toUpperCase()
-      });
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-
-    // Go to dashboard
-    navigate('/Users');
   };
 
-  // Submit Handler
-  const handleSubmit = async (e) => {
+  const triggerFileInput = () => {
+    document.getElementById('avatar-input').click();
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
     setIsLoading(true);
-
-    // Simulate API call
+    // Simulate API
     setTimeout(() => {
-      console.log('Register data:', formData);
       setIsLoading(false);
-
-      // Call Success handler
-      handleRegisterSuccess(formData);
+      navigate('/auth/dashboard');
     }, 2000);
   };
 
+  // Modal State
+  const [activeModal, setActiveModal] = useState(null); // 'terms' | 'privacy' | null
+
+  // -- Modal Content --
+  const getModalContent = () => {
+    if (activeModal === 'terms') {
+      return (
+        <div className="policy-content">
+          <section>
+            <h3>1. Acceptance of Terms</h3>
+            <p>By accessing and using EcoHealth Sentinel, you agree to be bound by these Terms of Service. This platform is designed for decentralized AI health monitoring and environmental protection.</p>
+          </section>
+          <section>
+            <h3>2. User Responsibilities</h3>
+            <p>Users must provide accurate information and maintain the security of their decentralized identity. Any misuse of AI agents or grid resources is strictly prohibited.</p>
+          </section>
+          <section>
+            <h3>3. Data Usage</h3>
+            <p>The platform operates on a decentralized grid. While your data is encrypted, the system uses anonymized health patterns to train collective intelligence models for the benefit of the community.</p>
+          </section>
+          <section>
+            <h3>4. Intellectual Property</h3>
+            <p>All AI models and algorithms hosted on the sentinel grid are protected by digital sovereignty laws. Users retain ownership of their raw data inputs.</p>
+          </section>
+        </div>
+      );
+    }
+    if (activeModal === 'privacy') {
+      return (
+        <div className="policy-content">
+          <section>
+            <h3>1. Data Sovereignty</h3>
+            <p>We believe in data ownership. Your personal health metrics and identification are stored securely and are only accessible via your unique cryptographic keys.</p>
+          </section>
+          <section>
+            <h3>2. Information Security</h3>
+            <p>We implement end-to-end encryption for all data transmissions between your nodes and the sentinel grid. Regular audits are conducted to ensure system integrity.</p>
+          </section>
+          <section>
+            <h3>3. Third-Party Access</h3>
+            <p>EcoHealth Sentinel does not sell your data. Third-party access is only granted for verified health researchers when users explicitly opt-in to specific studies.</p>
+          </section>
+          <section>
+            <h3>4. Cookie Policy</h3>
+            <p>We use localized tokens to maintain your session. No tracking cookies are used for advertising or external profiling purposes.</p>
+          </section>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const getModalTitle = () => {
+    return activeModal === 'terms' ? 'Terms of Service' : 'Privacy Policy';
+  };
+
   return (
-    <div className="register-container">
-      <div className="register-card">
-        {/* Logo/Brand */}
-        <div className="brand-section">
-          <div className="brand-logo-bg">
-            <User className="brand-logo-icon" />
+    <div className="register-page-wrapper">
+
+      {/* Page Brand (Top Left) */}
+      <Link to="/" className="page-brand">
+        <Logo />
+        <div className="brand-text-stack">
+          <span className="brand-name">EcoHealth</span>
+          <span className="brand-sub">Sentinel</span>
+        </div>
+      </Link>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="register-card"
+      >
+        {/* --- HEADER SECTION --- */}
+        <div className="register-header-section">
+          {/* 1. Blue Icon Badge (Left Aligned) */}
+          <div className="header-icon-badge">
+            <User size={28} strokeWidth={2} />
           </div>
-          <h1 className="brand-title">Create Your Account</h1>
-          <p className="brand-subtitle">Join us in building responsible AI solutions</p>
+
+          {/* 2. Title & Subtitle (Left Aligned) */}
+          <h1 className="header-title">Create Your Account</h1>
+          <p className="header-subtitle">Join us in the decentralized AI grid</p>
         </div>
 
-        {/* FORM */}
+        {/* 3. Avatar Upload (Centered) */}
+        <div className="avatar-section-wrapper">
+          <div className="avatar-upload-container">
+            <input
+              type="file"
+              id="avatar-input"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
+            <div className="avatar-circle" onClick={triggerFileInput}>
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Avatar Preview" className="avatar-preview-img" />
+              ) : (
+                <User size={38} strokeWidth={1.5} className="avatar-icon-main" />
+              )}
+              <div className="camera-badge">
+                <Camera size={14} color="white" strokeWidth={2.5} />
+              </div>
+            </div>
+            <span className="upload-label">Upload Identity Photo</span>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="register-form">
-          {/* Full Name & Email */}
-          <div className="form-grid-md">
+
+          <div className="form-row">
             <div className="form-group">
-              <label htmlFor="fullName" className="form-label">Full Name</label>
+              <label>Full Name</label>
               <div className="input-wrapper">
-                <User className="form-icon" />
                 <input
                   type="text"
-                  id="fullName"
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
-                  placeholder="Enter Full Name"
-                  className={`form-input ${errors.fullName ? 'input-error' : ''}`}
+                  placeholder="Enter your name"
+                  className="form-input"
                 />
               </div>
-              {errors.fullName && <div className="error-text"><AlertCircle size={12} />{errors.fullName}</div>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="email" className="form-label">Email Address</label>
+              <label>Phone Number</label>
               <div className="input-wrapper">
-                <Mail className="form-icon" />
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Email id"
-                  className={`form-input ${errors.email ? 'input-error' : ''}`}
-                />
-              </div>
-              {errors.email && <div className="error-text"><AlertCircle size={12} />{errors.email}</div>}
-            </div>
-          </div>
-
-          {/* Organization & Phone */}
-          <div className="form-grid-md">
-            <div className="form-group">
-              <label htmlFor="organization" className="form-label">Organization</label>
-              <div className="input-wrapper">
-                <Building className="form-icon" />
-                <input
-                  type="text"
-                  id="organization"
-                  name="organization"
-                  value={formData.organization}
-                  onChange={handleChange}
-                  placeholder="Your company/org"
-                  className={`form-input ${errors.organization ? 'input-error' : ''}`}
-                />
-              </div>
-              {errors.organization && <div className="error-text"><AlertCircle size={12} />{errors.organization}</div>}
-            </div>
-            <div className="form-group">
-              <label htmlFor="phone" className="form-label">Phone Number</label>
-              <div className="input-wrapper">
-                <Phone className="form-icon" />
                 <input
                   type="tel"
-                  id="phone"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+91 xxxxxxxxx"
+                  placeholder="+91 00000 00000"
                   className="form-input"
                 />
               </div>
             </div>
           </div>
 
-          {/* Role */}
           <div className="form-group">
-            <label htmlFor="role" className="form-label">Role</label>
-            <select id="role" name="role" value={formData.role} onChange={handleChange} className="form-select">
-              <option value="Select Option">Select Option</option>
-              <option value="healthcare">Healthcare Specialist</option>
-              <option value="agriculture">Agriculture Expert</option>
-              <option value="environment">Environmental Scientist</option>
-              <option value="education">Education Coordinator</option>
-              <option value="researcher">Researcher</option>
-            </select>
+            <label>Email Address</label>
+            <div className="input-wrapper">
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="email@domain.com"
+                className="form-input"
+              />
+            </div>
           </div>
 
-          {/* Password & Confirm */}
-          <div className="form-grid-md">
+          <div className="form-group">
+            <label>Organization</label>
+            <div className="input-wrapper">
+              <input
+                type="text"
+                name="organization"
+                value={formData.organization}
+                onChange={handleChange}
+                placeholder="Org/Company"
+                className="form-input"
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
             <div className="form-group">
-              <label htmlFor="password" className="form-label">Password</label>
+              <label>Password</label>
               <div className="input-wrapper">
-                <Lock className="form-icon" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  id="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Create password"
-                  className={`form-input input-password ${errors.password ? 'input-error' : ''}`}
+                  placeholder="••••••"
+                  className="form-input"
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="password-toggle">
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="toggle-eye">
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              {errors.password && <div className="error-text"><AlertCircle size={12} />{errors.password}</div>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+              <label>Confirm Password</label>
               <div className="input-wrapper">
-                <Lock className="form-icon" />
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
-                  id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="Confirm password"
-                  className={`form-input input-password ${errors.confirmPassword ? 'input-error' : ''}`}
+                  placeholder="••••••"
+                  className="form-input"
                 />
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="password-toggle">
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="toggle-eye">
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              {errors.confirmPassword && <div className="error-text"><AlertCircle size={12} />{errors.confirmPassword}</div>}
             </div>
           </div>
 
-          {/* Terms */}
-          <div className="form-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="agreeToTerms"
-                checked={formData.agreeToTerms}
-                onChange={handleChange}
-                className={`checkbox-input ${errors.agreeToTerms ? 'checkbox-error' : ''}`}
-              />
-              <span>I agree to the <a href="#" className="terms-link">Terms of Service</a> and <a href="#" className="terms-link">Privacy Policy</a></span>
+          <div className="terms-container">
+            <label className="checkbox-wrapper">
+              <input type="checkbox" name="agreeToTerms" onChange={handleChange} />
+              <span className="checkbox-text">
+                I have read and agree to the{' '}
+                <button type="button" className="terms-link-btn" onClick={() => setActiveModal('terms')}>Terms of Service</button>
+                {' '}and <button type="button" className="terms-link-btn" onClick={() => setActiveModal('privacy')}>Privacy Policy</button>.
+              </span>
             </label>
-            {errors.agreeToTerms && <div className="error-text"><AlertCircle size={12} />{errors.agreeToTerms}</div>}
           </div>
 
-          {/* Submit */}
-          <button type="submit" disabled={isLoading} className="submit-btn">
-            {isLoading ? <> <div className="loading-spinner"></div> <span>Creating account...</span> </> : <> <span>Create Account</span> <ArrowRight size={20} /> </>}
+          <button type="submit" className="create-account-btn" disabled={isLoading}>
+            {isLoading ? <div className="spinner-white"></div> : <>Create Account <ArrowRight size={18} /></>}
           </button>
         </form>
 
-        {/* Sign In */}
-        <div className="signin-section">
-          Already have an account? <Link to="/auth/login" className="signin-link">Sign in</Link>
+        <div className="card-footer">
+          Already have an account? <Link to="/auth/login">Sign in</Link>
         </div>
+      </motion.div>
 
-        {/* Footer */}
-        <div className="footer-section">
-          <p className="footer-text">© 2025 AI Solutions. All rights reserved.</p>
-        </div>
-      </div>
+      {/* --- Professional Modal --- */}
+      <AnimatePresence>
+        {activeModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-overlay"
+            onClick={() => setActiveModal(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
+              className="modal-container"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <div className="modal-title-group">
+                  <div className={`modal-icon-box ${activeModal}`}>
+                    {activeModal === 'terms' ? <FileText size={20} /> : <ShieldCheck size={20} />}
+                  </div>
+                  <h2 className="modal-title">{getModalTitle()}</h2>
+                </div>
+                <button className="modal-close-btn" onClick={() => setActiveModal(null)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="modal-body">
+                {getModalContent()}
+              </div>
+              <div className="modal-footer">
+                <button className="modal-secondary-btn" onClick={() => setActiveModal(null)}>Dismiss</button>
+                <button className="modal-primary-btn" onClick={() => setActiveModal(null)}>I Understand</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
