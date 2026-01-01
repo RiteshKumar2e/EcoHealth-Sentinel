@@ -14,27 +14,18 @@ import {
   Globe,
   TrendingUp,
   Mail,
-  Phone,
-  MapPin,
   Linkedin,
-  Twitter,
   Github,
   ArrowUp,
-  ChevronDown,
   CheckCircle,
-  Star,
   BarChart3,
   Activity,
-  Database,
-  Lock,
-  ExternalLink,
-  Terminal
+  Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './landing-page.css';
 
-
-// EcoHealth Sentinel Logo Component
+// EcoHealth Sentinel Logo Component - Updated for Light Theme
 function EcoHealthLogo() {
   return (
     <div
@@ -51,10 +42,10 @@ function EcoHealthLogo() {
           width: '46px',
           height: '46px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle at 30% 30%, #22c55e, #3b82f6 80%)',
+          background: 'linear-gradient(135deg, #10b981, #3b82f6)', /* More vibrant green to blue */
           position: 'relative',
           boxShadow:
-            '0 0 12px rgba(59,130,246,0.4), inset 0 0 10px rgba(255,255,255,0.2)',
+            '0 4px 6px rgba(37, 99, 235, 0.2), inset 0 0 10px rgba(255,255,255,0.2)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -64,12 +55,12 @@ function EcoHealthLogo() {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 64 64"
-          width="28"
-          height="28"
+          width="32"
+          height="32"
           style={{
             fill: 'none',
             stroke: 'white',
-            strokeWidth: 2,
+            strokeWidth: 2.5, /* Slightly thicker stroke */
             filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.7))',
           }}
         >
@@ -90,8 +81,6 @@ function EcoHealthLogo() {
             inset: 0,
             borderRadius: '50%',
             border: '2px solid rgba(255,255,255,0.2)',
-            boxShadow:
-              '0 0 12px rgba(34,197,94,0.4), 0 0 20px rgba(59,130,246,0.3)',
           }}
         ></div>
       </div>
@@ -101,15 +90,16 @@ function EcoHealthLogo() {
           display: 'flex',
           flexDirection: 'column',
           lineHeight: '1.2',
+          alignItems: 'flex-start',
         }}
       >
         <span
           style={{
             fontSize: '1.35rem',
             fontWeight: 800,
-            background: 'linear-gradient(to right, #22c55e, #3b82f6)',
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
+            /* Changed to Dark Slate for Light Theme Visibility */
+            color: '#2563eb', /* Primary Blue for better visibility */
+            letterSpacing: '-0.5px'
           }}
         >
           EcoHealth
@@ -117,15 +107,17 @@ function EcoHealthLogo() {
         <span
           style={{
             fontSize: '0.85rem',
-            fontWeight: 500,
-            color: 'rgba(200,220,255,0.8)',
+            fontWeight: 600,
+            /* Changed to Medium Slate */
+            color: '#1e293b', /* Darker Slate for better visibility */
             letterSpacing: '1px',
+            textTransform: 'uppercase'
           }}
         >
           Sentinel
         </span>
       </div>
-    </div>
+    </div >
   );
 }
 
@@ -182,10 +174,7 @@ function LegalModal({ isOpen, onClose, title, content }) {
 
 export default function Landing() {
   const [scrollY, setScrollY] = useState(0);
-  const [activeSection, setActiveSection] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [particles, setParticles] = useState([]);
-  const [showLoginOptions, setShowLoginOptions] = useState(false);
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activeSolution, setActiveSolution] = useState(null);
@@ -215,12 +204,6 @@ export default function Landing() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Mouse glow movement
-  useEffect(() => {
-    const handleMouseMove = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
 
   // Particle generation
   useEffect(() => {
@@ -351,11 +334,10 @@ export default function Landing() {
   // Solutions Array
   const solutions = [
     {
-      icon: <Heart className="w-8 h-8" />,
+      icon: <Heart className="w-8 h-8" style={{ width: '32px', height: '32px' }} />,
       title: 'Healthcare AI',
       description: 'Transforming patient care with predictive diagnostics and personalized treatment recommendations',
       color: 'from-rose-500 to-pink-600',
-      stats: '10K+ Patients Helped',
       domain: 'Healthcare & Medical Technology',
       fullDescription: 'Our Healthcare AI solution leverages advanced machine learning algorithms to provide early disease detection, personalized treatment plans, and real-time health monitoring. We use predictive analytics to identify health risks before they become critical, enabling healthcare providers to deliver proactive care.',
       features: [
@@ -365,14 +347,12 @@ export default function Landing() {
         'Integration with existing healthcare systems',
         'HIPAA-compliant data security'
       ],
-      impact: 'Reduced diagnosis time by 60%, improved treatment accuracy by 45%'
     },
     {
-      icon: <Leaf className="w-8 h-8" />,
+      icon: <Leaf className="w-8 h-8" style={{ width: '32px', height: '32px' }} />,
       title: 'Agriculture Tech',
       description: 'Optimizing crop yields and resource management through intelligent farming solutions',
       color: 'from-green-500 to-emerald-600',
-      stats: '5K+ Farms Optimized',
       domain: 'Smart Agriculture & Precision Farming',
       fullDescription: 'Our Agriculture Tech platform uses AI and IoT sensors to provide farmers with actionable insights for crop management, soil health monitoring, and weather prediction. By analyzing soil conditions, weather patterns, and crop health in real-time, we help farmers maximize yields while minimizing resource waste.',
       features: [
@@ -382,14 +362,12 @@ export default function Landing() {
         'Water usage optimization and irrigation scheduling',
         'Market price prediction for better crop planning'
       ],
-      impact: 'Increased crop yields by 40%, reduced water usage by 30%'
     },
     {
-      icon: <Sparkles className="w-8 h-8" />,
+      icon: <Sparkles className="w-8 h-8" style={{ width: '32px', height: '32px' }} />,
       title: 'Environmental AI',
-      description: 'Monitoring and protecting ecosystems with advanced environmental analytics',
+      description: 'Monitoring and protecting ecosystems with advanced environmental analytics solutions',
       color: 'from-blue-500 to-cyan-600',
-      stats: '100+ Projects Active',
       domain: 'Environmental Monitoring & Conservation',
       fullDescription: 'Our Environmental AI platform monitors air quality, water pollution, deforestation, and biodiversity changes in real-time. Using satellite imagery, IoT sensors, and predictive models, we help governments and organizations make data-driven decisions for environmental protection and sustainability.',
       features: [
@@ -399,15 +377,14 @@ export default function Landing() {
         'Carbon footprint tracking and reduction strategies',
         'Early warning system for environmental hazards'
       ],
-      impact: 'Monitoring 500+ ecosystems, prevented 20+ environmental disasters'
     }
   ];
 
   const features = [
-    { icon: <Brain />, text: 'Advanced Machine Learning' },
-    { icon: <Shield />, text: 'Security-First Architecture' },
-    { icon: <Users />, text: 'Real Social Impact' },
-    { icon: <Zap />, text: 'Efficient & Scalable' }
+    { icon: <Brain style={{ width: '20px', height: '20px' }} />, text: 'Advanced Machine Learning' },
+    { icon: <Shield style={{ width: '20px', height: '20px' }} />, text: 'Security-First Architecture' },
+    { icon: <Users style={{ width: '20px', height: '20px' }} />, text: 'Real Social Impact' },
+    { icon: <Zap style={{ width: '20px', height: '20px' }} />, text: 'Efficient & Scalable' }
   ];
 
   const goals = [
@@ -442,33 +419,6 @@ export default function Landing() {
     }
   ];
 
-  const stats = [
-    { icon: <Users />, value: '10K+', label: 'Active Users' },
-    { icon: <Globe />, value: '25+', label: 'Countries' },
-    { icon: <TrendingUp />, value: '95%', label: 'Success Rate' },
-    { icon: <Award />, value: '15+', label: 'Awards Won' }
-  ];
-
-  const testimonials = [
-    {
-      name: 'Ramesh Singh',
-      role: 'Farmer, Bihar',
-      text: 'EcoHealth Sentinel increased my crop yield by 40% using AI predictions. Life-changing!',
-      rating: 5
-    },
-    {
-      name: 'Dr. Anjali Mehta',
-      role: 'Hospital Director',
-      text: 'The AI diagnostics helped us identify diseases 3 weeks earlier. Saved many lives.',
-      rating: 5
-    },
-    {
-      name: 'Vikram Rao',
-      role: 'Environmental Officer',
-      text: 'Best environmental monitoring system. Real-time alerts prevented major disasters.',
-      rating: 5
-    }
-  ];
 
   return (
     <div className="landing-container">
@@ -489,15 +439,6 @@ export default function Landing() {
           />
         ))}
       </div>
-
-      {/* Mouse Glow */}
-      <div
-        className="mouse-glow"
-        style={{
-          left: `${mousePosition.x}px`,
-          top: `${mousePosition.y}px`
-        }}
-      />
 
       {/* Header */}
       <header className="landing-header">
@@ -581,18 +522,6 @@ export default function Landing() {
 
       </section>
 
-      {/* Stats Section */}
-      <section className="stats-section">
-        <div className="stats-container">
-          {stats.map((stat, idx) => (
-            <div key={idx} className="stat-item">
-              <div className="stat-icon">{stat.icon}</div>
-              <div className="stat-value">{stat.value}</div>
-              <div className="stat-label">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* About Us Section */}
       <section ref={aboutRef} className="about-section">
@@ -644,17 +573,17 @@ export default function Landing() {
 
           <div className="about-image">
             <div className="about-card">
-              <BarChart3 className="w-16 h-16" style={{ color: '#3b82f6' }} />
+              <BarChart3 className="w-16 h-16" style={{ color: '#3b82f6', width: '64px', height: '64px' }} />
               <h4>Data-Driven Decisions</h4>
               <p>Processing millions of data points daily to provide actionable insights</p>
             </div>
             <div className="about-card">
-              <Activity className="w-16 h-16" style={{ color: '#22c55e' }} />
+              <Activity className="w-16 h-16" style={{ color: '#22c55e', width: '64px', height: '64px' }} />
               <h4>Real-Time Monitoring</h4>
               <p>24/7 surveillance of crops, health metrics, and environmental factors</p>
             </div>
             <div className="about-card">
-              <Lock className="w-16 h-16" style={{ color: '#8b5cf6' }} />
+              <Lock className="w-16 h-16" style={{ color: '#8b5cf6', width: '64px', height: '64px' }} />
               <h4>Privacy First</h4>
               <p>End-to-end encryption and ethical AI practices</p>
             </div>
@@ -683,12 +612,11 @@ export default function Landing() {
               </div>
               <h3 className="solution-title">{solution.title}</h3>
               <p className="solution-description">{solution.description}</p>
-              <div className="solution-stats">{solution.stats}</div>
               <button
                 className="solution-btn"
                 onClick={() => setActiveSolution(solution)}
               >
-                Learn More <ArrowRight className="w-4 h-4" />
+                Learn More <ArrowRight className="w-4 h-4" style={{ width: '16px', height: '16px' }} />
               </button>
               <div className="card-glow"></div>
             </div>
@@ -725,8 +653,6 @@ export default function Landing() {
         </div>
       </section>
 
-
-
       {/* Team Section */}
       <section ref={teamRef} className="team-section">
         <div className="section-header team-header">
@@ -747,18 +673,16 @@ export default function Landing() {
               <p className="team-bio">{member.bio}</p>
               <div className="team-social">
                 <a href={member.linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${member.name}'s LinkedIn profile`} className="linkedin-icon">
-                  <Linkedin className="w-6 h-6" />
+                  <Linkedin className="w-6 h-6" style={{ width: '24px', height: '24px' }} />
                 </a>
                 <a href={member.github} target="_blank" rel="noopener noreferrer" aria-label={`${member.name}'s GitHub profile`} className="github-icon">
-                  <Github className="w-6 h-6" />
+                  <Github className="w-6 h-6" style={{ width: '24px', height: '24px' }} />
                 </a>
               </div>
             </div>
           ))}
         </div>
       </section>
-
-
 
       <footer ref={footerRef} className="footer">
         <div className="footer-content">
@@ -801,7 +725,7 @@ export default function Landing() {
                 aria-label="Visit our GitHub profile"
                 className="social-icon"
               >
-                <Github className="w-6 h-6" />
+                <Github className="w-6 h-6" style={{ width: '24px', height: '24px' }} />
               </a>
               <a
                 href="https://www.linkedin.com/in/ritesh-kumar-b3a654253"
@@ -810,14 +734,14 @@ export default function Landing() {
                 aria-label="Visit our LinkedIn profile"
                 className="social-icon"
               >
-                <Linkedin className="w-6 h-6" />
+                <Linkedin className="w-6 h-6" style={{ width: '24px', height: '24px' }} />
               </a>
               <a
                 href="mailto:riteshkumar90359@gmail.com"
                 aria-label="Send us an email"
                 className="social-icon"
               >
-                <Mail className="w-6 h-6" />
+                <Mail className="w-6 h-6" style={{ width: '24px', height: '24px' }} />
               </a>
             </div>
           </div>
@@ -915,12 +839,7 @@ export default function Landing() {
                   </ul>
                 </div>
 
-                <div className="popup-impact">
-                  <TrendingUp className="w-5 h-5" />
-                  <strong>Impact:</strong> {activeSolution.impact}
-                </div>
 
-                <div className="popup-stats-large">{activeSolution.stats}</div>
               </div>
             </div>
           </div>
