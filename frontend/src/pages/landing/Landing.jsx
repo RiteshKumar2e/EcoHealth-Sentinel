@@ -513,23 +513,12 @@ export default function Landing() {
         </nav>
 
         <div className="auth-buttons">
-          {!showLoginOptions ? (
-            <button
-              className="btn-signin btn-primary"
-              onClick={() => setShowLoginOptions(true)}
-            >
-              Sign In
-            </button>
-          ) : (
-            <>
-              <button className="btn-user" onClick={() => navigate('/auth/login')}>
-                User
-              </button>
-              <button className="btn-admin" onClick={() => navigate('/admin/login')}>
-                Admin
-              </button>
-            </>
-          )}
+          <button className="btn-user" onClick={() => navigate('/auth/login')}>
+            Sign In
+          </button>
+          <button className="btn-admin" onClick={() => navigate('/admin/login')}>
+            Admin Login
+          </button>
         </div>
       </header>
 
