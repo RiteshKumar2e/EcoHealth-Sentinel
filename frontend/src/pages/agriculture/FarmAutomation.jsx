@@ -5,6 +5,7 @@ import {
   Droplets, Thermometer, Leaf, Navigation, Bell,
   ChevronRight, AlertCircle, TrendingUp, Cpu
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import './FarmAutomation.css';
 
 const FarmAutomation = () => {
@@ -134,7 +135,11 @@ const FarmAutomation = () => {
     <div className="sentinel-hub-root">
       {/* 1. LEFT NAVIGATION: BRAND & CORE METRICS */}
       <aside className="sentinel-sidebar-left">
-        <div className="sentinel-brand">
+        <motion.div
+          className="sentinel-brand"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
           <div className="brand-hex-icon">
             <ShieldCheck size={28} fill="white" strokeWidth={2.5} />
           </div>
@@ -142,35 +147,50 @@ const FarmAutomation = () => {
             <h1>EcoHealth</h1>
             <span>SENTINEL COMMAND</span>
           </div>
-        </div>
+        </motion.div>
 
         <div className="sentinel-metrics-vertical">
-          <div className="metric-pill eco">
+          <motion.div
+            className="metric-pill eco"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
             <div className="pill-icon"><Leaf size={18} /></div>
             <div className="pill-data">
               <span className="p-label">ECO SAVINGS</span>
               <h3>{stats.ecoSavings}</h3>
               <span className="p-growth">Efficiency Optimized</span>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="metric-pill active">
+          <motion.div
+            className="metric-pill active"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
             <div className="pill-icon"><Activity size={18} /></div>
             <div className="pill-data">
               <span className="p-label">ACTIVE SENTINELS</span>
               <h3>{stats.active} <small>/ {nodes.length}</small></h3>
               <span className="p-growth">Global coverage: {nodes.length > 0 ? 'Optimal' : 'None'}</span>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="metric-pill system">
+          <motion.div
+            className="metric-pill system"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
             <div className="pill-icon"><Cpu size={18} /></div>
             <div className="pill-data">
               <span className="p-label">AI INTEGRITY</span>
               <h3>{stats.integrity}</h3>
               <span className="p-growth">Neural-Link: Stable</span>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         <div className="sidebar-footer-info">
@@ -214,7 +234,11 @@ const FarmAutomation = () => {
 
         <section className="node-canvas-grid">
           {filteredNodes.length === 0 ? (
-            <div className="empty-sentinel-state">
+            <motion.div
+              className="empty-sentinel-state"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
               <div className="sentinel-hollow-logo">
                 <ShieldCheck size={48} color="#e2e8f0" />
               </div>
@@ -223,58 +247,68 @@ const FarmAutomation = () => {
               <button className="btn-add-sentinel-empty" onClick={() => setShowModal(true)}>
                 <Plus size={18} /> Provision Your First Sentinel
               </button>
-            </div>
+            </motion.div>
           ) : (
             <div className="sentinel-cards-layout">
-              {filteredNodes.map(node => (
-                <div key={node.id} className={`sentinel-card-v2 ${node.status}`}>
-                  <div className="card-top-info">
-                    <div className="node-identity">
-                      <div className={`status-orb ${node.status}`}></div>
-                      <div>
-                        <h4>{node.name}</h4>
-                        <span className="node-type-tag">{node.type}</span>
+              <AnimatePresence mode="popLayout">
+                {filteredNodes.map(node => (
+                  <motion.div
+                    key={node.id}
+                    className={`sentinel-card-v2 ${node.status}`}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  >
+                    <div className="card-top-info">
+                      <div className="node-identity">
+                        <div className={`status-orb ${node.status}`}></div>
+                        <div>
+                          <h4>{node.name}</h4>
+                          <span className="node-type-tag">{node.type}</span>
+                        </div>
                       </div>
+                      <button className="card-menu-btn" onClick={() => deleteNode(node.id)}>
+                        <AlertCircle size={16} color="#ef4444" />
+                      </button>
                     </div>
-                    <button className="card-menu-btn" onClick={() => deleteNode(node.id)}>
-                      <AlertCircle size={16} color="#ef4444" />
-                    </button>
-                  </div>
 
-                  <div className="card-metrics-preview">
-                    <div className="mini-metric">
-                      <Battery size={14} />
-                      <span>{node.battery}%</span>
-                    </div>
-                    <div className="mini-metric">
-                      <Wifi size={14} />
-                      <span>{node.signal}/5</span>
-                    </div>
-                    {node.moisture && (
-                      <div className="mini-metric highlight">
-                        <Droplets size={14} />
-                        <span>{node.moisture}% Moisture</span>
+                    <div className="card-metrics-preview">
+                      <div className="mini-metric">
+                        <Battery size={14} />
+                        <span>{node.battery}%</span>
                       </div>
-                    )}
-                  </div>
-
-                  <div className="card-action-box">
-                    <div className="last-action-text">
-                      <Navigation size={12} />
-                      {node.lastAction}
+                      <div className="mini-metric">
+                        <Wifi size={14} />
+                        <span>{node.signal}/5</span>
+                      </div>
+                      {node.moisture && (
+                        <div className="mini-metric highlight">
+                          <Droplets size={14} />
+                          <span>{node.moisture}% Moisture</span>
+                        </div>
+                      )}
                     </div>
-                    <button
-                      className={`btn-node-trigger ${node.status === 'active' ? 'off' : 'on'}`}
-                      disabled={node.status === 'scanning'}
-                      onClick={() => toggleNode(node.id)}
-                    >
-                      <Power size={14} />
-                      {node.status === 'scanning' ? 'Calibrating Sensors...' :
-                        node.status === 'active' ? 'Deactivate Shield' : 'Activate Shield'}
-                    </button>
-                  </div>
-                </div>
-              ))}
+
+                    <div className="card-action-box">
+                      <div className="last-action-text">
+                        <Navigation size={12} />
+                        {node.lastAction}
+                      </div>
+                      <button
+                        className={`btn-node-trigger ${node.status === 'active' ? 'off' : 'on'}`}
+                        disabled={node.status === 'scanning'}
+                        onClick={() => toggleNode(node.id)}
+                      >
+                        <Power size={14} />
+                        {node.status === 'scanning' ? 'Calibrating Sensors...' :
+                          node.status === 'active' ? 'Deactivate Shield' : 'Activate Shield'}
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           )}
         </section>
@@ -318,15 +352,22 @@ const FarmAutomation = () => {
 
           <div className="feed-card-white">
             <div className="feed-scroll-box">
-              {feed.map(item => (
-                <div key={item.id} className={`feed-item ${item.type}`}>
-                  <div className={`feed-marker ${item.type}`}></div>
-                  <div className="feed-content">
-                    <p>{item.text}</p>
-                    <span>{item.time}</span>
-                  </div>
-                </div>
-              ))}
+              <AnimatePresence initial={false}>
+                {feed.map(item => (
+                  <motion.div
+                    key={item.id}
+                    className={`feed-item ${item.type}`}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                  >
+                    <div className={`feed-marker ${item.type}`}></div>
+                    <div className="feed-content">
+                      <p>{item.text}</p>
+                      <span>{item.time}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
 
             <div className="feed-placeholder">
@@ -337,62 +378,74 @@ const FarmAutomation = () => {
         </section>
       </aside>
       {/* 4. PROVISION MODAL */}
-      {showModal && (
-        <div className="sentinel-modal-overlay">
-          <div className="sentinel-modal">
-            <header className="modal-header">
-              <h2>Provision New Sentinel</h2>
-              <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
-            </header>
-            <form onSubmit={provisionNode}>
-              <div className="input-group">
-                <label>Sentinel Identity Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Alpha Drone 01"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="form-row">
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            className="sentinel-modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="sentinel-modal"
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            >
+              <header className="modal-header">
+                <h2>Provision New Sentinel</h2>
+                <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
+              </header>
+              <form onSubmit={provisionNode}>
                 <div className="input-group">
-                  <label>Service Type</label>
-                  <select
-                    value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  >
-                    <option>Soil Monitor</option>
-                    <option>Drone Scouter</option>
-                    <option>Irrigation Hub</option>
-                    <option>Climate Sensor</option>
-                    <option>Bio-Shield Generator</option>
-                  </select>
+                  <label>Sentinel Identity Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Alpha Drone 01"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                  />
                 </div>
 
-                <div className="input-group">
-                  <label>Assigned Zone</label>
-                  <select
-                    value={formData.zone}
-                    onChange={(e) => setFormData({ ...formData, zone: e.target.value })}
-                  >
-                    <option>North Field</option>
-                    <option>West Orchard</option>
-                    <option>Greenhouse A-1</option>
-                    <option>Hydroponic Bay</option>
-                  </select>
-                </div>
-              </div>
+                <div className="form-row">
+                  <div className="input-group">
+                    <label>Service Type</label>
+                    <select
+                      value={formData.type}
+                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                    >
+                      <option>Soil Monitor</option>
+                      <option>Drone Scouter</option>
+                      <option>Irrigation Hub</option>
+                      <option>Climate Sensor</option>
+                      <option>Bio-Shield Generator</option>
+                    </select>
+                  </div>
 
-              <div className="modal-actions">
-                <button type="button" className="btn-cancel" onClick={() => setShowModal(false)}>Discard</button>
-                <button type="submit" className="btn-confirm">Initialize Sentinel</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+                  <div className="input-group">
+                    <label>Assigned Zone</label>
+                    <select
+                      value={formData.zone}
+                      onChange={(e) => setFormData({ ...formData, zone: e.target.value })}
+                    >
+                      <option>North Field</option>
+                      <option>West Orchard</option>
+                      <option>Greenhouse A-1</option>
+                      <option>Hydroponic Bay</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="modal-actions">
+                  <button type="button" className="btn-cancel" onClick={() => setShowModal(false)}>Discard</button>
+                  <button type="submit" className="btn-confirm">Initialize Sentinel</button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

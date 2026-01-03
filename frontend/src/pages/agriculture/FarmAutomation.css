@@ -13,7 +13,7 @@
 
 .sentinel-hub-root {
     display: grid;
-    grid-template-columns: 280px 1fr 360px;
+    grid-template-columns: 320px 1fr 380px;
     height: 100vh;
     background-color: var(--sentinel-bg);
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -214,12 +214,16 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 .header-search-group {
     display: flex;
     align-items: center;
     gap: 24px;
+    flex-wrap: wrap;
+    flex: 1;
 }
 
 .sentinel-search {
@@ -239,7 +243,8 @@
     border: 1px solid var(--sentinel-border);
     padding: 12px 16px 12px 48px;
     border-radius: 12px;
-    width: 300px;
+    width: 100%;
+    max-width: 320px;
     font-size: 14px;
     outline: none;
     transition: all 0.2s;
@@ -285,6 +290,8 @@
     gap: 12px;
     cursor: pointer;
     box-shadow: 0 10px 25px -8px rgba(15, 23, 42, 0.4);
+    white-space: nowrap;
+    height: fit-content;
 }
 
 /* CARDS GRID */
@@ -328,8 +335,24 @@
 .card-top-info {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 24px;
+}
+
+.card-menu-btn {
+    background: transparent;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-menu-btn:hover {
+    background: #fee2e2;
 }
 
 .node-identity {
@@ -594,6 +617,19 @@
     padding-right: 10px;
 }
 
+.feed-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f0fdf4;
+    padding: 16px;
+    border-radius: 12px;
+    color: var(--sentinel-green);
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px dashed #bbf7d0;
+}
+
 .feed-scroll-box::-webkit-scrollbar {
     width: 4px;
 }
@@ -774,14 +810,34 @@
     box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.4);
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1600px) {
+    .sentinel-hub-root {
+        grid-template-columns: 280px 1fr 320px;
+    }
+}
+
+@media (max-width: 1280px) {
     .sentinel-hub-root {
         grid-template-columns: 1fr;
+        height: auto;
         overflow-y: auto;
     }
 
     .sentinel-sidebar-left,
     .sentinel-sidebar-right {
         border: none;
+        padding: 40px 20px;
+    }
+
+    .sentinel-sidebar-left {
+        border-bottom: 1px solid var(--sentinel-border);
+    }
+
+    .sentinel-main-frame {
+        padding: 40px 20px;
+    }
+
+    .sentinel-sidebar-right {
+        border-top: 1px solid var(--sentinel-border);
     }
 }
