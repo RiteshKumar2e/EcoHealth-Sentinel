@@ -1,0 +1,276 @@
+/* AgriFloatingChatbot.css */
+
+.agri-floating-wrapper {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* --- Trigger Button --- */
+.agri-chat-trigger {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7 0%, #f97316 100%);
+    /* Purple to Orange */
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.agri-chat-trigger:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 15px 30px rgba(168, 85, 247, 0.4);
+}
+
+.trigger-pulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: inherit;
+    opacity: 0.5;
+    z-index: -1;
+    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+
+    75%,
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}
+
+/* --- Chat Panel --- */
+.agri-chat-panel {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 380px;
+    height: 550px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.8) translateY(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transform-origin: bottom right;
+}
+
+.agri-chat-panel.open {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* --- Panel Header --- */
+.agri-panel-header {
+    background: #10b981;
+    /* Green from image */
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-bot-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #a855f7 0%, #f97316 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-title h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.close-btn {
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* --- Panel Body --- */
+.agri-panel-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.agri-msg-row {
+    display: flex;
+    max-width: 85%;
+}
+
+.agri-msg-row.bot {
+    align-self: flex-start;
+}
+
+.agri-msg-row.user {
+    align-self: flex-end;
+}
+
+.agri-msg-bubble {
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.bot .agri-msg-bubble {
+    background: #10b981;
+    /* Bot bubble green */
+    color: white;
+    border-bottom-left-radius: 4px;
+}
+
+.user .agri-msg-bubble {
+    background: white;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    border-bottom-right-radius: 4px;
+}
+
+.agri-msg-bubble.thinking {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-style: italic;
+    font-size: 0.85rem;
+    background: white;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.sparkle-anim {
+    animation: spin 2s linear infinite;
+    color: #10b981;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- Panel Footer --- */
+.agri-panel-footer {
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #f1f5f9;
+}
+
+.agri-input-box {
+    display: flex;
+    gap: 10px;
+    background: #f1f5f9;
+    /* Light grey input background */
+    padding: 5px 5px 5px 15px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s;
+}
+
+.agri-input-box:focus-within {
+    background: white;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.agri-input-box input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 0;
+    font-size: 0.95rem;
+    outline: none;
+    color: #1e293b;
+}
+
+.agri-send-btn {
+    padding: 8px 18px;
+    border-radius: 10px;
+    border: none;
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: default;
+    transition: all 0.2s;
+}
+
+.agri-send-btn.active {
+    background: #10b981;
+    /* Green send button */
+    color: white;
+    cursor: pointer;
+}
+
+.agri-send-btn.active:hover {
+    background: #059669;
+}
+
+/* Custom Scrollbar */
+.agri-panel-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.agri-panel-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.agri-panel-body::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}

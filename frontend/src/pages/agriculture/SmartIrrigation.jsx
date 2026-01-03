@@ -369,44 +369,6 @@ const SmartIrrigation = () => {
           </div>
 
           <div className="right-panel">
-            <div className="irrigation-card card-hover fade-in-up">
-              <h3 className="rec-title">
-                <Cloud size={20} className="icon-hover float-animation" />
-                7-Day Local Forecast
-                <span className="badge-pending" style={{ marginLeft: 'auto', fontSize: '10px' }}>PATNA, IN</span>
-              </h3>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', background: '#f8fafc', padding: '12px', borderRadius: '12px' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '12px', color: '#64748b' }}>Temp</div>
-                    <div style={{ fontWeight: '800', color: '#0f172a' }}>{weatherData.temperature}°C</div>
-                  </div>
-                  <div style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0' }}>
-                    <div style={{ fontSize: '12px', color: '#64748b' }}>Humid</div>
-                    <div style={{ fontWeight: '800', color: '#0f172a' }}>{weatherData.humidity}%</div>
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '12px', color: '#64748b' }}>Rain</div>
-                    <div style={{ fontWeight: '800', color: '#0f172a' }}>{weatherData.rainfall}mm</div>
-                  </div>
-                </div>
-
-                <div className="forecast-scroll-container">
-                  {weeklyForecast.map((item, id) => (
-                    <div key={id} className="forecast-mini-card">
-                      <div className="mini-day">{item.day}</div>
-                      <div className="mini-icon">
-                        {item.rain > 30 ? <CloudRain size={16} color="#3b82f6" /> : <Sun size={16} color="#f59e0b" />}
-                      </div>
-                      <div className="mini-temp">{item.temp}°</div>
-                      <div className="mini-rain">{item.rain}%</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="weather-forecast-box" style={{ marginTop: '12px' }}>{weatherData.forecast}</div>
-            </div>
             <div className="impact-card card-hover fade-in-up">
               <h3 style={{ fontWeight: '600', marginBottom: '16px' }}>Monthly Impact</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

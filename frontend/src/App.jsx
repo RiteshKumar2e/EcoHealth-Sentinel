@@ -34,7 +34,7 @@ import SupplyChain from "./pages/agriculture/SupplyChain.jsx";
 import PestControl from "./pages/agriculture/PestControl.jsx";
 import AgriReports from "./pages/agriculture/Reports.jsx";
 import CommunityHub from "./pages/agriculture/CommunityHub.jsx";
-import Settings from "./pages/agriculture/Settings.jsx";
+import Profile from "./pages/agriculture/Profile.jsx";
 
 // Import Environment Modules
 import AwarenessHub from "./pages/environment/AwarenessHub.jsx";
@@ -107,7 +107,7 @@ const App = () => {
           <Route path="irrigation" element={<SmartIrrigation />} />
           <Route path="supply-chain" element={<SupplyChain />} />
           <Route path="weather" element={<WeatherForecast />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
 

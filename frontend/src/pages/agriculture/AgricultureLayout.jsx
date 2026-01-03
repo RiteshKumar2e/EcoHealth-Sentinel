@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Leaf, Sun, Droplets, Sprout, Settings, BarChart, Truck, Bug, MessageSquare, Users, Cog, Menu, X } from 'lucide-react';
+import { Home, Leaf, Sun, Droplets, Sprout, Settings, BarChart, Truck, Bug, MessageSquare, Users, User, Cog, Menu, X, Bot } from 'lucide-react';
 import './Dashboard.css'; // Reusing existing styles
+import AgriFloatingChatbot from '../../components/agriculture/AgriFloatingChatbot';
 
 const AgricultureLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -9,6 +10,7 @@ const AgricultureLayout = () => {
     const navigate = useNavigate();
 
     const menuItems = [
+        { path: '/agriculture/profile', icon: User, label: 'My Profile' },
         { path: '/agriculture/dashboard', icon: Home, label: 'Dashboard' },
         { path: '/agriculture/crop-disease', icon: Leaf, label: 'Crop Disease' },
         { path: '/agriculture/weather', icon: Sun, label: 'Weather Forecast' },
@@ -18,8 +20,7 @@ const AgricultureLayout = () => {
         { path: '/agriculture/supply-chain', icon: Truck, label: 'Supply Chain' },
         { path: '/agriculture/pest-control', icon: Bug, label: 'Pest Control' },
         { path: '/agriculture/reports', icon: BarChart, label: 'Agri Reports' },
-        { path: '/agriculture/community', icon: Users, label: 'Community Hub' },
-        { path: '/agriculture/settings', icon: Cog, label: 'Settings' }
+        { path: '/agriculture/community', icon: Users, label: 'Community Hub' }
     ];
 
     return (
@@ -59,6 +60,8 @@ const AgricultureLayout = () => {
                     <Outlet />
                 </div>
             </div>
+            {/* Floating Chatbot for all pages */}
+            <AgriFloatingChatbot />
         </div>
     );
 };

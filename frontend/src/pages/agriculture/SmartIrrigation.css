@@ -310,11 +310,17 @@
 }
 
 .impact-card {
-    background: linear-gradient(135deg, #16a34a, #2563eb, #06b6d4);
-    border-radius: 16px;
-    padding: 20px;
-    color: white;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%) !important;
+    border: 1px solid #d1fae5 !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    color: #065f46 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+.impact-card h3 {
+    color: #065f46 !important;
+    font-weight: 800 !important;
 }
 
 /* Urgency Cards */
@@ -695,16 +701,16 @@
     font-size: 38px !important;
     font-weight: 900 !important;
     margin: 0 !important;
-    color: #ffffff !important;
+    color: #059669 !important;
     letter-spacing: -0.03em !important;
 }
 
 .impact-label {
     font-size: 14px !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
+    color: #64748b !important;
+    font-weight: 700 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
+    letter-spacing: 0.1em !important;
 }
 
 .feature-list {
