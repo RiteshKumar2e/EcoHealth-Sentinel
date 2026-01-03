@@ -123,3 +123,105 @@ export const getMarketForecast = async (req, res, next) => {
         next(error);
     }
 };
+
+
+// In-memory storage for shipments (simulated database)
+let activeShipments = [
+    {
+        id: 'SH001',
+        product: 'Tomatoes',
+        quantity: '500 kg',
+        from: 'Farm - Darbhanga',
+        to: 'Mandi - Patna',
+        status: 'in-transit',
+        startTime: Date.now() - 30000, // Started 30s ago
+        duration: 60000, // 1 min trip
+        fromCoords: { lat: 26.1542, lng: 85.8918 }, // Darbhanga
+        toCoords: { lat: 25.5941, lng: 85.1376 }, // Patna
+        driver: { name: 'Ramesh Kumar', phone: '+91-9876543210', vehicle: 'Tata 407 (BR-01-GA-1234)' },
+        temperature: '8.2°C',
+        humidity: '65%'
+    }
+];
+
+export const getSupplyChainData = async (req, res, next) => {
+    try {
+        const currentTime = Date.now();
+
+        // Update positions for all active shipments
+        const updatedShipments = activeShipments.map(shipment => {
+            if (shipment.status !== 'in-transit') return shipment;
+
+            const elapsedTime = currentTime - shipment.startTime;
+            let progress = elapsedTime / shipment.duration;
+
+            if (progress >= 1) {
+                progress = 1;
+                shipment.status = 'delivered';
+                shipment.currentLocation = shipment.to;
+            }
+
+            // Calculate current coordinates based on progress
+            const currentLat = shipment.fromCoords.lat + (shipment.toCoords.lat - shipment.fromCoords.lat) * progress;
+            const currentLng = shipment.fromCoords.lng + (shipment.toCoords.lng - shipment.fromCoords.lng) * progress;
+
+            // Estimate Arrival
+            const remainingTime = Math.max(0, shipment.duration - elapsedTime);
+            const remainingMins = Math.ceil(remainingTime / 60000 * 60); // scaled mins
+
+            return {
+                ...shipment,
+                progress: Math.round(progress * 100),
+                coordinates: { lat: currentLat, lng: currentLng },
+                estimatedArrival: progress >= 1 ? 'Arrived' : `${remainingMins} mins`,
+                temperature: (parseFloat(shipment.temperature) + (Math.random() - 0.5) * 0.1).toFixed(1) + '°C'
+            };
+        });
+
+        // Sync back to storage (in a real DB this would be an update)
+        activeShipments = updatedShipments;
+
+        res.json({
+            success: true,
+            active_vehicles: activeShipments.filter(s => s.status === 'in-transit').length,
+            completed_today: activeShipments.filter(s => s.status === 'delivered').length,
+            shipments: activeShipments
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const createShipment = async (req, res, next) => {
+    try {
+        const { product, quantity, from, to, driver, fromCoords, toCoords } = req.body;
+
+        const newShipment = {
+            id: `SH${Math.floor(1000 + Math.random() * 9000)}`,
+            product,
+            quantity,
+            from,
+            to,
+            status: 'in-transit',
+            startTime: Date.now(),
+            duration: 120000, // Default 2 mins for demo
+            fromCoords: fromCoords || { lat: 26.1542, lng: 85.8918 }, // Default to Darbhanga if missing
+            toCoords: toCoords || { lat: 25.5941, lng: 85.1376 }, // Default to Patna if missing
+            driver,
+            temperature: '24.0°C', // Initial ambient
+            humidity: '50%',
+            progress: 0,
+            coordinates: fromCoords || { lat: 26.1542, lng: 85.8918 }
+        };
+
+        activeShipments.push(newShipment);
+
+        res.status(201).json({
+            success: true,
+            message: 'Shipment created successfully',
+            shipment: newShipment
+        });
+    } catch (error) {
+        next(error);
+    }
+};
