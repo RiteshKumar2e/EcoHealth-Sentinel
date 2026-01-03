@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Users, MessageSquare, Share2, ThumbsUp, AlertCircle, Shield, Copy, Bot, Send } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Users, MessageSquare, Share2, ThumbsUp, AlertCircle, Shield, Copy, Bot, Send, MapPin, Clock } from 'lucide-react';
 import './CommunityHub.css';
 
 const CommunityHub = () => {
@@ -7,130 +7,117 @@ const CommunityHub = () => {
   const [newPost, setNewPost] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('General');
   const [moderationAlert, setModerationAlert] = useState('');
-  const [sharePopup, setSharePopup] = useState(null);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [commentInputs, setCommentInputs] = useState({});
 
-  // Chatbot states
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatInput, setChatInput] = useState('');
-  const [chatMessages, setChatMessages] = useState([
-    { sender: "bot", text: "Hello! I'm your farming assistant. Ask me anything 🌱" }
-  ]);
-
-  // Simulated backend fetch (posts)
   useEffect(() => {
-    const fetchPosts = async () => {
-      const data = [
-        {
-          id: 1,
-          author: 'Rajesh Kumar',
-          location: 'Punjab',
-          content: 'Successfully implemented drip irrigation. Water usage reduced by 40%!',
-          likes: 24,
-          comments: ['Great work!', 'Inspiring initiative 👏'],
-          category: 'Water Management',
-          verified: true,
-          timestamp: '2 hours ago'
-        },
-        {
-          id: 2,
-          author: 'Priya Sharma',
-          location: 'Maharashtra',
-          content: 'AI disease detection helped save my tomato crop. Early detection is key!',
-          likes: 45,
-          comments: ['This is so useful!', 'Which tool did you use?'],
-          category: 'Crop Health',
-          verified: true,
-          timestamp: '5 hours ago'
-        }
-      ];
-      setPosts(data);
-    };
     fetchPosts();
+
+    // Setup WebSocket for real-time updates if needed
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${protocol}//${window.location.host}`);
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === 'new_post') {
+        setPosts(prev => [message.data, ...prev]);
+      }
+    };
+
+    return () => ws.close();
   }, []);
 
-  // AI Content Moderation
-  const moderateContent = (content) => {
-    const harmfulPatterns = ['abuse', 'scam', 'fake', 'cheat'];
-    const lowerContent = content.toLowerCase();
-
-    for (let pattern of harmfulPatterns) {
-      if (lowerContent.includes(pattern)) {
-        return { safe: false, reason: 'Content contains potentially harmful terms' };
+  const fetchPosts = async () => {
+    try {
+      setIsDataLoading(true);
+      const response = await fetch('/api/agriculture/community/posts');
+      if (response.ok) {
+        const data = await response.json();
+        setPosts(data);
       }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    } finally {
+      setIsDataLoading(false);
     }
-    if (content.length < 10) {
-      return { safe: false, reason: 'Content too short for meaningful contribution' };
-    }
-    return { safe: true };
   };
 
-  // Post submission
-  const handlePostSubmit = () => {
-    const moderation = moderateContent(newPost);
-    if (!moderation.safe) {
-      setModerationAlert(moderation.reason);
+  const handlePostSubmit = async () => {
+    if (!newPost.trim()) return;
+
+    // Simple moderation
+    const harmfulPatterns = ['abuse', 'scam', 'fake'];
+    if (harmfulPatterns.some(p => newPost.toLowerCase().includes(p))) {
+      setModerationAlert('Content contains harmful terms');
       setTimeout(() => setModerationAlert(''), 3000);
       return;
     }
-    const post = {
-      id: posts.length + 1,
-      author: 'Current User',
-      location: 'Your Location',
-      content: newPost,
-      likes: 0,
-      comments: [],
-      category: selectedCategory,
-      verified: false,
-      timestamp: 'Just now'
-    };
-    setPosts([post, ...posts]);
-    setNewPost('');
-    setModerationAlert('');
-  };
 
-  // Like button
-  const handleLike = (postId) => {
-    setPosts(posts.map(post =>
-      post.id === postId ? { ...post, likes: post.likes + 1 } : post
-    ));
-  };
-
-  // Add comment
-  const handleAddComment = (postId, comment) => {
-    if (!comment.trim()) return;
-    setPosts(posts.map(post =>
-      post.id === postId ? { ...post, comments: [...post.comments, comment] } : post
-    ));
-  };
-
-  // Copy share link
-  const handleShare = (postId) => {
-    navigator.clipboard.writeText(`https://communityhub.com/post/${postId}`);
-    setSharePopup(postId);
-    setTimeout(() => setSharePopup(null), 2000);
-  };
-
-  // Chatbot send message
-  const handleChatSend = async () => {
-    if (!chatInput.trim()) return;
-
-    // add user message
-    const newMessages = [...chatMessages, { sender: "user", text: chatInput }];
-    setChatMessages(newMessages);
-
-    // send to backend
     try {
-      const response = await fetch("/api/chatbot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: chatInput })
+      const response = await fetch('/api/agriculture/community/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: newPost,
+          category: selectedCategory,
+          author: 'Current User', // In real app, get from auth context
+          location: 'Local Region'
+        })
       });
-      const data = await response.json();
-      setChatMessages([...newMessages, { sender: "bot", text: data.reply }]);
-    } catch (err) {
-      setChatMessages([...newMessages, { sender: "bot", text: "⚠️ Sorry, server not responding." }]);
+
+      if (response.ok) {
+        const post = await response.json();
+        setPosts(prev => [post, ...prev]);
+        setNewPost('');
+      }
+    } catch (error) {
+      console.error('Error creating post:', error);
     }
-    setChatInput('');
+  };
+
+  const handleLike = async (postId) => {
+    try {
+      const response = await fetch(`/api/agriculture/community/posts/${postId}/like`, {
+        method: 'POST'
+      });
+      if (response.ok) {
+        const updatedPost = await response.json();
+        setPosts(posts.map(p => p._id === postId ? updatedPost : p));
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
+  };
+
+  const handleAddComment = async (postId) => {
+    const text = commentInputs[postId];
+    if (!text || !text.trim()) return;
+
+    try {
+      const response = await fetch(`/api/agriculture/community/posts/${postId}/comment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          author: 'Current User',
+          text: text
+        })
+      });
+
+      if (response.ok) {
+        const updatedPost = await response.json();
+        setPosts(posts.map(p => p._id === postId ? updatedPost : p));
+        setCommentInputs(prev => ({ ...prev, [postId]: '' }));
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  };
+
+
+  const formatTime = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' • ' +
+      date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -138,24 +125,27 @@ const CommunityHub = () => {
       <div className="hub-wrapper">
 
         {/* Header */}
-        <div className="hub-header">
+        <header className="hub-header">
           <div className="header-left">
-            <Users size={32} color="#16a34a" />
+            <div style={{ background: '#ecfdf5', padding: '12px', borderRadius: '16px' }}>
+              <Users size={32} color="#10b981" />
+            </div>
             <div>
               <h1 className="hub-title">Community Hub</h1>
-              <p className="hub-subtitle">Connect, Share, Grow Together</p>
+              <p className="hub-subtitle">Connecting {posts.length * 12 + 150}+ progressive farmers</p>
             </div>
           </div>
           <div className="header-right">
-            <Shield size={20} />
-            <span>AI-Moderated</span>
+            <Shield size={16} />
+            <span>AI Secured Feed</span>
           </div>
-        </div>
+        </header>
 
         {/* Create Post */}
-        <div className="post-card">
+        <div className="create-post-card">
           <h2 className="section-heading">
-            <MessageSquare size={20} color="#16a34a" /> Share Your Experience
+            <MessageSquare size={20} color="#10b981" />
+            What's happening on your farm?
           </h2>
 
           <select
@@ -174,107 +164,103 @@ const CommunityHub = () => {
           <textarea
             value={newPost}
             onChange={(e) => setNewPost(e.target.value)}
-            placeholder="Share your farming insights, success stories, or ask questions..."
+            placeholder="Share insights, ask questions, or post an update..."
             className="hub-textarea"
           />
 
           {moderationAlert && (
             <div className="alert-box">
-              <AlertCircle size={16} />
+              <AlertCircle size={18} />
               <span>{moderationAlert}</span>
             </div>
           )}
 
           <button onClick={handlePostSubmit} className="btn-post">
-            Post to Community
+            Share with Community
           </button>
         </div>
 
-        {/* Posts */}
-        {posts.map(post => (
-          <div key={post.id} className="post-card">
-            <div className="post-header">
-              <div className="user-info">
-                <div className="user-avatar">
-                  <Users size={24} color="#16a34a" />
+        {/* Feed */}
+        {isDataLoading ? (
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
+            Loading farming insights...
+          </div>
+        ) : (
+          posts.map(post => (
+            <article key={post._id} className="feed-post-card">
+              <div className="post-header">
+                <div className="user-info">
+                  <div className="user-avatar">
+                    <Users size={24} color="#10b981" />
+                  </div>
+                  <div>
+                    <h3 className="user-name">
+                      {post.author}
+                      {post.verified && <Shield size={14} color="#3b82f6" fill="#3b82f6" />}
+                    </h3>
+                    <div className="post-meta">
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <MapPin size={12} /> {post.location}
+                      </span>
+                      <span style={{ margin: '0 8px' }}>•</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <Clock size={12} /> {formatTime(post.createdAt)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="user-name">
-                    {post.author} {post.verified && <Shield size={14} color="blue" />}
-                  </h3>
-                  <p className="post-meta">{post.location} • {post.timestamp}</p>
-                </div>
+                <span className="category-tag">{post.category}</span>
               </div>
-              <span className="category-tag">{post.category}</span>
-            </div>
 
-            <p className="post-content">{post.content}</p>
+              <p className="post-content">{post.content}</p>
 
-            {/* Post Actions */}
-            <div className="post-actions">
-              <button onClick={() => handleLike(post.id)} className="action-btn">
-                <ThumbsUp size={16} /> {post.likes} Likes
-              </button>
-              <button
-                onClick={() => handleAddComment(post.id, prompt("Enter your comment:"))}
-                className="action-btn"
-              >
-                <MessageSquare size={16} /> {post.comments.length} Comments
-              </button>
-              <button onClick={() => handleShare(post.id)} className="action-btn">
-                <Share2 size={16} /> Share
-              </button>
-            </div>
-
-            {/* Share Popup */}
-            {sharePopup === post.id && (
-              <div className="share-popup">
-                <Copy size={14} /> Link copied!
+              <div className="post-actions">
+                <button className="action-btn like-btn" onClick={() => handleLike(post._id)}>
+                  <ThumbsUp size={18} /> {post.likesCount || 0}
+                </button>
+                <button className="action-btn comment-btn" onClick={() => {
+                  const input = document.getElementById(`comment-input-${post._id}`);
+                  if (input) input.focus();
+                }}>
+                  <MessageSquare size={18} /> {post.comments?.length || 0}
+                </button>
+                <button className="action-btn share-btn" onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  alert('Link copied to clipboard!');
+                }}>
+                  <Share2 size={18} /> Share
+                </button>
               </div>
-            )}
 
-            {/* Comments */}
-            {post.comments.length > 0 && (
+              {/* Comments Section */}
               <div className="comments-section">
-                {post.comments.map((c, i) => (
-                  <p key={i} className="comment-text">💬 {c}</p>
+                {post.comments?.map((comment, idx) => (
+                  <div key={idx} className="comment-item">
+                    <div className="comment-author">{comment.author}</div>
+                    <div className="comment-text">{comment.text}</div>
+                  </div>
                 ))}
+
+                <div className="comment-input-group">
+                  <input
+                    id={`comment-input-${post._id}`}
+                    type="text"
+                    placeholder="Write a comment..."
+                    className="comment-input"
+                    value={commentInputs[post._id] || ''}
+                    onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddComment(post._id)}
+                  />
+                  <button className="btn-comment" onClick={() => handleAddComment(post._id)}>
+                    <Send size={16} />
+                  </button>
+                </div>
               </div>
-            )}
-          </div>
-        ))}
+            </article>
+          ))
+        )}
       </div>
 
-      {/* Chatbot floating button */}
-      <div className="chatbot-icon" onClick={() => setChatOpen(!chatOpen)}>
-        <Bot size={45} color="white" />
-      </div>
-
-      {/* Chatbot window */}
-      {chatOpen && (
-        <div className="chatbot-window">
-          <div className="chat-header">🌱 AgriBot</div>
-          <div className="chat-body">
-            {chatMessages.map((msg, i) => (
-              <div key={i} className={msg.sender === "user" ? "msg-user" : "msg-bot"}>
-                {msg.text}
-              </div>
-            ))}
-          </div>
-          <div className="chat-input-area">
-            <input
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Ask me anything..."
-              className="chat-input"
-              onKeyDown={(e) => e.key === 'Enter' && handleChatSend()}
-            />
-            <button onClick={handleChatSend} className="chat-send-btn">
-              <Send size={24} />
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

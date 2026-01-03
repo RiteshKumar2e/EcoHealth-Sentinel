@@ -2,6 +2,7 @@ import Pest from '../models/Pest.js';
 import Treatment from '../models/Treatment.js';
 import Report from '../models/Report.js';
 import Config from '../models/Config.js';
+import Post from '../models/Post.js';
 
 export const getAgriDashboard = async (req, res, next) => {
     try {
@@ -517,6 +518,98 @@ export const deleteReport = async (req, res, next) => {
     try {
         await Report.findByIdAndDelete(req.params.id);
         res.json({ message: 'Report deleted' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// --- Community Hub Management ---
+
+export const getPosts = async (req, res, next) => {
+    try {
+        let posts = await Post.find().sort({ createdAt: -1 });
+
+        // Seed some initial posts if empty and not seeded
+        const isSeeded = await Config.findOne({ key: 'community_seeded' });
+        if (!isSeeded && posts.length === 0) {
+            const initialPosts = [
+                {
+                    author: 'Rajesh Kumar',
+                    location: 'Punjab',
+                    content: 'Successfully implemented drip irrigation. Water usage reduced by 40%!',
+                    category: 'Water Management',
+                    verified: true,
+                    likesCount: 24,
+                    comments: [
+                        { author: 'Suresh Raina', text: 'Great work!' },
+                        { author: 'Dr. Mehta', text: 'Inspiring initiative 👏' }
+                    ]
+                },
+                {
+                    author: 'Priya Sharma',
+                    location: 'Maharashtra',
+                    content: 'AI disease detection helped save my tomato crop. Early detection is key!',
+                    category: 'Crop Health',
+                    verified: true,
+                    likesCount: 45,
+                    comments: [
+                        { author: 'Anil K', text: 'This is so useful!' },
+                        { author: 'Farmer John', text: 'Which tool did you use?' }
+                    ]
+                }
+            ];
+            await Post.insertMany(initialPosts);
+            await Config.create({ key: 'community_seeded', value: true });
+            posts = await Post.find().sort({ createdAt: -1 });
+        }
+
+        res.json(posts);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const createPost = async (req, res, next) => {
+    try {
+        const { author, content, category, location } = req.body;
+        const post = new Post({
+            author: author || 'Global Farmer',
+            content,
+            category: category || 'General',
+            location: location || 'Unknown',
+            verified: false
+        });
+        await post.save();
+        res.status(201).json(post);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const likePost = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const post = await Post.findByIdAndUpdate(
+            id,
+            { $inc: { likesCount: 1 } },
+            { new: true }
+        );
+        res.json(post);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const addComment = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { author, text } = req.body;
+        const post = await Post.findById(id);
+        if (!post) return res.status(404).json({ message: 'Post not found' });
+
+        post.comments.push({ author: author || 'Anonymous', text });
+        await post.save();
+        res.status(201).json(post);
     } catch (error) {
         next(error);
     }

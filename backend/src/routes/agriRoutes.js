@@ -12,7 +12,11 @@ import {
     deleteTreatment,
     getReports,
     generateReport,
-    deleteReport
+    deleteReport,
+    getPosts,
+    createPost,
+    likePost,
+    addComment
 } from '../controllers/agriController.js';
 
 const router = express.Router();
@@ -34,5 +38,11 @@ router.delete('/treatments/:id', deleteTreatment);
 router.get('/reports', getReports);
 router.post('/reports', generateReport);
 router.delete('/reports/:id', deleteReport);
+
+// Community Hub
+router.get('/community/posts', getPosts);
+router.post('/community/posts', createPost);
+router.post('/community/posts/:id/like', likePost);
+router.post('/community/posts/:id/comment', addComment);
 
 export default router;
