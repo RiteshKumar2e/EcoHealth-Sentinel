@@ -21,19 +21,15 @@
 
 .sidebar {
     width: 280px;
-    background: #b40404;
-    /* Clean white background */
-    color: #334155;
-    /* Dark slate text */
+    background: #ffffff;
+    color: #1e293b;
     padding: 24px 0;
     position: fixed;
     height: 100vh;
     left: 0;
     top: 0;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
-    /* Softer shadow for light theme */
+    box-shadow: 1px 0 10px rgba(0, 0, 0, 0.02);
     overflow-y: auto;
     border-right: 1px solid #e2e8f0;
 }
@@ -92,17 +88,13 @@
     padding: 14px 20px;
     border-radius: 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
     font-size: 1rem;
     font-weight: 600;
-    color: #64748b;
-    /* Slate-grey text */
-    background: transparent;
+    color: #475569;
 }
 
 .sidebar-item svg {
     opacity: 0.8;
-    transition: opacity 0.3s;
 }
 
 .sidebar-item:hover {
@@ -115,10 +107,8 @@
 }
 
 .sidebar-item.active {
-    color: #3b82f6;
-    background: #f0f4ff;
-    /* Light/White background as in image */
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    color: #4f46e5;
+    background: #f5f3ff;
     position: relative;
 }
 
@@ -143,14 +133,12 @@
     top: 25px;
     z-index: 1100;
     background: linear-gradient(135deg, #4f46e5, #9333ea);
-    /* Premium Indigo-Purple gradient */
     border: none;
     border-radius: 12px;
     width: 52px;
     height: 52px;
     cursor: pointer;
     box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,7 +167,6 @@
 }
 
 .dashboard-content {
-    animation: fadeIn 0.5s ease-out;
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
@@ -201,9 +188,7 @@
     flex: 1;
     min-height: 100vh;
     padding: 32px 60px 60px 60px;
-    /* Base padding */
     padding-top: 110px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     margin-left: 0;
     position: relative;
     z-index: 1;
@@ -315,17 +300,21 @@
 
 .metric-label {
     font-size: 0.875rem;
-    color: #6b7280;
-    font-weight: 500;
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
     margin-bottom: 8px;
     margin-top: 0;
 }
 
 .metric-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1f2937;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #0f172a !important;
+    /* Deep Navy for Max Contrast */
     margin: 8px 0;
+    opacity: 1 !important;
 }
 
 .metric-info {
@@ -349,8 +338,7 @@
 .progress-bar {
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #60a5fa, #2563eb);
-    transition: width 1s ease-out;
+    background: linear-gradient(90deg, #4f46e5, #06b6d4);
 }
 
 /* Predictions Grid */
@@ -532,67 +520,72 @@
 
 /* Impact Section */
 .impact-section {
-    background: linear-gradient(135deg, #10b981, #059669, #0891b2);
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    padding: 40px;
-    color: white;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    padding: 32px;
+    color: #1e293b;
 }
 
 .impact-header {
     font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 32px;
+    color: #1e293b;
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     margin-top: 0;
 }
 
 .impact-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 24px;
+    gap: 20px;
 }
 
 .impact-card {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px;
     padding: 24px;
-    transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .impact-card:hover {
-    transform: scale(1.05);
+    background: #ffffff;
+    border-color: #cbd5e1;
 }
 
 .impact-value {
     font-size: 2.5rem;
-    font-weight: 700;
+    font-weight: 800;
+    color: #0f172a !important;
+    /* Deep Navy for Contrast */
     margin-bottom: 8px;
     margin-top: 0;
 }
 
 .impact-label {
     font-size: 0.875rem;
-    font-weight: 500;
-    opacity: 0.95;
+    font-weight: 700;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
     margin: 0;
 }
 
 .impact-progress-container {
-    margin-top: 12px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.4);
+    margin-top: 16px;
+    height: 8px;
+    background: #f1f5f9;
     border-radius: 999px;
     overflow: hidden;
 }
 
 .impact-progress-bar {
     height: 100%;
-    background: white;
+    background: linear-gradient(90deg, #4f46e5, #06b6d4);
     border-radius: 999px;
-    transition: width 1s ease-out;
 }
