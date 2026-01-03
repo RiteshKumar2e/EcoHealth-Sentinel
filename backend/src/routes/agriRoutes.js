@@ -9,7 +9,10 @@ import {
     getTreatments,
     scheduleTreatment,
     updateTreatmentStatus,
-    deleteTreatment
+    deleteTreatment,
+    getReports,
+    generateReport,
+    deleteReport
 } from '../controllers/agriController.js';
 
 const router = express.Router();
@@ -26,5 +29,10 @@ router.get('/treatments', getTreatments);
 router.post('/treatments', scheduleTreatment);
 router.patch('/treatments/:id/status', updateTreatmentStatus);
 router.delete('/treatments/:id', deleteTreatment);
+
+// Reports
+router.get('/reports', getReports);
+router.post('/reports', generateReport);
+router.delete('/reports/:id', deleteReport);
 
 export default router;

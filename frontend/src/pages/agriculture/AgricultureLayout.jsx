@@ -17,7 +17,7 @@ const AgricultureLayout = () => {
         { path: '/agriculture/market', icon: BarChart, label: 'Market Forecast' },
         { path: '/agriculture/supply-chain', icon: Truck, label: 'Supply Chain' },
         { path: '/agriculture/pest-control', icon: Bug, label: 'Pest Control' },
-        { path: '/agriculture/chatbot', icon: MessageSquare, label: 'Reports & Chatbot' },
+        { path: '/agriculture/reports', icon: BarChart, label: 'Agri Reports' },
         { path: '/agriculture/community', icon: Users, label: 'Community Hub' },
         { path: '/agriculture/settings', icon: Cog, label: 'Settings' }
     ];

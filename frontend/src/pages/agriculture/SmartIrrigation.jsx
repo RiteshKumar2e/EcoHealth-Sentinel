@@ -100,7 +100,30 @@ const SmartIrrigation = () => {
       setLastUpdated(new Date());
     } catch (error) {
       console.warn('Weather API failed, using fallback:', error);
-      // Fail-over to mock if needed, but attempt real time first
+
+      const fallbackPayload = {
+        temperature: 28,
+        humidity: 62,
+        rainfall: 0,
+        forecast: 'Partly Cloudy (Offline Mode)',
+        apiForecast: []
+      };
+
+      setWeatherData({
+        temperature: fallbackPayload.temperature,
+        humidity: fallbackPayload.humidity,
+        rainfall: fallbackPayload.rainfall,
+        forecast: `Conditions: ${fallbackPayload.forecast}`
+      });
+
+      // Provide 7 days of mock forecast
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const mockWeekly = days.map((day, i) => ({
+        day,
+        temp: 26 + Math.floor(Math.random() * 6),
+        rain: i % 4 === 0 ? 40 : 10
+      }));
+      setWeeklyForecast(mockWeekly);
     } finally {
       setIsRefreshing(false);
     }

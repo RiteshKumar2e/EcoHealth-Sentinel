@@ -1,5 +1,7 @@
 import Pest from '../models/Pest.js';
 import Treatment from '../models/Treatment.js';
+import Report from '../models/Report.js';
+import Config from '../models/Config.js';
 
 export const getAgriDashboard = async (req, res, next) => {
     try {
@@ -443,6 +445,78 @@ export const deleteTreatment = async (req, res, next) => {
     try {
         await Treatment.findByIdAndDelete(req.params.id);
         res.json({ message: 'Treatment deleted' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// --- Report Management ---
+
+export const getReports = async (req, res, next) => {
+    try {
+        let reports = await Report.find().sort({ createdAt: -1 });
+
+        // Check if we've already seeded the initial data
+        const isSeeded = await Config.findOne({ key: 'reports_seeded' });
+
+        if (!isSeeded) {
+            const initialReports = [
+                {
+                    name: 'Crop Yield Analysis - Winter 2025',
+                    type: 'Yield Analysis',
+                    date: 'Dec 28, 2025',
+                    size: '2.4 MB',
+                    status: 'Ready'
+                },
+                {
+                    name: 'Soil Health Assessment - Zone A',
+                    type: 'Soil Health',
+                    date: 'Dec 25, 2025',
+                    size: '1.8 MB',
+                    status: 'Ready'
+                },
+                {
+                    name: 'Water Usage Report - December',
+                    type: 'Water Management',
+                    date: 'Dec 20, 2025',
+                    size: '1.5 MB',
+                    status: 'Ready'
+                }
+            ];
+            await Report.insertMany(initialReports);
+            await Config.create({ key: 'reports_seeded', value: true });
+            reports = await Report.find().sort({ createdAt: -1 });
+        }
+
+        res.json(reports);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const generateReport = async (req, res, next) => {
+    try {
+        const { reportType } = req.body;
+
+        const newReport = new Report({
+            name: `${reportType} - ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
+            type: reportType.split(' ')[0] + ' ' + (reportType.split(' ')[1] || ''),
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            size: (Math.random() * (3.0 - 1.0) + 1.0).toFixed(1) + ' MB',
+            status: 'Ready'
+        });
+
+        await newReport.save();
+        res.status(201).json(newReport);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteReport = async (req, res, next) => {
+    try {
+        await Report.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Report deleted' });
     } catch (error) {
         next(error);
     }

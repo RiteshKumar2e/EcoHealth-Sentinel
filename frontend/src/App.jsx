@@ -32,7 +32,7 @@ import FarmAutomation from "./pages/agriculture/FarmAutomation.jsx";
 import MarketForecast from "./pages/agriculture/MarketForecast.jsx";
 import SupplyChain from "./pages/agriculture/SupplyChain.jsx";
 import PestControl from "./pages/agriculture/PestControl.jsx";
-import ReportsChatbot from "./pages/agriculture/ReportsChatbot.jsx";
+import AgriReports from "./pages/agriculture/Reports.jsx";
 import CommunityHub from "./pages/agriculture/CommunityHub.jsx";
 import Settings from "./pages/agriculture/Settings.jsx";
 
@@ -103,7 +103,7 @@ const App = () => {
           <Route path="automation" element={<FarmAutomation />} />
           <Route path="market" element={<MarketForecast />} />
           <Route path="pest-control" element={<PestControl />} />
-          <Route path="chatbot" element={<ReportsChatbot />} />
+          <Route path="reports" element={<AgriReports />} />
           <Route path="irrigation" element={<SmartIrrigation />} />
           <Route path="supply-chain" element={<SupplyChain />} />
           <Route path="weather" element={<WeatherForecast />} />
