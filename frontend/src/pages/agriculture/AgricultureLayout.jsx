@@ -13,7 +13,6 @@ const AgricultureLayout = () => {
         { path: '/agriculture/crop-disease', icon: Leaf, label: 'Crop Disease' },
         { path: '/agriculture/weather', icon: Sun, label: 'Weather Forecast' },
         { path: '/agriculture/irrigation', icon: Droplets, label: 'Smart Irrigation' },
-        { path: '/agriculture/fertilizer', icon: Sprout, label: 'Fertilizer Recommendations' },
         { path: '/agriculture/automation', icon: Settings, label: 'Farm Automation' },
         { path: '/agriculture/market', icon: BarChart, label: 'Market Forecast' },
         { path: '/agriculture/supply-chain', icon: Truck, label: 'Supply Chain' },

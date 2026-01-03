@@ -1,374 +1,398 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Power, Zap, Clock, Activity, Shield, Send, TrendingUp } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import {
+  Zap, Activity, ShieldCheck, Search, Plus,
+  Settings, Power, Battery, Wifi, MoreVertical,
+  Droplets, Thermometer, Leaf, Navigation, Bell,
+  ChevronRight, AlertCircle, TrendingUp, Cpu
+} from "lucide-react";
 import './FarmAutomation.css';
 
-const SENSOR_COLORS = {
-  irrigation: "#2DD4BF",
-  fertilizer: "#FBBF24",
-  pest: "#FB7185",
-  sensor: "#60A5FA",
-};
-
 const FarmAutomation = () => {
-  const [devices, setDevices] = useState([
+  // Sentinel State Management
+  const [nodes, setNodes] = useState([
     {
       id: 1,
-      name: "Irrigation System A",
-      type: "irrigation",
+      name: "Soil Sentinel Alpha",
+      type: "Eco-Monitor",
       status: "active",
-      mode: "auto",
-      schedule: "6:00 AM - 8:00 AM",
-      waterFlow: 45,
-      energyUsage: 2.3,
-      aiOptimized: true,
+      health: 98,
+      moisture: 62,
+      battery: 88,
+      signal: 5,
+      lastAction: "Moisture analysis complete"
     },
     {
       id: 2,
-      name: "Fertilizer Dispenser",
-      type: "fertilizer",
+      name: "Irrigation Node 02",
+      type: "Automation",
       status: "idle",
-      mode: "auto",
-      schedule: "Every 3 days",
-      lastRun: "2 days ago",
-      energyUsage: 0.5,
-      aiOptimized: true,
-    },
-    {
-      id: 3,
-      name: "Pest Control Sprayer",
-      type: "pest",
+      health: 100,
+      flowRate: 0,
+      battery: 92,
+      signal: 4,
+      lastAction: "Task scheduled: 06:00 PM"
+    }
+  ]);
+
+  const [rules, setRules] = useState([]);
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [feed, setFeed] = useState([
+    { id: 1, text: "Sentinel Command Hub Initialized", time: "Just now", type: "success" }
+  ]);
+
+  // Modal State
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    type: "Soil Monitor",
+    zone: "North Field"
+  });
+
+  const filteredNodes = useMemo(() => {
+    return nodes.filter(n => {
+      const matchesSearch = n.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesFilter = activeFilter === "all" || n.status === activeFilter;
+      return matchesSearch && matchesFilter;
+    });
+  }, [nodes, searchQuery, activeFilter]);
+
+  const stats = useMemo(() => ({
+    active: nodes.filter(n => n.status === 'active').length,
+    ecoSavings: nodes.length > 0 ? (nodes.filter(n => n.status === 'active').length * 12.5).toFixed(1) + "%" : "0%",
+    integrity: nodes.length > 0 ? "100%" : "0%"
+  }), [nodes]);
+
+  const addToFeed = (text, type = "success") => {
+    setFeed(prev => [{ id: Date.now(), text, time: "Just now", type }, ...prev].slice(0, 5));
+  };
+
+  const provisionNode = (e) => {
+    e.preventDefault();
+    if (!formData.name.trim()) return;
+
+    const id = Date.now();
+    const newNode = {
+      id,
+      name: formData.name,
+      type: formData.type,
+      zone: formData.zone,
       status: "idle",
-      mode: "manual",
-      schedule: "As needed",
-      lastRun: "5 days ago",
-      energyUsage: 0,
-      aiOptimized: false,
-    },
-    {
-      id: 4,
-      name: "Weather Station",
-      type: "sensor",
-      status: "active",
-      mode: "auto",
-      temperature: 28,
-      humidity: 72,
-      energyUsage: 0.1,
-      aiOptimized: true,
-    },
-  ]);
+      health: 100,
+      battery: 100,
+      signal: 5,
+      lastAction: `Assigned to ${formData.zone}. Initializing...`
+    };
 
-  const [automationRules, setAutomationRules] = useState([
-    {
-      id: 1,
-      condition: "Soil moisture < 50%",
-      action: "Activate irrigation for 30 minutes",
-      enabled: true,
-      triggered: 12,
-    },
-    {
-      id: 2,
-      condition: "Temperature > 35°C",
-      action: "Increase irrigation by 20%",
-      enabled: true,
-      triggered: 3,
-    },
-    {
-      id: 3,
-      condition: "Disease detected",
-      action: "Send alert + Schedule treatment",
-      enabled: true,
-      triggered: 1,
-    },
-  ]);
+    setNodes([...nodes, newNode]);
+    addToFeed(`New Sentinel Provisioned: ${formData.name}`);
+    setShowModal(false);
+    setFormData({ name: "", type: "Soil Monitor", zone: "North Field" });
+  };
 
-  const [chatMessages, setChatMessages] = useState([
-    { id: "bot-1", author: "bot", text: "Hello! I'm your farm automation assistant. Ask me about devices status, energy optimization, or automation rules." },
-  ]);
-  const [chatText, setChatText] = useState("");
-  const [loadingDevices, setLoadingDevices] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+  const deleteNode = (id) => {
+    const node = nodes.find(n => n.id === id);
+    setNodes(nodes.filter(n => n.id !== id));
+    addToFeed(`Sentinel Removed: ${node.name}`, "warning");
+  };
 
-  const chatListRef = useRef(null);
-  const wsRef = useRef(null);
+  const addLogicRule = () => {
+    const newRule = {
+      id: Date.now(),
+      condition: "Moisture < 45%",
+      action: "Trigger Bio-Hydration"
+    };
+    setRules([...rules, newRule]);
+    addToFeed("Autonomous Intelligence Rule Configured");
+  };
 
-  useEffect(() => {
-    let mounted = true;
-    const fetchDevices = async () => {
-      setLoadingDevices(true);
-      try {
-        const res = await fetch("/api/devices");
-        if (!mounted) return;
-        if (res.ok) {
-          const json = await res.json();
-          if (Array.isArray(json)) setDevices(json);
+  const toggleNode = (id) => {
+    setNodes(nodes.map(n => {
+      if (n.id === id) {
+        if (n.status === 'idle') {
+          addToFeed(`Initializing scanning for ${n.name}...`);
+          return { ...n, status: 'scanning', lastAction: "Scanning environmental perimeter..." };
         }
-      } catch (e) {
-        console.log('Using local device data');
-      } finally {
-        if (mounted) setLoadingDevices(false);
+        addToFeed(`${n.name} deactivated.`);
+        return { ...n, status: 'idle', lastAction: "Sentinel enters standby mode" };
       }
-    };
-    fetchDevices();
-    const id = setInterval(fetchDevices, 30000);
-    return () => {
-      mounted = false;
-      clearInterval(id);
-    };
-  }, []);
+      return n;
+    }));
 
-  useEffect(() => {
-    if (chatListRef.current) {
-      chatListRef.current.scrollTop = chatListRef.current.scrollHeight;
-    }
-  }, [chatMessages]);
-
-  const toggleDevice = (deviceId) =>
-    setDevices((ds) =>
-      ds.map((device) =>
-        device.id === deviceId ? { ...device, status: device.status === "active" ? "idle" : "active" } : device
-      )
-    );
-
-  const toggleMode = (deviceId) =>
-    setDevices((ds) => ds.map((device) => (device.id === deviceId ? { ...device, mode: device.mode === "auto" ? "manual" : "auto" } : device)));
-
-  const toggleRule = (ruleId) => setAutomationRules((rs) => rs.map((r) => (r.id === ruleId ? { ...r, enabled: !r.enabled } : r)));
-
-  const sendMessageToBot = async (messageText) => {
-    if (!messageText || messageText.trim() === "") return;
-
-    const userId = `user-${Date.now()}`;
-    setChatMessages((m) => [...m, { id: userId, author: "you", text: messageText }]);
-    setChatText("");
-    setIsTyping(true);
-
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ message: messageText }));
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: messageText,
-          context: {
-            devices: devices.map(d => ({ id: d.id, name: d.name, status: d.status, type: d.type })),
-            rules: automationRules.map(r => ({ condition: r.condition, enabled: r.enabled }))
-          }
-        }),
-      });
-      const json = await (res.ok ? res.json() : Promise.resolve({ reply: "Sorry, chat service unavailable." }));
-      setIsTyping(false);
-      setChatMessages((m) => [...m, { id: `bot-${Date.now()}`, author: "bot", text: json.reply || String(json) }]);
-    } catch (err) {
-      setIsTyping(false);
-      setChatMessages((m) => [...m, { id: `bot-${Date.now()}`, author: "bot", text: "Network error: cannot reach chat backend." }]);
-    }
+    setTimeout(() => {
+      setNodes(prev => prev.map(n => {
+        if (n.id === id && n.status === 'scanning') {
+          addToFeed(`${n.name} Shield Activated!`);
+          return { ...n, status: 'active', lastAction: "Autonomous protection active" };
+        }
+        return n;
+      }));
+    }, 1500);
   };
-
-  const handleChatKey = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessageToBot(chatText.trim());
-    }
-  };
-
-  const totalEnergy = useMemo(() =>
-    devices.reduce((s, d) => s + (Number(d.energyUsage) || 0), 0),
-    [devices]
-  );
-
-  const activeDevices = useMemo(() =>
-    devices.filter(d => d.status === 'active').length,
-    [devices]
-  );
 
   return (
-    <div className="automation-container">
-      <div className="automation-wrapper">
-
-        {/* Header */}
-        <div className="glass-card header-card">
-          <div className="header-bg-glow"></div>
-
-          <div className="header-content">
-            <Zap className="header-icon" />
-            <div>
-              <h1 className="header-title">Farm Automation</h1>
-              <p className="header-subtitle">AI-driven device control with real-time monitoring</p>
-            </div>
+    <div className="sentinel-hub-root">
+      {/* 1. LEFT NAVIGATION: BRAND & CORE METRICS */}
+      <aside className="sentinel-sidebar-left">
+        <div className="sentinel-brand">
+          <div className="brand-hex-icon">
+            <ShieldCheck size={28} fill="white" strokeWidth={2.5} />
           </div>
-
-          <div className="header-stats">
-            <div className="stats-label">Total Energy</div>
-            <div className="stats-value">{totalEnergy.toFixed(1)} kW</div>
-            <div className="stats-subtext">{activeDevices} of {devices.length} devices active</div>
+          <div className="brand-labels">
+            <h1>EcoHealth</h1>
+            <span>SENTINEL COMMAND</span>
           </div>
         </div>
 
-        {/* Left: Devices */}
-        <div className="device-grid">
-          {devices.map((device) => (
-            <div key={device.id} className="glass-card device-card" style={{ borderLeft: `4px solid ${SENSOR_COLORS[device.type]}` }}>
-              <div className="device-glow" style={{ background: `radial-gradient(circle, ${SENSOR_COLORS[device.type]}20 0%, transparent 70%)` }} />
-
-              <div className="device-header">
-                <div className="device-info">
-                  <div className={`status-dot ${device.status === 'active' ? 'active-dot' : 'idle-dot'}`} />
-                  <div>
-                    <div className="device-name">{device.name}</div>
-                    <div className="device-type">{device.type}</div>
-                  </div>
-                </div>
-
-                {device.aiOptimized && (
-                  <div className="ai-badge">
-                    <Shield className="ai-icon" />
-                    AI
-                  </div>
-                )}
-              </div>
-
-              <div className="device-actions">
-                <button
-                  onClick={() => toggleDevice(device.id)}
-                  className={`toggle-btn ${device.status === 'active' ? 'btn-active' : 'btn-inactive'}`}
-                >
-                  {device.status === 'active' ? 'Turn Off' : 'Turn On'}
-                </button>
-
-                <button
-                  onClick={() => toggleMode(device.id)}
-                  className={`mode-btn ${device.mode === 'auto' ? 'mode-auto' : 'mode-manual'}`}
-                >
-                  {device.mode}
-                </button>
-              </div>
-
-              <div className="device-metrics">
-                {device.waterFlow && (
-                  <div>
-                    <div className="metric-value">{device.waterFlow} L/min</div>
-                    <div className="metric-label">Water Flow</div>
-                    <div className="progress-container" style={{ width: `${Math.min(100, device.waterFlow)}%` }}>
-                      <div className="progress-shimmer"></div>
-                    </div>
-                  </div>
-                )}
-
-                {device.temperature && (
-                  <div>
-                    <div className="metric-value">{device.temperature}°C</div>
-                    <div className="metric-label">Temperature</div>
-                  </div>
-                )}
-
-                {device.humidity && (
-                  <div>
-                    <div className="metric-value">{device.humidity}%</div>
-                    <div className="metric-label">Humidity</div>
-                  </div>
-                )}
-
-                <div>
-                  <div className="metric-value">{device.energyUsage} kW</div>
-                  <div className="metric-label">Energy</div>
-                </div>
-
-                <div>
-                  <div className="metric-value" style={{ fontSize: 12 }}>{device.schedule}</div>
-                  <div className="metric-label">Schedule</div>
-                </div>
-              </div>
+        <div className="sentinel-metrics-vertical">
+          <div className="metric-pill eco">
+            <div className="pill-icon"><Leaf size={18} /></div>
+            <div className="pill-data">
+              <span className="p-label">ECO SAVINGS</span>
+              <h3>{stats.ecoSavings}</h3>
+              <span className="p-growth">Efficiency Optimized</span>
             </div>
-          ))}
+          </div>
 
-          {/* Rules */}
-          <div className="glass-card rules-section">
-            <div className="rules-header">
-              <TrendingUp className="rules-icon" />
-              <h2 className="rules-title">AI Automation Rules</h2>
+          <div className="metric-pill active">
+            <div className="pill-icon"><Activity size={18} /></div>
+            <div className="pill-data">
+              <span className="p-label">ACTIVE SENTINELS</span>
+              <h3>{stats.active} <small>/ {nodes.length}</small></h3>
+              <span className="p-growth">Global coverage: {nodes.length > 0 ? 'Optimal' : 'None'}</span>
             </div>
+          </div>
 
-            {automationRules.map((rule) => (
-              <div key={rule.id} className={`rule-item ${rule.enabled ? 'rule-enabled' : 'rule-disabled'}`}>
-                <div>
-                  <div className="rule-info-if">IF: {rule.condition}</div>
-                  <div className="rule-info-then">THEN: {rule.action}</div>
-                  <div className="rule-triggered">Triggered {rule.triggered}x</div>
-                </div>
-
-                <button
-                  onClick={() => toggleRule(rule.id)}
-                  className={`rule-btn ${rule.enabled ? 'mode-auto' : 'mode-manual'}`}
-                >
-                  {rule.enabled ? 'Enabled' : 'Disabled'}
-                </button>
-              </div>
-            ))}
+          <div className="metric-pill system">
+            <div className="pill-icon"><Cpu size={18} /></div>
+            <div className="pill-data">
+              <span className="p-label">AI INTEGRITY</span>
+              <h3>{stats.integrity}</h3>
+              <span className="p-growth">Neural-Link: Stable</span>
+            </div>
           </div>
         </div>
 
-        {/* Right: Chat & Impact */}
-        <div className="right-panel">
-          {/* Impact */}
-          <div className="glass-card impact-card">
-            <h3 className="impact-title">Automation Impact</h3>
-
-            <div className="impact-grid">
-              {[
-                { value: '60%', label: 'Labor Saved' },
-                { value: '35%', label: 'Energy Efficiency' },
-                { value: '24/7', label: 'Monitoring' },
-                { value: 'Zero', label: 'Human Errors' }
-              ].map((item, i) => (
-                <div key={i} className="impact-item">
-                  <div className="impact-value">{item.value}</div>
-                  <div className="impact-label">{item.label}</div>
-                </div>
-              ))}
-            </div>
+        <div className="sidebar-footer-info">
+          <div className="uptime-status">
+            <div className="dot pulse-green"></div>
+            Online Protection: 24/7
           </div>
+        </div>
+      </aside>
 
-          {/* Chat */}
-          <div className="glass-card chat-card">
-            <h3 className="chat-title">Assistant</h3>
-
-            <div ref={chatListRef} className="chat-messages">
-              {chatMessages.map((msg) => (
-                <div key={msg.id} className={`chat-message ${msg.author === 'you' ? 'msg-user' : 'msg-bot'}`}>
-                  {msg.text}
-                </div>
-              ))}
-
-              {isTyping && (
-                <div className="typing-indicator">
-                  {[0, 1, 2].map(i => (
-                    <div key={i} className="typing-dot" style={{ animationDelay: `${i * 0.2}s` }} />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="chat-input-area">
-              <textarea
-                value={chatText}
-                onChange={(e) => setChatText(e.target.value)}
-                onKeyDown={handleChatKey}
-                placeholder="Ask about devices or energy..."
-                className="chat-input"
-                rows={2}
+      {/* 2. MAIN WORKSPACE: SENTINEL NODES */}
+      <main className="sentinel-main-frame">
+        <header className="main-frame-header">
+          <div className="header-search-group">
+            <div className="sentinel-search">
+              <Search size={18} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Locate Sentinel Nodes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
+            </div>
+            <nav className="filter-nav">
+              <button
+                className={activeFilter === 'all' ? 'active' : ''}
+                onClick={() => setActiveFilter('all')}
+              >All Infrastructure</button>
+              <button
+                className={activeFilter === 'active' ? 'active' : ''}
+                onClick={() => setActiveFilter('active')}
+              >Shield Active</button>
+            </nav>
+          </div>
 
-              <button onClick={() => sendMessageToBot(chatText.trim())} className="send-btn">
-                <Send style={{ width: 20, height: 20 }} />
+          <button className="btn-provision-prime" onClick={() => setShowModal(true)}>
+            <Plus size={18} />
+            <span>Provision New Sentinel</span>
+          </button>
+        </header>
+
+        <section className="node-canvas-grid">
+          {filteredNodes.length === 0 ? (
+            <div className="empty-sentinel-state">
+              <div className="sentinel-hollow-logo">
+                <ShieldCheck size={48} color="#e2e8f0" />
+              </div>
+              <h3>No Sentinels Provisioned</h3>
+              <p>Initialize your first Sentinel Node to begin autonomous ecological protection.</p>
+              <button className="btn-add-sentinel-empty" onClick={() => setShowModal(true)}>
+                <Plus size={18} /> Provision Your First Sentinel
               </button>
             </div>
+          ) : (
+            <div className="sentinel-cards-layout">
+              {filteredNodes.map(node => (
+                <div key={node.id} className={`sentinel-card-v2 ${node.status}`}>
+                  <div className="card-top-info">
+                    <div className="node-identity">
+                      <div className={`status-orb ${node.status}`}></div>
+                      <div>
+                        <h4>{node.name}</h4>
+                        <span className="node-type-tag">{node.type}</span>
+                      </div>
+                    </div>
+                    <button className="card-menu-btn" onClick={() => deleteNode(node.id)}>
+                      <AlertCircle size={16} color="#ef4444" />
+                    </button>
+                  </div>
+
+                  <div className="card-metrics-preview">
+                    <div className="mini-metric">
+                      <Battery size={14} />
+                      <span>{node.battery}%</span>
+                    </div>
+                    <div className="mini-metric">
+                      <Wifi size={14} />
+                      <span>{node.signal}/5</span>
+                    </div>
+                    {node.moisture && (
+                      <div className="mini-metric highlight">
+                        <Droplets size={14} />
+                        <span>{node.moisture}% Moisture</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="card-action-box">
+                    <div className="last-action-text">
+                      <Navigation size={12} />
+                      {node.lastAction}
+                    </div>
+                    <button
+                      className={`btn-node-trigger ${node.status === 'active' ? 'off' : 'on'}`}
+                      disabled={node.status === 'scanning'}
+                      onClick={() => toggleNode(node.id)}
+                    >
+                      <Power size={14} />
+                      {node.status === 'scanning' ? 'Calibrating Sensors...' :
+                        node.status === 'active' ? 'Deactivate Shield' : 'Activate Shield'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+
+      {/* 3. RIGHT SIDEBAR: INTELLIGENCE & LOGS */}
+      <aside className="sentinel-sidebar-right">
+        <section className="intelligence-panel">
+          <div className="section-title-box">
+            <TrendingUp size={20} className="title-icon" />
+            <h3>Autonomous Logic</h3>
+          </div>
+
+          <div className="logic-card-sentinel">
+            {rules.length === 0 ? (
+              <div className="logic-empty-prompt">
+                <Settings size={32} className="spin-icon-slow" />
+                <h4>Zero Intelligence Rules</h4>
+                <p>Automate your farm with eco-conscious triggers based on real-time climate data.</p>
+                <button className="btn-add-logic" onClick={addLogicRule}>+ Configure Logic</button>
+              </div>
+            ) : (
+              <div className="rules-list-v2">
+                {rules.map(rule => (
+                  <div key={rule.id} className="rule-item-v2">
+                    <p><strong>IF:</strong> {rule.condition}</p>
+                    <p><strong>THEN:</strong> {rule.action}</p>
+                  </div>
+                ))}
+                <button className="btn-add-logic-small" onClick={addLogicRule}>+ Add Rule</button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="sentinel-log-panel">
+          <div className="section-title-box">
+            <Activity size={20} className="title-icon" />
+            <h3>Sentinel Feed</h3>
+          </div>
+
+          <div className="feed-card-white">
+            <div className="feed-scroll-box">
+              {feed.map(item => (
+                <div key={item.id} className={`feed-item ${item.type}`}>
+                  <div className={`feed-marker ${item.type}`}></div>
+                  <div className="feed-content">
+                    <p>{item.text}</p>
+                    <span>{item.time}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="feed-placeholder">
+              <ShieldCheck size={16} />
+              Environmental Shield Status: Healthy
+            </div>
+          </div>
+        </section>
+      </aside>
+      {/* 4. PROVISION MODAL */}
+      {showModal && (
+        <div className="sentinel-modal-overlay">
+          <div className="sentinel-modal">
+            <header className="modal-header">
+              <h2>Provision New Sentinel</h2>
+              <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
+            </header>
+            <form onSubmit={provisionNode}>
+              <div className="input-group">
+                <label>Sentinel Identity Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Alpha Drone 01"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="input-group">
+                  <label>Service Type</label>
+                  <select
+                    value={formData.type}
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  >
+                    <option>Soil Monitor</option>
+                    <option>Drone Scouter</option>
+                    <option>Irrigation Hub</option>
+                    <option>Climate Sensor</option>
+                    <option>Bio-Shield Generator</option>
+                  </select>
+                </div>
+
+                <div className="input-group">
+                  <label>Assigned Zone</label>
+                  <select
+                    value={formData.zone}
+                    onChange={(e) => setFormData({ ...formData, zone: e.target.value })}
+                  >
+                    <option>North Field</option>
+                    <option>West Orchard</option>
+                    <option>Greenhouse A-1</option>
+                    <option>Hydroponic Bay</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-cancel" onClick={() => setShowModal(false)}>Discard</button>
+                <button type="submit" className="btn-confirm">Initialize Sentinel</button>
+              </div>
+            </form>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

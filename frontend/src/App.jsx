@@ -28,7 +28,6 @@ import FarmDashboard from "./pages/agriculture/Dashboard.jsx";
 import CropDiseaseDetection from "./pages/agriculture/CropDiseaseDetection.jsx";
 import WeatherForecast from "./pages/agriculture/WeatherForecast.jsx";
 import SmartIrrigation from "./pages/agriculture/SmartIrrigation.jsx";
-import FertilizerRecommendations from "./pages/agriculture/FertilizerRecommendations.jsx";
 import FarmAutomation from "./pages/agriculture/FarmAutomation.jsx";
 import MarketForecast from "./pages/agriculture/MarketForecast.jsx";
 import SupplyChain from "./pages/agriculture/SupplyChain.jsx";
@@ -102,7 +101,6 @@ const App = () => {
           <Route path="community" element={<CommunityHub />} />
           <Route path="crop-disease" element={<CropDiseaseDetection />} />
           <Route path="automation" element={<FarmAutomation />} />
-          <Route path="fertilizer" element={<FertilizerRecommendations />} />
           <Route path="market" element={<MarketForecast />} />
           <Route path="pest-control" element={<PestControl />} />
           <Route path="chatbot" element={<ReportsChatbot />} />
