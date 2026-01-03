@@ -54,23 +54,37 @@ const Dashboard = () => {
   const MetricCard = ({ icon: Icon, iconColor, badge, badgeType, label, value, info, progress }) => {
     return (
       <div className="metric-card">
-        <div className="metric-card-header">
-          <Icon size={32} color={iconColor} />
+        <div className="metric-top">
+          <div className="metric-icon-group">
+            <div className="metric-icon-box" style={{ background: `${iconColor}15` }}>
+              <Icon size={26} color={iconColor} />
+            </div>
+            <h3 className="metric-label">{label}</h3>
+          </div>
           <span className={`badge ${badgeType === 'live' ? 'badge-live' : 'badge-ai'}`}>
+            {badge === 'Live' ? <div className="pulse-dot" /> : null}
             {badge}
           </span>
         </div>
-        <h3 className="metric-label">{label}</h3>
-        <p className="metric-value">{value}</p>
-        {info && <p className="metric-info">{info}</p>}
-        {progress !== undefined && (
-          <div className="progress-container">
-            <div
-              className="progress-bar"
-              style={{ width: isLoaded ? `${progress}%` : '0%' }}
-            />
-          </div>
-        )}
+
+        <div className="metric-middle">
+          <p className="metric-value">{value}</p>
+        </div>
+
+        <div className="metric-bottom">
+          {info && <div className="metric-info">{info}</div>}
+          {progress !== undefined && (
+            <div className="progress-container">
+              <div
+                className="progress-bar"
+                style={{
+                  width: isLoaded ? `${Math.max(progress, 2)}%` : '0%',
+                  background: iconColor
+                }}
+              />
+            </div>
+          )}
+        </div>
       </div>
     );
   };

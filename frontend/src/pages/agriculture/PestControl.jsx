@@ -17,6 +17,7 @@ const PestControl = () => {
   const [showExpertModal, setShowExpertModal] = useState(false);
   const [notification, setNotification] = useState(null);
   const [detectionResult, setDetectionResult] = useState(null);
+  const [showError, setShowError] = useState(false);
 
   // Backend Data State
   const [pests, setPests] = useState([]);
@@ -112,6 +113,24 @@ const PestControl = () => {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      const fileName = file.name.toLowerCase();
+
+      // Detection logic same as CropDiseaseDetection
+      const blacklist = ['logo', 'code', 'compute', 'text', 'screenshot', 'banner', 'brand', 'icon', 'graphic', 'social', 'dashboard'];
+      const whitelist = ['leaf', 'plant', 'crop', 'field', 'farm', 'rice', 'wheat', 'potato', 'tomato', 'corn', 'nature', 'green', 'garden', 'soil', 'earth', 'ground'];
+
+      const containsBlacklist = blacklist.some(keyword => fileName.includes(keyword));
+      const containsWhitelist = whitelist.some(keyword => fileName.includes(keyword));
+
+      // AI Simulated Reject
+      if (containsBlacklist || (!containsWhitelist && !/^\d+$/.test(fileName.split('.')[0]))) {
+        setShowError(true);
+        setUploadedImage(null);
+        setDetectionResult(null);
+        e.target.value = '';
+        return;
+      }
+
       setUploadedImage(URL.createObjectURL(file));
       setIsLoading(true);
       setDetectionResult(null);
@@ -237,6 +256,29 @@ const PestControl = () => {
 
   return (
     <div className="pest-control-container">
+      {/* Error Popup */}
+      {showError && (
+        <div className="error-popup-overlay">
+          <div className="error-popup-card">
+            <div className="error-popup-icon">
+              <AlertTriangle size={40} color="#e11d48" />
+            </div>
+            <h3 className="error-popup-title">Non-Crop Image Detected</h3>
+            <p className="error-popup-message">
+              Our AI Vision system has identified this as a <strong>logo, text, or non-agricultural image</strong>.
+              <br /><br />
+              Please <strong>insert a proper crop or leaf image</strong> to receive an accurate pest analysis.
+            </p>
+            <button
+              className="error-popup-button"
+              onClick={() => setShowError(false)}
+            >
+              Insert Crop Image
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Notification */}
       {notification && (
         <div className={`notification-toast slide-up ${notification.type === 'success' ? 'notification-success' : 'notification-error'}`}>

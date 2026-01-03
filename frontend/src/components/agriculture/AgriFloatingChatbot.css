@@ -320,3 +320,45 @@
     color: #059669;
     font-weight: 800;
 }
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 500px) {
+    .agri-floating-wrapper {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .agri-chat-trigger {
+        width: 55px;
+        height: 55px;
+    }
+
+    .agri-chat-panel {
+        width: calc(100vw - 40px);
+        height: calc(100vh - 120px);
+        bottom: 75px;
+        border-radius: 24px;
+    }
+
+    .agri-panel-header {
+        padding: 24px 16px;
+    }
+
+    .header-bot-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header-text h3 {
+        font-size: 15px;
+    }
+
+    .agri-panel-body {
+        padding: 16px;
+    }
+
+    .agri-msg-bubble {
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+}

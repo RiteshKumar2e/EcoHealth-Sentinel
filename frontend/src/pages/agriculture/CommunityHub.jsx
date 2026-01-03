@@ -1,30 +1,48 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Users, MessageSquare, Share2, ThumbsUp, AlertCircle, Shield, Copy, Bot, Send, MapPin, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Users, MessageSquare, Share2, ThumbsUp, AlertCircle, Shield, Send, MapPin, Clock } from 'lucide-react';
 import './CommunityHub.css';
 
 const CommunityHub = () => {
-  const [posts, setPosts] = useState([]);
+  // Inject some pre-populated data for visual demo as per USER image
+  const [posts, setPosts] = useState([
+    {
+      _id: 'p1',
+      author: 'Priya Sharma',
+      verified: true,
+      location: 'Maharashtra',
+      createdAt: new Date().toISOString(),
+      category: 'Crop Health',
+      content: 'AI disease detection helped save my tomato crop. Early detection is key!',
+      likesCount: 46,
+      comments: [
+        { author: 'Anil K', text: 'This is so useful!' },
+        { author: 'Farmer John', text: 'Which tool did you use?' }
+      ]
+    },
+    {
+      _id: 'p2',
+      author: 'Rajesh Kumar',
+      verified: true,
+      location: 'Punjab',
+      createdAt: new Date().toISOString(),
+      category: 'Water Management',
+      content: 'Successfully implemented drip irrigation. Water usage reduced by 40%!',
+      likesCount: 25,
+      comments: [
+        { author: 'Suresh Raina', text: 'Great work!' },
+        { author: 'Dr. Mehta', text: 'Inspiring initiative 👏' }
+      ]
+    }
+  ]);
+
   const [newPost, setNewPost] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('General');
   const [moderationAlert, setModerationAlert] = useState('');
-  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(false);
   const [commentInputs, setCommentInputs] = useState({});
 
   useEffect(() => {
-    fetchPosts();
-
-    // Setup WebSocket for real-time updates if needed
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${protocol}//${window.location.host}`);
-
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.type === 'new_post') {
-        setPosts(prev => [message.data, ...prev]);
-      }
-    };
-
-    return () => ws.close();
+    // fetchPosts(); // In production, this would fetch from real API
   }, []);
 
   const fetchPosts = async () => {
@@ -42,7 +60,7 @@ const CommunityHub = () => {
     }
   };
 
-  const handlePostSubmit = async () => {
+  const handlePostSubmit = () => {
     if (!newPost.trim()) return;
 
     // Simple moderation
@@ -53,66 +71,46 @@ const CommunityHub = () => {
       return;
     }
 
-    try {
-      const response = await fetch('/api/agriculture/community/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content: newPost,
-          category: selectedCategory,
-          author: 'Current User', // In real app, get from auth context
-          location: 'Local Region'
-        })
-      });
+    const post = {
+      _id: Date.now().toString(),
+      content: newPost,
+      category: selectedCategory,
+      author: 'Agri Expert', // Mock current user
+      verified: true,
+      location: 'New Delhi',
+      createdAt: new Date().toISOString(),
+      likesCount: 0,
+      comments: []
+    };
 
-      if (response.ok) {
-        const post = await response.json();
-        setPosts(prev => [post, ...prev]);
-        setNewPost('');
-      }
-    } catch (error) {
-      console.error('Error creating post:', error);
-    }
+    setPosts(prev => [post, ...prev]);
+    setNewPost('');
   };
 
-  const handleLike = async (postId) => {
-    try {
-      const response = await fetch(`/api/agriculture/community/posts/${postId}/like`, {
-        method: 'POST'
-      });
-      if (response.ok) {
-        const updatedPost = await response.json();
-        setPosts(posts.map(p => p._id === postId ? updatedPost : p));
+  const handleLike = (postId) => {
+    setPosts(posts.map(p => {
+      if (p._id === postId) {
+        return { ...p, likesCount: (p.likesCount || 0) + 1 };
       }
-    } catch (error) {
-      console.error('Error liking post:', error);
-    }
+      return p;
+    }));
   };
 
-  const handleAddComment = async (postId) => {
+  const handleAddComment = (postId) => {
     const text = commentInputs[postId];
     if (!text || !text.trim()) return;
 
-    try {
-      const response = await fetch(`/api/agriculture/community/posts/${postId}/comment`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          author: 'Current User',
-          text: text
-        })
-      });
-
-      if (response.ok) {
-        const updatedPost = await response.json();
-        setPosts(posts.map(p => p._id === postId ? updatedPost : p));
-        setCommentInputs(prev => ({ ...prev, [postId]: '' }));
+    setPosts(posts.map(p => {
+      if (p._id === postId) {
+        return {
+          ...p,
+          comments: [...(p.comments || []), { author: 'Agri Expert', text: text }]
+        };
       }
-    } catch (error) {
-      console.error('Error adding comment:', error);
-    }
+      return p;
+    }));
+    setCommentInputs(prev => ({ ...prev, [postId]: '' }));
   };
-
 
   const formatTime = (dateStr) => {
     const date = new Date(dateStr);
@@ -123,7 +121,6 @@ const CommunityHub = () => {
   return (
     <div className="hub-container">
       <div className="hub-wrapper">
-
         {/* Header */}
         <header className="hub-header">
           <div className="header-left">
@@ -191,7 +188,7 @@ const CommunityHub = () => {
               <div className="post-header">
                 <div className="user-info">
                   <div className="user-avatar">
-                    <Users size={24} color="#10b981" />
+                    <Users size={28} color="#10b981" />
                   </div>
                   <div>
                     <h3 className="user-name">
@@ -202,7 +199,7 @@ const CommunityHub = () => {
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                         <MapPin size={12} /> {post.location}
                       </span>
-                      <span style={{ margin: '0 8px' }}>•</span>
+                      <span>•</span>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                         <Clock size={12} /> {formatTime(post.createdAt)}
                       </span>
@@ -260,7 +257,6 @@ const CommunityHub = () => {
           ))
         )}
       </div>
-
     </div>
   );
 };

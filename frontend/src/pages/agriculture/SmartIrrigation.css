@@ -12,18 +12,6 @@
     }
 }
 
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
 @keyframes float {
 
     0%,
@@ -45,28 +33,6 @@
 
     50% {
         opacity: 0.5;
-    }
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: -1000px 0;
-    }
-
-    100% {
-        background-position: 1000px 0;
-    }
-}
-
-@keyframes ripple {
-    0% {
-        transform: scale(0);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(4);
-        opacity: 0;
     }
 }
 
@@ -99,8 +65,6 @@
         transform: rotate(360deg);
     }
 }
-
-/* Irrigation Container styles removed for Agriculture Layout */
 
 .irrigation-wrapper {
     width: 100%;
@@ -194,19 +158,6 @@
     filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.4));
 }
 
-.button-hover {
-    transition: all 0.3s ease;
-}
-
-.button-hover:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.glow-effect {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-}
-
 .progress-bar-container {
     width: 100%;
     background: #e5e7eb;
@@ -222,29 +173,6 @@
     transition: width 0.5s ease;
     height: 100%;
     border-radius: 9999px;
-}
-
-.shimmer-bg {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.3) 50%, rgba(59, 130, 246, 0.1) 100%);
-    background-size: 1000px 100%;
-    animation: shimmer 3s infinite;
-}
-
-.water-ripple {
-    position: relative;
-}
-
-.water-ripple::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: rgba(59, 130, 246, 0.3);
-    transform: translate(-50%, -50%);
-    animation: ripple 2s ease-out infinite;
 }
 
 .stagger-1 {
@@ -267,23 +195,11 @@
     animation-delay: 0.5s;
 }
 
-/* Background circles removed */
-
 .badge {
     font-size: 12px;
     padding: 4px 12px;
     border-radius: 9999px;
     font-weight: 600;
-}
-
-.status-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 6px 12px;
-    border-radius: 9999px;
 }
 
 .mode-button {
@@ -300,15 +216,6 @@
     background: linear-gradient(135deg, #dbeafe, #e0f2fe);
 }
 
-.schedule-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px;
-    background: rgba(249, 250, 251, 0.8);
-    border-radius: 12px;
-}
-
 .impact-card {
     background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%) !important;
     border: 1px solid #d1fae5 !important;
@@ -316,11 +223,6 @@
     padding: 24px !important;
     color: #065f46 !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
-}
-
-.impact-card h3 {
-    color: #065f46 !important;
-    font-weight: 800 !important;
 }
 
 /* Urgency Cards */
@@ -355,37 +257,6 @@
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-.header-title {
-    font-size: 28px;
-    font-weight: bold;
-    color: #1f2937;
-    margin: 0;
-}
-
-.header-subtitle {
-    font-size: 14px;
-    color: #6b7280;
-    margin: 0;
-}
-
-.controls-box {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-/* Indicators */
-.indicator-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    padding: 6px 12px;
-    border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.8);
 }
 
 /* Metric Cards */
@@ -455,14 +326,8 @@
     background: white !important;
     color: #0f172a !important;
     font-size: 14px !important;
-    font-weight: 500 !important;
     transition: all 0.2s ease !important;
     outline: none !important;
-}
-
-.input-group-premium input:focus {
-    border-color: #4f46e5 !important;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
 }
 
 .time-selector-flex {
@@ -479,15 +344,8 @@
     font-size: 14px !important;
     font-weight: 700 !important;
     outline: none !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
     text-align: center !important;
     min-width: 55px !important;
-}
-
-.time-selector-flex select:focus {
-    border-color: #4f46e5 !important;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
 }
 
 .add-task-btn-premium {
@@ -498,13 +356,7 @@
     font-weight: 700 !important;
     border: none !important;
     cursor: pointer !important;
-    transition: all 0.2s ease !important;
     height: 42px !important;
-}
-
-.add-task-btn-premium:hover {
-    background: #1e293b !important;
-    transform: translateY(-2px) !important;
 }
 
 .badge-count {
@@ -532,7 +384,6 @@
     background: white !important;
     border: 1px solid #f1f5f9 !important;
     border-radius: 14px !important;
-    transition: all 0.3s ease !important;
 }
 
 .status-dot {
@@ -544,10 +395,6 @@
 .status-dot.scheduled {
     background: #3b82f6 !important;
     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
-}
-
-.status-dot.completed {
-    background: #10b981 !important;
 }
 
 .schedule-day {
@@ -573,18 +420,6 @@
     color: #1d4ed8 !important;
 }
 
-.status-completed {
-    background: #ecfdf5 !important;
-    color: #047857 !important;
-}
-
-@media (max-width: 768px) {
-    .form-grid-premium {
-        grid-template-columns: 1fr !important;
-    }
-}
-
-/* AI Recommendation Premium Styles */
 .rec-title {
     font-size: 18px !important;
     font-weight: 850 !important;
@@ -598,7 +433,6 @@
 .rec-text {
     font-size: 15px !important;
     color: #e11d48 !important;
-    /* Urgent Red */
     margin: 0 0 20px 0 !important;
     font-weight: 600 !important;
     line-height: 1.5 !important;
@@ -618,18 +452,6 @@
     cursor: pointer !important;
     background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
     color: white !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important;
-}
-
-.action-btn-primary:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3) !important;
-}
-
-.action-btn-danger {
-    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
-    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.2) !important;
 }
 
 .action-btn-secondary {
@@ -640,61 +462,6 @@
     background: #ffffff !important;
     color: #0f172a !important;
     cursor: pointer !important;
-    transition: all 0.3s ease !important;
-}
-
-.action-btn-secondary:hover {
-    background: #f8fafc !important;
-    border-color: #cbd5e1 !important;
-    transform: translateY(-2px) !important;
-}
-
-.badge-pending {
-    background: #fff7ed !important;
-    color: #c2410c !important;
-    padding: 4px 10px !important;
-    border-radius: 6px !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    border: 1px solid #ffedd5 !important;
-    text-transform: uppercase !important;
-}
-
-.disabled-ai-btn {
-    opacity: 0.6 !important;
-    cursor: not-allowed !important;
-    filter: grayscale(0.5) !important;
-    pointer-events: auto !important;
-}
-
-.disabled-ai-btn:hover {
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-/* Weather & Impact Widgets */
-.weather-row {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 10px 0 !important;
-    border-bottom: 1px solid #f1f5f9 !important;
-}
-
-.weather-row span:last-child {
-    color: #1e293b !important;
-    font-weight: 700 !important;
-}
-
-.weather-forecast-box {
-    margin-top: 16px !important;
-    padding: 16px !important;
-    background: #eff6ff !important;
-    border-radius: 12px !important;
-    font-size: 14px !important;
-    color: #1e40af !important;
-    font-weight: 700 !important;
-    border: 1px solid #dbeafe !important;
 }
 
 .impact-value {
@@ -702,7 +469,6 @@
     font-weight: 900 !important;
     margin: 0 !important;
     color: #059669 !important;
-    letter-spacing: -0.03em !important;
 }
 
 .impact-label {
@@ -710,13 +476,11 @@
     color: #64748b !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.1em !important;
 }
 
 .feature-list {
-    margin: 0 !important;
-    padding: 0 !important;
     list-style: none !important;
+    padding: 0 !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 12px !important;
@@ -728,15 +492,8 @@
     display: flex !important;
     gap: 12px !important;
     font-weight: 600 !important;
-    align-items: flex-start !important;
 }
 
-.feature-item span:first-child {
-    color: #10b981 !important;
-    font-weight: 900 !important;
-}
-
-/* Main Layout Grid */
 .main-content-grid {
     display: grid !important;
     grid-template-columns: repeat(12, 1fr) !important;
@@ -766,5 +523,50 @@
     .left-panel,
     .right-panel {
         grid-column: span 1 !important;
+    }
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+    .header-flex {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .main-title-premium {
+        font-size: 24px !important;
+    }
+
+    .form-grid-premium {
+        grid-template-columns: 1fr !important;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .rec-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .action-btn-primary,
+    .action-btn-secondary {
+        width: 100%;
+    }
+
+    .accuracy-badge-premium {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .metric-value {
+        font-size: 28px !important;
+    }
+
+    .main-title-premium {
+        font-size: 20px !important;
     }
 }

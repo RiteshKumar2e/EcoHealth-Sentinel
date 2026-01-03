@@ -38,8 +38,6 @@
     }
 }
 
-/* Weather Container styles removed for Agriculture Layout */
-
 .weather-content-wrapper {
     width: 100%;
     position: relative;
@@ -107,8 +105,8 @@
     font-weight: bold;
     background: linear-gradient(to right, #2563eb, #06b6d4);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin: 0;
 }
 
@@ -219,7 +217,6 @@
     margin-bottom: 12px;
     transition: all 0.3s ease;
     border: 1px solid transparent;
-    /* Fallback */
 }
 
 .alert-card:hover {
@@ -410,4 +407,73 @@
 .modal-submit-btn:hover {
     box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
     transform: translateY(-2px);
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+
+    .weather-grid-2,
+    .grid-md-2,
+    .grid-md-3,
+    .grid-md-4,
+    .grid-md-7 {
+        grid-template-columns: 1fr !important;
+    }
+
+    .weather-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-left {
+        width: 100%;
+    }
+
+    .weather-title {
+        font-size: 24px;
+    }
+
+    .temp-display {
+        font-size: 40px;
+    }
+
+    .current-weather-main {
+        padding: 24px 16px;
+    }
+
+    .weather-stat-card {
+        padding: 12px;
+    }
+
+    .forecast-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+        padding: 12px 16px;
+    }
+
+    .forecast-card p,
+    .forecast-card div {
+        margin: 0 !important;
+    }
+
+    .forecast-card svg {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    .location-modal-content {
+        padding: 24px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .weather-card {
+        padding: 16px;
+    }
+
+    .temp-display {
+        font-size: 32px;
+    }
 }

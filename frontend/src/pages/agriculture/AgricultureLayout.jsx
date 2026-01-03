@@ -5,9 +5,30 @@ import './Dashboard.css'; // Reusing existing styles
 import AgriFloatingChatbot from '../../components/agriculture/AgriFloatingChatbot';
 
 const AgricultureLayout = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
     const location = useLocation();
     const navigate = useNavigate();
+
+    // Auto-close sidebar on mobile after navigation
+    const handleNavigation = (path) => {
+        navigate(path);
+        if (window.innerWidth <= 768) {
+            setIsSidebarOpen(false);
+        }
+    };
+
+    // Handle window resize
+    React.useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 768) {
+                setIsSidebarOpen(true);
+            } else {
+                setIsSidebarOpen(false);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const menuItems = [
         { path: '/agriculture/profile', icon: User, label: 'My Profile' },
@@ -36,7 +57,7 @@ const AgricultureLayout = () => {
                     {menuItems.map((item) => (
                         <div
                             key={item.path}
-                            onClick={() => navigate(item.path)}
+                            onClick={() => handleNavigation(item.path)}
                             className={`sidebar-item ${location.pathname === item.path ? 'active' : ''}`}
                         >
                             <item.icon size={20} />
