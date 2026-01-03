@@ -335,9 +335,6 @@ ecohealth-sentinel/
 
 ### ⚙️ Backend
 
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=nodejs,express,mongodb,redis,python" />
-</p>
 
 - 🟢 **Node.js** - Runtime environment
 - 🚂 **Express.js** - Web framework
@@ -1343,9 +1340,7 @@ SOFTWARE.
 
 [![Website](https://img.shields.io/badge/Website-ecohealth.com-blue?style=for-the-badge&logo=google-chrome&logoColor=white)](https://ecohealth.com)
 [![Email](https://img.shields.io/badge/Email-support@ecohealth.com-red?style=for-the-badge&logo=gmail&logoColor=white)](mailto:support@ecohealth.com)
-[![Twitter](https://img.shields.io/badge/Twitter-@EcoHealthAI-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/EcoHealthAI)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-EcoHealth_Sentinel-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/company/ecohealth)
-[![Discord](https://img.shields.io/badge/Discord-Join_Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/ecohealth)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yourusername)
 
 </div>
@@ -1373,6 +1368,5 @@ If you find EcoHealth Sentinel helpful, please consider:
 
 **© 2025 EcoHealth Sentinel. All Rights Reserved.**
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer" width="100%"/>
 
 </div>
