@@ -140,15 +140,16 @@
 
 .menu-toggle {
     position: fixed;
-    top: 20px;
+    top: 25px;
     z-index: 1100;
-    background: #ffffff;
+    background: linear-gradient(135deg, #4f46e5, #9333ea);
+    /* Premium Indigo-Purple gradient */
     border: none;
     border-radius: 12px;
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     cursor: pointer;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
@@ -158,26 +159,23 @@
 
 .menu-toggle.open {
     left: 200px;
-    /* Inside sidebar area (sidebar is 280px wide) */
-    background: rgb(255, 7, 7);
-    /* Subtle on dark sidebar */
+    background: rgba(255, 7, 7, 0.9);
+    /* Red X background when open */
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
 }
 
-.menu-toggle.open svg {
+.menu-toggle.open svg,
+.menu-toggle.closed svg {
     color: white !important;
 }
 
 .menu-toggle.closed {
-    left: 20px;
-}
-
-.menu-toggle svg {
-    color: #1f2937 !important;
+    left: 25px;
 }
 
 .menu-toggle:hover {
     transform: scale(1.1);
-    background: #f8fafc;
+    box-shadow: 0 12px 25px rgba(79, 70, 229, 0.4);
 }
 
 .dashboard-content {
@@ -202,9 +200,9 @@
 .main-content {
     flex: 1;
     min-height: 100vh;
-    padding: 32px 60px 60px 350px;
-    /* Aggressive right shift for premium centered feel */
-    padding-top: 100px;
+    padding: 32px 60px 60px 60px;
+    /* Base padding */
+    padding-top: 110px;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     margin-left: 0;
     position: relative;
@@ -217,20 +215,23 @@
 
 .main-content-inner {
     width: 100% !important;
-    max-width: 1400px !important;
-    /* Proper reading width */
+    max-width: none !important;
+    /* Allow true full-page expansion */
     margin: 0 !important;
 }
 
 .main-content.sidebar-open {
     margin-left: 280px;
     width: calc(100% - 280px);
-    /* Exactly fill remaining width */
+    padding-left: 80px;
+    /* Extra shift to center the content area */
 }
 
 .main-content.sidebar-closed {
     margin-left: 0;
     width: 100%;
+    padding-left: 140px;
+    /* Highly safe distance to clear the toggle button */
 }
 
 .main-content-inner,
