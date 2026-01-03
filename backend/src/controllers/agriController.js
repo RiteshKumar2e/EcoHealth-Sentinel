@@ -1,3 +1,6 @@
+import Pest from '../models/Pest.js';
+import Treatment from '../models/Treatment.js';
+
 export const getAgriDashboard = async (req, res, next) => {
     try {
         res.json({
@@ -221,6 +224,225 @@ export const createShipment = async (req, res, next) => {
             message: 'Shipment created successfully',
             shipment: newShipment
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// --- Pest Control & Treatment Management ---
+
+export const getPests = async (req, res, next) => {
+    try {
+        let pests = await Pest.find();
+        // Seed defaults if specific ones don't exist
+        const defaultPests = [
+            {
+                name: 'Aphids',
+                severity: 'Medium',
+                crops: ['Tomato', 'Cotton', 'Wheat'],
+                symptoms: 'Curled leaves, sticky residue, stunted growth',
+                organicControl: ['Neem oil spray (5ml per liter)', 'Ladybugs'],
+                chemicalControl: 'Imidacloprid 17.8% SL',
+                prevention: 'Regular monitoring',
+                aiDetection: 92,
+                image: '🐛'
+            },
+            {
+                name: 'Bollworm',
+                severity: 'High',
+                crops: ['Cotton', 'Tomato', 'Okra'],
+                symptoms: 'Holes in fruits/bolls, larvae inside',
+                organicControl: ['Bt spray', 'Pheromone traps'],
+                chemicalControl: 'Chlorantraniliprole 18.5% SC',
+                prevention: 'Crop rotation',
+                aiDetection: 89,
+                image: '🐛'
+            },
+            {
+                name: 'Whitefly',
+                severity: 'High',
+                crops: ['Cotton', 'Tomato', 'Chili'],
+                symptoms: 'Yellow leaves, sooty mold',
+                organicControl: ['Yellow sticky traps', 'Neem oil'],
+                chemicalControl: 'Thiamethoxam 25% WG',
+                prevention: 'Resistant varieties',
+                aiDetection: 94,
+                image: '🦟'
+            },
+            {
+                name: 'Fall Armyworm',
+                severity: 'High',
+                crops: ['Maize', 'Sorghum', 'Rice'],
+                symptoms: 'Ragged holes in leaves, sawdust-like frass',
+                organicControl: ['Neem oil', 'Beauveria bassiana'],
+                chemicalControl: 'Spinetoram 11.7% SC',
+                prevention: 'Deep ploughing, trap crops',
+                aiDetection: 96,
+                image: '🦋'
+            },
+            {
+                name: 'Locust',
+                severity: 'High',
+                crops: ['All Crops'],
+                symptoms: 'Complete defoliation, visible swarms',
+                organicControl: ['Metarhizium acridum', 'Garlic spray'],
+                chemicalControl: 'Lambda-cyhalothrin 5% EC',
+                prevention: 'Monitor breeding grounds',
+                aiDetection: 98,
+                image: '🦗'
+            },
+            {
+                name: 'Thrips',
+                severity: 'Medium',
+                crops: ['Chili', 'Onion', 'Capsicum'],
+                symptoms: 'Leaf curling upward, silver streak marks',
+                organicControl: ['Blue sticky traps', 'Neem oil'],
+                chemicalControl: 'Fipronil 5% SC',
+                prevention: 'Avoid excessive nitrogen',
+                aiDetection: 91,
+                image: '🐜'
+            },
+            {
+                name: 'Red Spider Mite',
+                severity: 'Medium',
+                crops: ['Tea', 'Okra', 'Brinjal'],
+                symptoms: 'Yellow speckled leaves, fine webbing',
+                organicControl: ['Sulfur dust', 'Predatory mites'],
+                chemicalControl: 'Spiromesifen 22.9% SC',
+                prevention: 'Maintain humidity, remove weeds',
+                aiDetection: 88,
+                image: '🕷️'
+            },
+            {
+                name: 'Rice Leaf Folder',
+                severity: 'Medium',
+                crops: ['Rice'],
+                symptoms: 'Longitudinal white streaks, folded leaves',
+                organicControl: ['Trichogramma chilonis', 'Light traps'],
+                chemicalControl: 'Cartap Hydrochloride 50% SP',
+                prevention: 'Avoid shade, balanced fertilizer',
+                aiDetection: 93,
+                image: '🐛'
+            },
+            {
+                name: 'Mealybug',
+                severity: 'Medium',
+                crops: ['Cotton', 'Grapes', 'Hibiscus'],
+                symptoms: 'Cottony masses on stems/leaves, sticky honeydew',
+                organicControl: ['Cryptolaemus beetle', 'Soap solution'],
+                chemicalControl: 'Profenofos 50% EC',
+                prevention: 'Ant control (they farm mealybugs)',
+                aiDetection: 95,
+                image: '🐞'
+            },
+            {
+                name: 'Fruit Fly',
+                severity: 'High',
+                crops: ['Mango', 'Guava', 'Gourd'],
+                symptoms: 'Small holes on fruits, rotting, premature dropping',
+                organicControl: ['Methyl Eugenol traps', 'Bagging fruits'],
+                chemicalControl: 'Malathion 50% EC',
+                prevention: 'Deep ploughing of orchard soil',
+                aiDetection: 91,
+                image: '🪰'
+            },
+            {
+                name: 'Brown Plant Hopper',
+                severity: 'High',
+                crops: ['Rice'],
+                symptoms: 'Hopper burn (drying of plants in patches)',
+                organicControl: ['Neem oil', 'Alternate wetting and drying'],
+                chemicalControl: 'Pymetrozine 50% WG',
+                prevention: 'Wider plant spacing',
+                aiDetection: 94,
+                image: '🦟'
+            },
+            {
+                name: 'Diamondback Moth',
+                severity: 'High',
+                crops: ['Cabbage', 'Cauliflower', 'Broccoli'],
+                symptoms: 'Window-pane like holes in leaves',
+                organicControl: ['Mustard trap cropping', 'Bt spray'],
+                chemicalControl: 'Spinosad 45% SC',
+                prevention: 'Clean cultivation',
+                aiDetection: 92,
+                image: '🦋'
+            },
+            {
+                name: 'Jassids',
+                severity: 'Medium',
+                crops: ['Okra', 'Cotton', 'Eggplant'],
+                symptoms: 'Hopper burn, yellowing of leaf margins',
+                organicControl: ['Yellow sticky traps', 'Neem cake'],
+                chemicalControl: 'Acetamiprid 20% SP',
+                prevention: 'Intercropping with maize',
+                aiDetection: 87,
+                image: '🦗'
+            },
+            {
+                name: 'Stem Borer',
+                severity: 'High',
+                crops: ['Rice', 'Sugarcane', 'Maize'],
+                symptoms: 'Dead hearts, white heads (in rice)',
+                organicControl: ['Pheromone traps', 'Trichogramma cards'],
+                chemicalControl: 'Cartap Hydrochloride 4G',
+                prevention: 'Stubbles burning after harvest',
+                aiDetection: 90,
+                image: '🐛'
+            }
+        ];
+
+        // Upsert logic: Check if DB is empty or just seed missing ones
+        if (pests.length < defaultPests.length) {
+            for (const pest of defaultPests) {
+                const exists = await Pest.findOne({ name: pest.name });
+                if (!exists) {
+                    await Pest.create(pest);
+                }
+            }
+            // Re-fetch after seeding
+            pests = await Pest.find();
+        }
+        res.json(pests);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getTreatments = async (req, res, next) => {
+    try {
+        const treatments = await Treatment.find().sort({ date: 1 });
+        res.json(treatments);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const scheduleTreatment = async (req, res, next) => {
+    try {
+        const treatment = new Treatment(req.body);
+        await treatment.save();
+        res.status(201).json(treatment);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateTreatmentStatus = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const treatment = await Treatment.findByIdAndUpdate(id, { status }, { new: true });
+        res.json(treatment);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteTreatment = async (req, res, next) => {
+    try {
+        await Treatment.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Treatment deleted' });
     } catch (error) {
         next(error);
     }
