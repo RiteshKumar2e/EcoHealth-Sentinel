@@ -83,7 +83,6 @@ The project follows a modern **Monorepo-style** structure with a decoupled clien
 | **Google Gemini API** | Generative AI & Vision capabilities |
 | **Socket.io** | Bi-directional event-based communication |
 | **JWT & Bcrypt** | Secure Authentication & Encryption |
-| **Twilio** | SMS/WhatsApp Integration for Alerts |
 
 ---
 
@@ -143,8 +142,6 @@ MONGO_URI=mongodb://localhost:27017/ecohealth
 JWT_SECRET=your_super_secret_key_here
 GEMINI_API_KEY=your_google_gemini_key
 GOOGLE_CLIENT_ID=your_google_oauth_client_id
-TWILIO_ACCOUNT_SID=optional_twilio_sid
-TWILIO_AUTH_TOKEN=optional_twilio_token
 ```
 
 ### **Frontend (.env)**
