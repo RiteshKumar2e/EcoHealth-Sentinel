@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Droplets, Leaf, AlertCircle, Sun, Cloud, Home, Sprout, Settings, BarChart, Truck, Bug, MessageSquare, Users, Cog, Menu, X } from 'lucide-react';
+import { TrendingUp, Droplets, Leaf, AlertCircle, Sun, Cloud, Home, Sprout, Settings, BarChart, Truck, Bug, MessageSquare, Users, Cog, Menu, X, ChevronLeft } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -103,6 +103,10 @@ const Dashboard = () => {
   return (
     <div className="dashboard-content">
       <div className="page-header">
+        <button className="back-portal-btn" onClick={() => navigate('/auth/dashboard')}>
+          <ChevronLeft size={20} />
+          Back to Domain Portal
+        </button>
         <h1 className="page-title">Farm Intelligence Dashboard</h1>
         <p className="page-subtitle">AI-powered insights for smarter farming decisions</p>
       </div>
