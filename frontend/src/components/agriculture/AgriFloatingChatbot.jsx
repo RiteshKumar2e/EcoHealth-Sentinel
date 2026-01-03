@@ -7,7 +7,7 @@ const AgriFloatingChatbot = () => {
     const [messages, setMessages] = useState([
         {
             role: "bot",
-            text: "Hi 👋 I'm the AI Agri-Expert Agent. I can help you with crop health, weather impacts, or farming tips!",
+            text: "Hello! I'm your AI Agri-Expert Agent. How can I assist you with your field or crops today?",
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
     ]);
@@ -91,11 +91,18 @@ const AgriFloatingChatbot = () => {
             {/* Chat Panel */}
             <div className={`agri-chat-panel ${isOpen ? 'open' : ''}`}>
                 <header className="agri-panel-header">
-                    <div className="header-title">
+                    <div className="header-status-badge">
+                        <div className="status-dot"></div>
+                        <span>Sentinel AI Active</span>
+                    </div>
+                    <div className="header-title-main">
                         <div className="header-bot-icon">
-                            <Bot size={20} color="white" />
+                            <Bot size={22} color="white" strokeWidth={2.5} />
                         </div>
-                        <h3>AI Agent</h3>
+                        <div className="header-text">
+                            <h3>EcoHealth Assistant</h3>
+                            <p>Agricultural Intelligence</p>
+                        </div>
                     </div>
                     <button className="close-btn" onClick={() => setIsOpen(false)}>
                         <X size={20} />
@@ -136,7 +143,7 @@ const AgriFloatingChatbot = () => {
                             onClick={handleSendMessage}
                             disabled={!input.trim() || loading}
                         >
-                            {loading ? "..." : "Send"}
+                            {loading ? <Sparkles size={18} className="sparkle-anim" /> : <Send size={18} />}
                         </button>
                     </div>
                 </div>
