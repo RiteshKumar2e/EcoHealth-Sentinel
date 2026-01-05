@@ -43,6 +43,8 @@ export default function Dashboard() {
       navigate('/agriculture/profile');
     } else if (domainId === 'healthcare') {
       navigate('/healthcare/profile');
+    } else if (domainId === 'environment') {
+      navigate('/environment/profile');
     } else {
       navigate(`/${domainId}/dashboard`);
     }
@@ -246,7 +248,7 @@ export default function Dashboard() {
                   transition: 'all 0.2s ease'
                 }}
               >
-                <span>{domain.id === 'agriculture' || domain.id === 'healthcare' ? 'My Profile' : `Explore ${domain.title}`}</span>
+                <span>{domain.id === 'environment' ? 'Explore Ecosystem' : `Explore ${domain.title}`}</span>
                 <ArrowRight style={{
                   width: '20px',
                   height: '20px',

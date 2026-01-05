@@ -37,6 +37,8 @@ import CommunityHub from "./pages/agriculture/CommunityHub.jsx";
 import Profile from "./pages/agriculture/Profile.jsx";
 
 // Import Environment Modules
+import EnvironmentLayout from "./pages/environment/EnvironmentLayout.jsx";
+import EnvProfile from "./pages/environment/Profile.jsx";
 import AwarenessHub from "./pages/environment/AwarenessHub.jsx";
 import CarbonCalculator from "./pages/environment/CarbonCalculator.jsx";
 import EnvChatbot from "./pages/environment/Chatbot.jsx";
@@ -46,7 +48,7 @@ import DisasterPrediction from "./pages/environment/DisasterPrediction.jsx";
 import PollutionHeatmap from "./pages/environment/PollutionHeatmap.jsx";
 import RenewableEnergy from "./pages/environment/RenewableEnergy.jsx";
 import EnvReports from "./pages/environment/Reports.jsx";
-import EnvSettings from "./pages/environment/Settings.jsx";
+// import EnvSettings from "./pages/environment/Settings.jsx";  // Removed unused import
 import WasteManagement from "./pages/environment/WasteManagement.jsx";
 import WildlifeConservation from "./pages/environment/WildlifeConservation.jsx";
 
@@ -114,18 +116,22 @@ const App = () => {
 
 
         {/* Environment Routes */}
-        <Route path="/environment/dashboard" element={<EnvDashboard />} />
-        <Route path="/environment/awareness" element={<AwarenessHub />} />
-        <Route path="/environment/carbon" element={<CarbonCalculator />} />
-        <Route path="/environment/chatbot" element={<EnvChatbot />} />
-        <Route path="/environment/climate" element={<ClimatePredictions />} />
-        <Route path="/environment/disaster" element={<DisasterPrediction />} />
-        <Route path="/environment/pollution" element={<PollutionHeatmap />} />
-        <Route path="/environment/renewable" element={<RenewableEnergy />} />
-        <Route path="/environment/reports" element={<EnvReports />} />
-        <Route path="/environment/settings" element={<EnvSettings />} />
-        <Route path="/environment/waste" element={<WasteManagement />} />
-        <Route path="/environment/wildlife" element={<WildlifeConservation />} />
+        <Route path="/environment" element={<EnvironmentLayout />}>
+          <Route index element={<Navigate to="profile" replace />} />
+          <Route path="profile" element={<EnvProfile />} />
+          <Route path="dashboard" element={<EnvDashboard />} />
+          <Route path="awareness" element={<AwarenessHub />} />
+          <Route path="carbon" element={<CarbonCalculator />} />
+          <Route path="chatbot" element={<EnvChatbot />} />
+          <Route path="climate" element={<ClimatePredictions />} />
+          <Route path="disaster" element={<DisasterPrediction />} />
+          <Route path="pollution" element={<PollutionHeatmap />} />
+          <Route path="renewable" element={<RenewableEnergy />} />
+          <Route path="reports" element={<EnvReports />} />
+          <Route path="waste" element={<WasteManagement />} />
+          <Route path="wildlife" element={<WildlifeConservation />} />
+
+        </Route>
 
         {/* Healthcare Routes */}
         <Route path="/healthcare" element={<HealthcareLayout />}>

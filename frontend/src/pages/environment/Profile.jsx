@@ -1,36 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, MapPin, Leaf, Save, Bell, Shield, LogOut, Camera, Globe, Trash2, ChevronLeft } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Activity, Save, Bell, Shield, LogOut, Camera, Leaf, TreeDeciduous, Wind, Recycle, ChevronLeft, Zap } from 'lucide-react';
 import './Profile.css';
 
 const Profile = () => {
     const navigate = useNavigate();
-    const [profile, setProfile] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        location: '',
-        farmSize: '',
-        primaryCrop: '',
-        joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-        avatar: null
+    const [profile, setProfile] = useState(() => {
+        const saved = localStorage.getItem('envUserProfile');
+        return saved ? JSON.parse(saved) : {
+            name: '',
+            email: '',
+            phone: '',
+            location: '',
+            carbonScore: '850',
+            treesPlanted: '12',
+            eventsJoined: '5',
+            impactLevel: 'Eco-Warrior',
+            joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+            avatar: null
+        };
     });
 
     const [settings, setSettings] = useState({
         notifications: true,
-        aiAnalysis: true,
-        publicProfile: false
+        publicProfile: true,
+        newsletter: true
     });
 
     const [isSaving, setIsSaving] = useState(false);
 
     const handleSave = () => {
         setIsSaving(true);
+        localStorage.setItem('envUserProfile', JSON.stringify(profile));
         // Simulate API call
         setTimeout(() => {
             setIsSaving(false);
-            alert('Profile updated successfully! ✨');
+            alert('Eco-Profile updated successfully! 🌍');
         }, 1200);
+    };
+
+    const handleLogout = () => {
+        if (window.confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            navigate('/auth/login');
+        }
     };
 
     const handleImageUpload = (e) => {
@@ -47,14 +61,13 @@ const Profile = () => {
     return (
         <div className="profile-container">
             <div className="profile-wrapper">
-
                 {/* Profile Hero Card */}
                 <div className="profile-card-hero">
                     <button className="back-portal-btn-profile" onClick={() => navigate('/auth/dashboard')}>
                         <ChevronLeft size={20} />
                         Back to Domain Portal
                     </button>
-                    <button className="logout-btn-profile" onClick={() => navigate('/')}>
+                    <button className="logout-btn-profile" onClick={handleLogout}>
                         <LogOut size={16} />
                         Logout
                     </button>
@@ -63,12 +76,7 @@ const Profile = () => {
                     <div className="profile-avatar-wrapper">
                         <div className="profile-avatar">
                             {profile.avatar ? (
-                                <img src={profile.avatar} alt="Profile" className="avatar-img" style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                    borderRadius: '50%'
-                                }} />
+                                <img src={profile.avatar} alt="Profile" className="avatar-img" />
                             ) : (
                                 <User size={80} strokeWidth={1.5} />
                             )}
@@ -99,21 +107,21 @@ const Profile = () => {
                             </button>
                         </div>
                     </div>
-                    <h1 className="profile-name-title">{profile.name}</h1>
-                    <div className="profile-role-badge">Premium Farmer Member</div>
+                    <h1 className="profile-name-title">{profile.name || 'User'}</h1>
+                    <div className="profile-role-badge">{profile.impactLevel}</div>
 
                     <div className="profile-stats-grid">
                         <div className="stat-box">
-                            <div className="stat-lab">Farm Size</div>
-                            <div className="stat-val">{profile.farmSize}</div>
+                            <div className="stat-lab">Carbon Score</div>
+                            <div className="stat-val">{profile.carbonScore}</div>
                         </div>
                         <div className="stat-box">
-                            <div className="stat-lab">Total Harvest</div>
-                            <div className="stat-val">240 Tons</div>
+                            <div className="stat-lab">Trees Planted</div>
+                            <div className="stat-val">{profile.treesPlanted}</div>
                         </div>
                         <div className="stat-box">
-                            <div className="stat-lab">Member Since</div>
-                            <div className="stat-val">{profile.joinedDate}</div>
+                            <div className="stat-lab">Events Joined</div>
+                            <div className="stat-val">{profile.eventsJoined}</div>
                         </div>
                     </div>
                 </div>
@@ -123,8 +131,8 @@ const Profile = () => {
                     <div className="profile-content-left">
                         <section className="section-card">
                             <h2 className="section-title">
-                                <span className="icon-box"><User size={20} color="#059669" /></span>
-                                Personal Details
+                                <span className="icon-box"><User size={20} color="#10b981" /></span>
+                                Personal Information
                             </h2>
 
                             <div className="form-row">
@@ -135,6 +143,7 @@ const Profile = () => {
                                         className="profile-input"
                                         value={profile.name}
                                         onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                                        placeholder="Enter your name"
                                     />
                                 </div>
                                 <div className="form-group">
@@ -144,6 +153,7 @@ const Profile = () => {
                                         className="profile-input"
                                         value={profile.email}
                                         onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                                        placeholder="name@example.com"
                                     />
                                 </div>
                             </div>
@@ -156,6 +166,7 @@ const Profile = () => {
                                         className="profile-input"
                                         value={profile.phone}
                                         onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                                        placeholder="+91 999 999 9999"
                                     />
                                 </div>
                                 <div className="form-group">
@@ -165,32 +176,35 @@ const Profile = () => {
                                         className="profile-input"
                                         value={profile.location}
                                         onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                                        placeholder="City, Country"
                                     />
                                 </div>
                             </div>
 
                             <h2 className="section-title" style={{ marginTop: '2rem' }}>
-                                <span className="icon-box"><Leaf size={20} color="#059669" /></span>
-                                Farming Profile
+                                <span className="icon-box"><Leaf size={20} color="#10b981" /></span>
+                                Eco Impact Stats
                             </h2>
 
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label>Farm Size (Acres)</label>
+                                    <label>Carbon Score (Pt)</label>
                                     <input
                                         type="text"
                                         className="profile-input"
-                                        value={profile.farmSize}
-                                        onChange={(e) => setProfile({ ...profile, farmSize: e.target.value })}
+                                        value={profile.carbonScore}
+                                        readOnly
+                                        style={{ background: '#f8fafc', cursor: 'default' }}
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label>Primary Crop</label>
+                                    <label>Trees Planted</label>
                                     <input
                                         type="text"
                                         className="profile-input"
-                                        value={profile.primaryCrop}
-                                        onChange={(e) => setProfile({ ...profile, primaryCrop: e.target.value })}
+                                        value={profile.treesPlanted}
+                                        readOnly
+                                        style={{ background: '#f8fafc', cursor: 'default' }}
                                     />
                                 </div>
                             </div>
@@ -211,7 +225,7 @@ const Profile = () => {
                             </h2>
                             <div className="preferences-list">
                                 <div className="pref-item">
-                                    <span className="pref-label">Push Notifications</span>
+                                    <span className="pref-label">Disaster Alerts</span>
                                     <div
                                         className={`toggle ${settings.notifications ? 'active' : ''}`}
                                         onClick={() => setSettings({ ...settings, notifications: !settings.notifications })}
@@ -220,16 +234,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                                 <div className="pref-item">
-                                    <span className="pref-label">AI Crop Analysis</span>
-                                    <div
-                                        className={`toggle ${settings.aiAnalysis ? 'active' : ''}`}
-                                        onClick={() => setSettings({ ...settings, aiAnalysis: !settings.aiAnalysis })}
-                                    >
-                                        <div className="toggle-knob"></div>
-                                    </div>
-                                </div>
-                                <div className="pref-item">
-                                    <span className="pref-label">Public Feed Profile</span>
+                                    <span className="pref-label">Public Eco-Profile</span>
                                     <div
                                         className={`toggle ${settings.publicProfile ? 'active' : ''}`}
                                         onClick={() => setSettings({ ...settings, publicProfile: !settings.publicProfile })}
@@ -237,12 +242,41 @@ const Profile = () => {
                                         <div className="toggle-knob"></div>
                                     </div>
                                 </div>
+                                <div className="pref-item">
+                                    <span className="pref-label">Green Newsletter</span>
+                                    <div
+                                        className={`toggle ${settings.newsletter ? 'active' : ''}`}
+                                        onClick={() => setSettings({ ...settings, newsletter: !settings.newsletter })}
+                                    >
+                                        <div className="toggle-knob"></div>
+                                    </div>
+                                </div>
                             </div>
                         </section>
 
+                        <section className="section-card danger-zone-section" style={{ borderTop: '2px dashed #fee2e2', marginTop: '1rem', paddingTop: '1rem' }}>
+                            <h2 className="section-title" style={{ color: '#ef4444' }}>
+                                <span className="icon-box" style={{ background: '#fef2f2', border: '1px solid #fee2e2' }}><Shield size={20} color="#ef4444" /></span>
+                                Account Security
+                            </h2>
+                            <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem' }}>
+                                Manage your account security and data privacy.
+                            </p>
+                            <button className="btn-delete" style={{
+                                background: '#fef2f2',
+                                color: '#ef4444',
+                                border: '1px solid #fee2e2',
+                                padding: '0.875rem',
+                                borderRadius: '12px',
+                                width: '100%',
+                                fontWeight: '700',
+                                cursor: 'pointer'
+                            }}>
+                                Request Data Deletion
+                            </button>
+                        </section>
                     </div>
                 </div>
-
             </div>
         </div>
     );

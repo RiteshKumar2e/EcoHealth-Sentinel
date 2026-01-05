@@ -1,11 +1,11 @@
-/* Profile.css - Sentinel Premium Light Theme */
+/* Profile.css - Sentinel Environment Theme */
 :root {
-    --profile-primary: #059669;
-    /* Deep Emerald */
-    --profile-accent: #334155;
-    /* Royal Slate */
-    --profile-secondary: #0f172a;
-    /* Navy */
+    --env-primary: #10b981;
+    /* Emerald */
+    --env-accent: #047857;
+    /* Dark Emerald */
+    --env-secondary: #064e3b;
+    /* Deep Green */
     --glass-bg: rgba(255, 255, 255, 0.98);
     --glass-border: rgba(226, 232, 240, 0.8);
     --text-main: #0f172a;
@@ -15,7 +15,8 @@
 
 .profile-container {
     min-height: 100vh;
-    background: #f8fafc;
+    background: #f0fdf4;
+    /* Light green bg */
     padding: 2.5rem;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: var(--text-main);
@@ -29,8 +30,6 @@
     z-index: 10;
     padding-top: 1rem;
 }
-
-/* Old logout button removed */
 
 /* --- Buttons --- */
 .back-portal-btn-profile {
@@ -108,7 +107,7 @@
     left: 0;
     width: 100%;
     height: 120px;
-    background: linear-gradient(135deg, var(--profile-primary), #059669);
+    background: linear-gradient(135deg, var(--env-primary), #059669);
     opacity: 0.1;
     z-index: 0;
 }
@@ -133,7 +132,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--profile-primary);
+    color: var(--env-primary);
     overflow: hidden;
 }
 
@@ -149,7 +148,7 @@
     font-weight: 850;
     margin: 1.5rem 0 0.5rem;
     letter-spacing: -0.04em;
-    background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+    background: linear-gradient(135deg, #064e3b 0%, #10b981 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -157,7 +156,7 @@
 
 .profile-role-badge {
     background: #ecfdf5;
-    color: var(--profile-primary);
+    color: var(--env-primary);
     padding: 6px 18px;
     border-radius: 99px;
     font-weight: 700;
@@ -224,8 +223,8 @@
 .icon-box {
     padding: 12px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 1px solid #bbf7d0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -264,14 +263,14 @@
 }
 
 .profile-input:focus {
-    border-color: var(--profile-primary);
+    border-color: var(--env-primary);
     box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
 
 .btn-save {
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, var(--profile-primary), #059669);
+    background: linear-gradient(135deg, var(--env-primary), #059669);
     color: white;
     border: none;
     border-radius: 12px;
@@ -326,7 +325,7 @@
 }
 
 .toggle.active {
-    background: var(--profile-primary);
+    background: var(--env-primary);
 }
 
 .toggle-knob {
@@ -342,45 +341,6 @@
 
 .toggle.active .toggle-knob {
     left: 27px;
-}
-
-.danger-zone {
-    border-top: 2px dashed #fee2e2;
-    padding-top: 2rem;
-    margin-top: 2rem;
-}
-
-.btn-delete {
-    background: #fef2f2;
-    color: #ef4444;
-    border: 1px solid #fee2e2;
-    padding: 0.875rem;
-    border-radius: 12px;
-    width: 100%;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-delete:hover {
-    background: #ef4444;
-    color: white;
-}
-
-/* --- Mobile Responsiveness --- */
-@media (max-width: 1024px) {
-    .btn-logout {
-        position: static;
-        margin: 0 auto 2rem;
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-@media (max-width: 900px) {
-    .profile-main-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 @media (max-width: 768px) {
@@ -407,27 +367,7 @@
         gap: 1rem;
     }
 
-    .stat-box {
-        padding: 1rem;
-    }
-
-    .section-card {
-        padding: 1.5rem;
-        border-radius: 16px;
-    }
-
-    .form-row {
+    .profile-main-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .btn-save {
-        padding: 0.875rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .profile-name-title {
-        font-size: 1.5rem;
     }
 }

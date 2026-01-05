@@ -101,10 +101,6 @@ const Dashboard = () => {
   return (
     <div className="dashboard-content">
       <div className="page-header">
-        <button className="back-portal-btn" onClick={() => navigate('/auth/dashboard')}>
-          <ChevronLeft size={20} />
-          Back to Domain Portal
-        </button>
         <h1 className="page-title">Farm Intelligence Dashboard</h1>
         <p className="page-subtitle">AI-powered insights for smarter farming decisions</p>
       </div>
