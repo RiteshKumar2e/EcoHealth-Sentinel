@@ -108,7 +108,7 @@ const SymptomChecker = () => {
         <div className="diagnosis-card">
           <div className="card-header">
             <div className="header-icon-box">
-              <Stethoscope size={20} />
+              <Stethoscope size={28} />
             </div>
             <div>
               <h2 className="card-title">Symptom Assessment</h2>
@@ -239,8 +239,8 @@ const SymptomChecker = () => {
         {/* Right Column: AI Chat Assistant */}
         <div className="diagnosis-card chat-sidebar-card">
           <div className="card-header">
-            <div className="header-icon-box" style={{ background: '#f0f9ff', color: '#0369a1' }}>
-              <MessageSquare size={20} />
+            <div className="header-icon-box" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)', color: 'white' }}>
+              <MessageSquare size={24} />
             </div>
             <div>
               <h2 className="card-title">AI Assistant</h2>
@@ -275,8 +275,8 @@ const SymptomChecker = () => {
 
         <div className="records-section">
           <div className="card-header border-0">
-            <div className="header-icon-box" style={{ background: '#ecfdf5', color: '#059669' }}>
-              <History size={20} />
+            <div className="header-icon-box" style={{ background: 'linear-gradient(135deg, #10b981, #059669)', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)' }}>
+              <History size={24} />
             </div>
             <div>
               <h2 className="card-title">Previous Assessments</h2>
