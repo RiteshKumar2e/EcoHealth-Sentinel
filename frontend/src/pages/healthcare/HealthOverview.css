@@ -892,10 +892,19 @@
   animation: spin 1s linear infinite;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
   .sidebar {
-    width: 280px;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
   }
 
   .main-content {
@@ -904,14 +913,32 @@
 
   .menu-toggle {
     left: 20px;
+    display: flex;
   }
 
   .menu-toggle.sidebar-open {
-    left: 300px;
+    left: 290px;
+  }
+}
+
+@media (max-width: 768px) {
+  .healthcare-content-wrapper {
+    padding: 16px;
   }
 
   .page-title {
-    font-size: 2rem;
+    font-size: 1.75rem;
+  }
+
+  .header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 8px;
   }
 
   .stats-grid {
@@ -919,12 +946,35 @@
   }
 
   .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
   }
 
-  .header-actions {
-    width: 100%;
-    justify-content: space-between;
+  .dept-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .time-range-buttons {
+    display: none;
+    /* Hide on very small screens to save space */
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
   }
 }
 

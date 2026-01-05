@@ -679,3 +679,59 @@
     color: #9ca3af;
     /* text-gray-400 */
 }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .medicine-main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .medicine-container {
+        padding: 1rem;
+    }
+
+    .medicine-header {
+        padding: 1.5rem;
+    }
+
+    .medicine-title {
+        font-size: 1.75rem;
+    }
+
+    .medicine-header-icon {
+        display: none;
+    }
+
+    .medicine-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .medicine-history-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .medicine-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .medicine-history-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .medicine-rec-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .medicine-form-group {
+        gap: 0.5rem;
+    }
+
+    .medicine-allergy-btn {
+        flex: 1;
+        text-align: center;
+    }
+}

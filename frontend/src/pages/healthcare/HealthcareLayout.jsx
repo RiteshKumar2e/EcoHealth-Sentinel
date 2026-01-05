@@ -47,8 +47,23 @@ const HealthcareLayout = () => {
 
     return (
         <div className="dashboard-container">
+            {/* Sidebar Overlay for Mobile */}
+            {isSidebarOpen && window.innerWidth <= 1024 && (
+                <div
+                    className="sidebar-overlay"
+                    onClick={() => setIsSidebarOpen(false)}
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        background: 'rgba(0,0,0,0.5)',
+                        backdropFilter: 'blur(4px)',
+                        zIndex: 999
+                    }}
+                />
+            )}
+
             {/* Sidebar */}
-            <div className={`sidebar ${!isSidebarOpen ? 'hidden' : ''}`}>
+            <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
                     <h2 className="sidebar-logo">PatientAid</h2>
                     <p className="sidebar-tagline">Your Personal Health Companion</p>
@@ -75,7 +90,7 @@ const HealthcareLayout = () => {
                 {/* Mobile Menu Toggle */}
                 <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className={`menu-toggle ${!isSidebarOpen ? 'sidebar-closed' : ''}`}
+                    className={`menu-toggle ${isSidebarOpen ? 'sidebar-open' : ''}`}
                 >
                     {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
@@ -90,5 +105,6 @@ const HealthcareLayout = () => {
         </div>
     );
 };
+
 
 export default HealthcareLayout;

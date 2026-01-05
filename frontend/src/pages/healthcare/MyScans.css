@@ -616,3 +616,61 @@
 .recent-confidence {
     font-weight: 700;
 }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .mia-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .mia-page {
+        padding: 16px;
+    }
+
+    .mia-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+    }
+
+    .mia-title {
+        font-size: 24px;
+    }
+
+    .header-icon {
+        display: none;
+    }
+
+    .scan-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .chat-box {
+        height: 350px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .scan-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .upload-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-demo {
+        width: 100%;
+    }
+}

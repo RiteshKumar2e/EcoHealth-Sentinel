@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { FileText, Download, TrendingUp, Calendar, BarChart3, Filter, Search, Printer, Share2, Mail, Clock, Shield, Bell, Zap, Activity, Heart } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
+import './MyHealthReports.css';
+
 const MyHealthReports = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('Last 30 Days');
 
@@ -22,32 +24,32 @@ const MyHealthReports = () => {
   ];
 
   return (
-    <div style={{ padding: '24px', minHeight: '100vh', background: 'transparent' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+    <div className="reports-container">
+      <div className="reports-header">
         <div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: '800', margin: '0', color: 'white' }}>My Health Reports</h1>
-          <p style={{ color: '#94a3b8', margin: '8px 0 0 0' }}>Download and analyze your medical history and AI-generated health metrics</p>
+          <h1 className="reports-title">My Health Reports</h1>
+          <p className="reports-subtitle">Download and analyze your medical history and AI-generated health metrics</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button style={{ padding: '12px 24px', background: '#3b82f6', color: 'white', borderRadius: '12px', border: 'none', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="header-actions">
+          <button className="btn-header btn-primary">
             <Printer size={20} />
             Print All
           </button>
-          <button style={{ padding: '12px 24px', background: 'rgba(255,255,255,0.05)', color: 'white', borderRadius: '12px', border: 'none', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button className="btn-header btn-secondary">
             <Share2 size={20} />
             Share
           </button>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+      <div className="stats-grid">
         {[
           { label: 'Reports Generated', value: '24', icon: FileText, color: '#3b82f6' },
           { label: 'AI Risk Scans', value: '156', icon: Zap, color: '#f59e0b' },
           { label: 'Lab Syncs', value: '12', icon: Activity, color: '#10b981' },
           { label: 'Avg Pulse', value: '72 bpm', icon: Heart, color: '#ef4444' }
         ].map((stat, i) => (
-          <div key={i} style={{ background: 'rgba(30, 41, 59, 0.5)', padding: '24px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div key={i} className="stat-card">
             <stat.icon style={{ color: stat.color, marginBottom: '12px' }} size={24} />
             <h3 style={{ fontSize: '2rem', margin: '0', color: 'white' }}>{stat.value}</h3>
             <p style={{ margin: '4px 0 0 0', color: '#94a3b8' }}>{stat.label}</p>
@@ -55,20 +57,20 @@ const MyHealthReports = () => {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-        <div style={{ background: 'rgba(30, 41, 59, 0.5)', borderRadius: '24px', padding: '24px', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 style={{ margin: '0', color: 'white', fontSize: '1.25rem' }}>Heart Rate & Activity Trend</h2>
+      <div className="reports-main-grid">
+        <div className="glass-panel">
+          <div className="panel-header">
+            <h2 className="panel-title">Heart Rate & Activity Trend</h2>
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              style={{ background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 16px', borderRadius: '8px' }}
+              className="select-period"
             >
               <option>Last 7 Days</option>
               <option>Last 30 Days</option>
             </select>
           </div>
-          <div style={{ height: '350px' }}>
+          <div className="chart-wrapper">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={vitalsTrend}>
                 <defs>
@@ -88,32 +90,32 @@ const MyHealthReports = () => {
           </div>
         </div>
 
-        <div style={{ background: 'rgba(30, 41, 59, 0.5)', borderRadius: '24px', padding: '24px', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <h2 style={{ margin: '0 0 20px 0', color: 'white', fontSize: '1.25rem' }}>Recent Documents</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="glass-panel">
+          <h2 className="panel-title" style={{ marginBottom: '20px' }}>Recent Documents</h2>
+          <div className="documents-list">
             {reportsList.map(report => (
-              <div key={report.id} style={{ padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <div style={{ padding: '10px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '10px' }}>
+              <div key={report.id} className="document-item">
+                <div className="doc-info">
+                  <div className="doc-meta">
+                    <div className="doc-icon-box">
                       <FileText size={20} color="#3b82f6" />
                     </div>
                     <div>
-                      <p style={{ margin: '0', color: 'white', fontWeight: '600', fontSize: '0.9rem' }}>{report.name}</p>
-                      <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '0.75rem' }}>{report.date} • {report.type}</p>
+                      <p className="doc-name">{report.name}</p>
+                      <p className="doc-date">{report.date} • {report.type}</p>
                     </div>
                   </div>
-                  <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}><Download size={18} /></button>
+                  <button className="btn-download"><Download size={18} /></button>
                 </div>
               </div>
             ))}
           </div>
-          <button style={{ width: '100%', marginTop: '20px', padding: '12px', borderRadius: '12px', border: '2px solid rgba(37, 99, 235, 0.5)', background: 'transparent', color: '#3b82f6', fontWeight: '700', cursor: 'pointer' }}>View All Documents</button>
+          <button className="btn-view-all">View All Documents</button>
         </div>
       </div>
 
-      <div style={{ marginTop: '32px', background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(37, 99, 235, 0.1))', padding: '24px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', gap: '20px', alignItems: 'center' }}>
-        <div style={{ padding: '16px', background: 'rgba(255,255,255,0.1)', borderRadius: '16px' }}>
+      <div className="security-footer">
+        <div className="security-icon-box">
           <Shield size={32} color="#8b5cf6" />
         </div>
         <div>
@@ -124,5 +126,6 @@ const MyHealthReports = () => {
     </div>
   );
 };
+
 
 export default MyHealthReports;

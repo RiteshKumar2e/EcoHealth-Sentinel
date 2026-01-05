@@ -934,3 +934,74 @@
 input::placeholder {
     color: #9E9E9E;
 }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .emergency-predictions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .emergency-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .emergency-dashboard {
+        padding: 1rem;
+    }
+
+    .emergency-glass-card {
+        padding: 1.5rem;
+    }
+
+    .emergency-gradient-text {
+        font-size: 1.75rem;
+    }
+
+    .emergency-timeframe-buttons {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+
+    .emergency-metric-value {
+        font-size: 1.75rem;
+    }
+
+    .emergency-performance-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .emergency-chatbot-container {
+        width: calc(100vw - 40px);
+        right: 20px;
+        bottom: 80px;
+        height: 500px;
+    }
+}
+
+@media (max-width: 480px) {
+    .emergency-header-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .emergency-performance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .emergency-action-buttons {
+        flex-direction: column;
+    }
+
+    .emergency-toolbar-button {
+        width: 100%;
+    }
+
+    .emergency-icon-3d {
+        width: 48px;
+        height: 48px;
+    }
+}

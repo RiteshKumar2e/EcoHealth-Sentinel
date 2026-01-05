@@ -929,3 +929,61 @@
     background: linear-gradient(135deg, #C4B5FD, #A78BFA);
     animation: float3d var(--duration) ease-in-out infinite var(--delay);
 }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .diagnosis-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar-sticky {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .diagnosis-container {
+        padding: 2rem 1rem;
+    }
+
+    .diagnosis-card {
+        padding: 1.5rem;
+        border-radius: 1.5rem;
+    }
+
+    .primary-confidence-value {
+        font-size: 2rem;
+    }
+
+    .diagnosis-hero-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .results-hero {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .grid-3,
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    .diagnosis-actions {
+        flex-direction: column;
+    }
+
+    .chat-bubble {
+        max-width: 95%;
+    }
+
+    .primary-diagnosis-val {
+        font-size: 1.5rem;
+    }
+}
