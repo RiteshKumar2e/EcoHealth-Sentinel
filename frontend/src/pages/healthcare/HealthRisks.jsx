@@ -14,54 +14,20 @@ const HealthRisks = () => {
   const [riskPredictions, setRiskPredictions] = useState([]);
   const [selectedTimeframe, setSelectedTimeframe] = useState('24h');
   const [healthMetrics, setHealthMetrics] = useState({
-    overallRiskScore: 12,
-    stressLevel: 'Low',
-    resilienceScore: 88
+    overallRiskScore: 0,
+    stressLevel: 'None',
+    resilienceScore: 0
   });
   const [notifications, setNotifications] = useState([]);
 
-  const generateData = useCallback(() => {
-    const predictions = [
-      {
-        id: 1,
-        type: 'Dehydration Risk',
-        riskLevel: 'Medium',
-        probability: 65,
-        timeframe: 'Next 4 hours',
-        factors: ['High local temperature', 'Lower water intake detected', 'Increased heart rate'],
-        recommendedAction: 'Drink 500ml of water with electrolytes immediately.',
-        confidence: 94,
-        impact: 'Mild'
-      },
-      {
-        id: 2,
-        type: 'Post-Workout Recovery',
-        riskLevel: 'Low',
-        probability: 20,
-        timeframe: 'Next 12 hours',
-        factors: ['High activity intensity', 'Steady heart recovery'],
-        recommendedAction: 'Focus on protein intake and 8 hours of sleep.',
-        confidence: 88,
-        impact: 'Positive'
-      },
-      {
-        id: 3,
-        type: 'Migraine Alert',
-        riskLevel: 'High',
-        probability: 72,
-        timeframe: 'Tomorrow Morning',
-        factors: ['Drop in barometric pressure', 'Reduced sleep quality last night'],
-        recommendedAction: 'Avoid screen time tonight, maintain darkness in bedroom.',
-        confidence: 82,
-        impact: 'Moderate'
-      }
-    ];
-    setRiskPredictions(predictions);
-  }, []);
+  const fetchData = useCallback(async () => {
+
+    setRiskPredictions([]);
+  }, [selectedTimeframe]);
 
   useEffect(() => {
-    generateData();
-  }, [generateData]);
+    fetchData();
+  }, [fetchData]);
 
   const addNotification = (title, message) => {
     const id = Date.now();
@@ -71,13 +37,7 @@ const HealthRisks = () => {
     }, 3000);
   };
 
-  const riskTrendData = [
-    { time: '08:00', risk: 10, target: 15 },
-    { time: '12:00', risk: 25, target: 15 },
-    { time: '16:00', risk: 40, target: 15 },
-    { time: '20:00', risk: 30, target: 15 },
-    { time: '00:00', risk: 15, target: 15 }
-  ];
+  const riskTrendData = []; // Start with no trend data
 
   return (
     <div className="emergency-dashboard">
@@ -141,37 +101,44 @@ const HealthRisks = () => {
         </div>
 
         <div className="emergency-predictions-grid">
-          {riskPredictions.map((p, i) => (
-            <motion.div key={p.id} className={`emergency-glass-card emergency-prediction-card ${p.riskLevel.toLowerCase()}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-              <div className="emergency-prediction-header">
-                <div>
-                  <h3 className="emergency-prediction-title">{p.type}</h3>
-                  <div className="emergency-prediction-badges">
-                    <span className={`emergency-risk-badge ${p.riskLevel.toLowerCase()}`}>{p.riskLevel} Probability</span>
-                    <span className="emergency-risk-badge emergency-confidence-badge">AI Confidence: {p.confidence}%</span>
+          {riskPredictions.length > 0 ? (
+            riskPredictions.map((p, i) => (
+              <motion.div key={p.id} className={`emergency-glass-card emergency-prediction-card ${p.riskLevel.toLowerCase()}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
+                <div className="emergency-prediction-header">
+                  <div>
+                    <h3 className="emergency-prediction-title">{p.type}</h3>
+                    <div className="emergency-prediction-badges">
+                      <span className={`emergency-risk-badge ${p.riskLevel.toLowerCase()}`}>{p.riskLevel} Probability</span>
+                      <span className="emergency-risk-badge emergency-confidence-badge">AI Confidence: {p.confidence}%</span>
+                    </div>
+                  </div>
+                  <div className="emergency-probability-display">
+                    <span className="emergency-probability-text">{p.probability}%</span>
                   </div>
                 </div>
-                <div className="emergency-probability-display">
-                  <span className="emergency-probability-text">{p.probability}%</span>
+                <div className="emergency-prediction-details">
+                  <div className="emergency-detail-item"><Clock size={16} /><p>{p.timeframe}</p></div>
+                  <div className="emergency-detail-item"><AlertTriangle size={16} /><p>Impact: {p.impact}</p></div>
                 </div>
-              </div>
-              <div className="emergency-prediction-details">
-                <div className="emergency-detail-item"><Clock size={16} /><p>{p.timeframe}</p></div>
-                <div className="emergency-detail-item"><AlertTriangle size={16} /><p>Impact: {p.impact}</p></div>
-              </div>
-              <div className="emergency-factors-section">
-                <p className="emergency-factors-label">Contributing Factors</p>
-                <div className="emergency-factors-tags">
-                  {p.factors.map((f, j) => <span key={j} className="emergency-factor-tag">{f}</span>)}
+                <div className="emergency-factors-section">
+                  <p className="emergency-factors-label">Contributing Factors</p>
+                  <div className="emergency-factors-tags">
+                    {p.factors.map((f, j) => <span key={j} className="emergency-factor-tag">{f}</span>)}
+                  </div>
                 </div>
-              </div>
-              <div className="emergency-action-box">
-                <p className="emergency-action-label">AI Recommendation:</p>
-                <p className="emergency-action-text">{p.recommendedAction}</p>
-                <button className="emergency-action-button" onClick={() => addNotification('Guidance Synced', 'Check your HealthAssistant for details.')}>Acknowledge Risk</button>
-              </div>
-            </motion.div>
-          ))}
+                <div className="emergency-action-box">
+                  <p className="emergency-action-label">AI Recommendation:</p>
+                  <p className="emergency-action-text">{p.recommendedAction}</p>
+                  <button className="emergency-action-button" onClick={() => addNotification('Guidance Synced', 'Check your HealthAssistant for details.')}>Acknowledge Risk</button>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <div className="emergency-empty-state">
+              <Shield size={48} className="empty-icon" />
+              <p>No health risks detected. You're doing great!</p>
+            </div>
+          )}
         </div>
 
         <div className="emergency-glass-card" style={{ marginTop: '24px', padding: '24px' }}>

@@ -315,6 +315,31 @@
     margin-bottom: 2rem;
 }
 
+.emergency-empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 2px dashed rgba(25, 118, 210, 0.2);
+    color: #64748b;
+    text-align: center;
+}
+
+.empty-icon {
+    margin-bottom: 16px;
+    color: #bfdbfe;
+}
+
+.emergency-empty-state p {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
 .emergency-prediction-card {
     position: relative;
     background: white;
