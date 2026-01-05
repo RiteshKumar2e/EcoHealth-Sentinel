@@ -10,10 +10,9 @@ import {
   Shield,
   FileImage,
   Send,
+  Activity,
+  FileText
 } from "lucide-react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, MeshWobbleMaterial } from "@react-three/drei";
-import { motion } from "framer-motion";
 import './MyScans.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
@@ -30,7 +29,7 @@ export default function MyScans() {
 
   // chat
   const [chatMessages, setChatMessages] = useState([
-    { id: "sys", from: "bot", text: "Hello — I am your assistant. Ask about analyses or upload an image." },
+    { id: "sys", from: "bot", text: "Hello — I am your AI Medical Assistant. Upload a scan to get started or ask me about your history." },
   ]);
   const [chatInput, setChatInput] = useState("");
   const chatRef = useRef(null);
@@ -39,75 +38,26 @@ export default function MyScans() {
   const fileRef = useRef(null);
 
   const scanTypes = [
-    { id: "xray", name: "X-Ray", icon: FileImage, color: "#2563eb" },
-    { id: "ct", name: "CT Scan", icon: Brain, color: "#7c3aed" },
-    { id: "mri", name: "MRI", icon: Brain, color: "#16a34a" },
-    { id: "ultrasound", name: "Ultrasound", icon: ImageIcon, color: "#f97316" },
+    { id: "xray", name: "X-Ray", icon: FileImage },
+    { id: "ct", name: "CT Scan", icon: Activity },
+    { id: "mri", name: "MRI", icon: Brain },
+    { id: "ultrasound", name: "Ultrasound", icon: ImageIcon },
   ];
 
   useEffect(() => {
-    // load analyses
-    fetch("/api/analyses")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d?.recentAnalyses) setRecentAnalyses(d.recentAnalyses);
-        else fallbackAnalyses();
-      })
-      .catch(() => fallbackAnalyses());
-
-    // load stats
-    fetch("/api/stats")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d?.stats) setStats(d.stats);
-        else fallbackStats();
-      })
-      .catch(() => fallbackStats());
-
-    function fallbackAnalyses() {
-      setRecentAnalyses([
-        {
-          id: 1,
-          type: "Chest X-Ray",
-          date: "2025-10-04",
-          findings: "Clear lungs, no significant abnormalities detected",
-          confidence: 94,
-          priority: "normal",
-        },
-        {
-          id: 2,
-          type: "Brain MRI",
-          date: "2025-10-03",
-          findings: "Slight inflammation noted - consult your specialist",
-          confidence: 87,
-          priority: "medium",
-        },
-      ]);
-    }
-
-    function fallbackStats() {
-      setStats([
-        { label: "My Scans Analyzed", value: "12", icon: ImageIcon, color: "#2563eb" },
-        { label: "AI Precision", value: "94.8%", icon: Brain, color: "#16a34a" },
-        { label: "Avg Analysis Time", value: "45 sec", icon: Clock, color: "#7c3aed" },
-        { label: "Detected Alerts", value: "2", icon: AlertCircle, color: "#ef4444" },
-      ]);
-    }
+    // In a real app, you would fetch this from your API
+    // const fetchData = async () => {
+    //   const response = await fetch(`${API_BASE_URL}/scans`);
+    //   ...
+    // };
+    setStats([
+      { label: "Scans Analyzed", value: "0", icon: FileText },
+      { label: "AI Precision", value: "0%", icon: Brain },
+      { label: "Avg Analysis Time", value: "0s", icon: Clock },
+      { label: "Pending Reviews", value: "0", icon: AlertCircle },
+    ]);
   }, []);
 
-  // helper for priority badges
-  const getPriorityClass = (priority) => {
-    switch (priority) {
-      case "high":
-        return "badge-high";
-      case "medium":
-        return "badge-medium";
-      default:
-        return "badge-normal";
-    }
-  };
-
-  // Upload flow - uses /api/upload
   const handleUploadFile = async (file) => {
     if (!selectedScan) {
       alert("Please select a scan type first.");
@@ -118,46 +68,22 @@ export default function MyScans() {
     setAnalysisResult(null);
     setIsAnalyzing(true);
 
-    try {
-      const form = new FormData();
-      form.append("file", file);
-      form.append("type", selectedScan);
-
-      // Post to backend
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: form,
+    // Simulate API Call
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      setAnalysisResult({
+        findings: "No acute fracture identified in the visible cortical bone structures. Soft tissues appear normal.",
+        confidence: 96
       });
-      const data = await res.json();
-
-      if (data?.analysis) {
-        setAnalysisResult(data.analysis);
-      } else {
-        // fallback sample
-        setAnalysisResult({ findings: "No result from server", confidence: 0 });
-      }
-
-      // refresh recent analyses (non-blocking)
-      fetch("/api/analyses")
-        .then((r) => r.json())
-        .then((d) => d?.recentAnalyses && setRecentAnalyses(d.recentAnalyses))
-        .catch(() => { });
-    } catch (err) {
-      console.error(err);
-      setAnalysisResult({ findings: "Upload failed. See console.", confidence: 0 });
-    } finally {
-      // short delay to give sense of completion
-      setTimeout(() => setIsAnalyzing(false), 600);
-    }
+      setChatMessages(prev => [...prev, { id: Date.now(), from: 'bot', text: `Analysis complete for your ${scanTypes.find(s => s.id === selectedScan).name}. Results appear normal with 96% confidence.` }]);
+    }, 2000);
   };
 
-  // wrapper called by file input
   const onFileChange = (e) => {
     const f = e.target.files?.[0];
     if (f) handleUploadFile(f);
   };
 
-  // chat send
   const sendChat = async () => {
     const text = (chatInput || "").trim();
     if (!text) return;
@@ -165,300 +91,177 @@ export default function MyScans() {
     setChatMessages((m) => [...m, userMsg]);
     setChatInput("");
 
-    // show typing indicator
-    const typingId = Date.now() + "-typing";
-    setChatMessages((m) => [...m, { id: typingId, from: "bot", text: "..." }]);
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
-      });
-      const data = await res.json();
-      setChatMessages((m) => m.filter((x) => x.id !== typingId));
-      setChatMessages((m) => [...m, { id: Date.now() + "-b", from: "bot", text: data?.reply || "Sorry, no reply." }]);
-    } catch (e) {
-      setChatMessages((m) => m.filter((x) => x.id !== typingId));
-      setChatMessages((m) => [...m, { id: Date.now() + "-err", from: "bot", text: "Network error — try again." }]);
-    }
-
-    // scroll chat to bottom
+    // Simulate response
     setTimeout(() => {
-      if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }, 80);
+      setChatMessages((m) => [...m, { id: Date.now() + "-b", from: "bot", text: "I can help explain your scan results. Please consult a doctor for a definitive diagnosis." }]);
+    }, 1000);
   };
 
   return (
     <div className="mia-page">
       <div className="mia-container">
-        {/* subtle 3D background */}
-        <div className="three-d-container">
-          <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
-            <ambientLight intensity={0.65} />
-            <directionalLight position={[3, 2, 5]} intensity={0.9} />
-            <mesh position={[-2.2, 0.2, -1.8]} rotation={[0.3, 0.8, 0]}>
-              <sphereGeometry args={[1.6, 80, 80]} />
-              <MeshWobbleMaterial factor={0.4} speed={1.1} roughness={0.3} metalness={0.2} />
-            </mesh>
-            <mesh position={[2.8, -0.6, -2.5]} rotation={[0.2, -0.5, 0]}>
-              <boxGeometry args={[1.8, 1.8, 1.8]} />
-              <MeshWobbleMaterial factor={0.35} speed={0.9} roughness={0.5} metalness={0.25} />
-            </mesh>
-            <OrbitControls enableZoom={false} enableRotate={false} enablePan={false} />
-          </Canvas>
-        </div>
 
         {/* Header */}
         <div className="mia-header">
           <div>
             <h1 className="mia-title">My Medical Scans</h1>
-            <p className="mia-subtitle">AI-powered insights for your personal diagnostic imaging</p>
+            <p className="mia-subtitle">AI-powered diagnostic imaging feedback</p>
           </div>
-          <div className="mia-header-right">
-            <Brain className="header-icon" />
+          <div className="header-icon-box">
+            <Brain size={24} />
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="statsGrid">
+        {/* Stats Grid */}
+        <div className="stats-grid">
           {stats.map((s, i) => {
-            const Icon = s.icon || ImageIcon;
+            const Icon = s.icon;
             return (
-              <motion.div
-                key={i}
-                initial={{ y: 12, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: i * 0.06 }}
-                className="stat-card"
-              >
-                <div className="stat-content">
-                  <Icon className="stat-icon stat-icon-dynamic" style={{ '--color': s.color || "#374151" }} />
-                  <div>
-                    <div className="stat-label">{s.label}</div>
-                    <div className="stat-value stat-value-dynamic" style={{ '--color': s.color || "#111827" }}>{s.value}</div>
-                  </div>
+              <div key={i} className="stat-card">
+                <div className="stat-icon">
+                  <Icon size={20} />
                 </div>
-              </motion.div>
+                <div className="stat-info">
+                  <div className="stat-value">{s.value}</div>
+                  <div className="stat-label">{s.label}</div>
+                </div>
+              </div>
             );
           })}
         </div>
 
-        {/* main area: upload + capabilities/chat */}
+        {/* Main Content Grid */}
         <div className="mia-main-grid">
-          {/* Upload & results */}
-          <div className="upload-card">
-            <h2 className="card-title">Upload Medical Image</h2>
 
-            {/* scan selection */}
-            <div className="scan-grid">
-              {scanTypes.map((t) => {
-                const Icon = t.icon;
-                const active = selectedScan === t.id;
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => setSelectedScan(t.id)}
-                    className={`scan-btn ${active ? 'active' : ''}`}
-                    aria-pressed={active}
-                  >
-                    <Icon className="scan-icon scan-icon-dynamic" style={{ '--color': t.color }} />
-                    <div className="scan-label">{t.name}</div>
-                  </button>
-                );
-              })}
-            </div>
+          {/* Left Column: Upload & Analysis */}
+          <div className="main-column">
+            <div className="content-card">
+              <h2 className="card-title">New Analysis</h2>
 
-            {/* upload box */}
-            <div className="upload-box">
-              <Upload className="upload-icon" />
-              <div className="upload-text-main">
-                {selectedScan ? `Upload ${scanTypes.find((s) => s.id === selectedScan).name}` : "Select scan type first"}
-              </div>
-              <div className="upload-text-sub">Drag & drop or click to browse</div>
-
-              <input ref={fileRef} type="file" accept="image/*,application/dicom" className="hidden" onChange={onFileChange} />
-
-              <div className="upload-actions">
-                <button
-                  onClick={() => fileRef.current && fileRef.current.click()}
-                  disabled={!selectedScan || isAnalyzing}
-                  className={`btn-primary ${selectedScan && !isAnalyzing ? 'enabled' : ''}`}
-                >
-                  {isAnalyzing ? "Analyzing..." : "Choose file"}
-                </button>
-
-                <button
-                  onClick={() => {
-                    // demo: trigger fake upload with a Blob to show UI
-                    if (!selectedScan) return alert("Select scan type first");
-                    setIsAnalyzing(true);
-                    setAnalysisResult(null);
-                    setTimeout(() => {
-                      setIsAnalyzing(false);
-                      setAnalysisResult({ findings: "Demo: no abnormalities detected", confidence: 92 });
-                    }, 1400);
-                  }}
-                  className="btn-demo"
-                >
-                  Demo
-                </button>
-              </div>
-            </div>
-
-            {/* progress or result */}
-            <div className="analysis-progress-grid">
-              {isAnalyzing && (
-                <div className="progress-box">
-                  <div className="progress-header">
-                    <Clock className="progress-icon" />
-                    <div>
-                      <div className="progress-title">AI Analysis in Progress</div>
-                      <div className="progress-subtitle">Processing image with deep learning models...</div>
+              {/* Scan Type Selection */}
+              <div className="scan-grid">
+                {scanTypes.map((t) => {
+                  const Icon = t.icon;
+                  return (
+                    <div
+                      key={t.id}
+                      onClick={() => setSelectedScan(t.id)}
+                      className={`scan-btn ${selectedScan === t.id ? 'active' : ''}`}
+                    >
+                      <Icon className="scan-icon" size={24} />
+                      <span className="scan-label">{t.name}</span>
                     </div>
-                  </div>
-                  <div className="progress-bar-bg">
-                    <div className="progress-bar-fill" style={{ '--width': "64%" }} />
-                  </div>
+                  );
+                })}
+              </div>
+
+              {/* Upload Box */}
+              <div className="upload-box">
+                <Upload className="upload-icon-large" size={48} />
+                <div className="upload-title">
+                  {selectedScan ? `Upload ${scanTypes.find(s => s.id === selectedScan).name} Image` : "Select Scan Type"}
                 </div>
-              )}
+                <p className="upload-subtitle">DICOM, JPEG, or PNG supported</p>
 
-              {analysisResult && !isAnalyzing && (
+                <input ref={fileRef} type="file" accept="image/*,application/dicom" style={{ display: 'none' }} onChange={onFileChange} />
+
+                <div className="upload-actions">
+                  <button
+                    onClick={() => fileRef.current && fileRef.current.click()}
+                    disabled={!selectedScan || isAnalyzing}
+                    className="btn-primary"
+                    style={{ width: '100%' }}
+                  >
+                    {isAnalyzing ? "Processing..." : "Select File"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Analysis Result */}
+              {(isAnalyzing || analysisResult) && (
                 <div className="analysis-box">
-                  <div className="analysis-header">
-                    <CheckCircle className="analysis-icon" />
-                    <div className="analysis-header-right">
-                      <div className="analysis-title">Analysis Complete</div>
-                      <div className="analysis-confidence">
-                        AI Confidence: <strong>{analysisResult.confidence ?? "—"}%</strong>
-                      </div>
-                      <div className="findings-box">
-                        <div className="findings-text">
-                          <strong>AI Summary:</strong> {analysisResult.findings}
-                        </div>
-                        <div className="findings-disclaimer">⚠️ These results are AI-generated for your information. Please consult a qualified radiologist or your primary physician for a formal diagnosis.</div>
-                      </div>
+                  {isAnalyzing ? (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                      <Clock className="spin" size={24} style={{ color: '#059669', marginBottom: '8px' }} />
+                      <p style={{ color: '#047857', fontWeight: '500' }}>Analyzing medical imagery...</p>
                     </div>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="analysis-header">
+                        <div className="analysis-status">
+                          <CheckCircle size={18} /> Analysis Complete
+                        </div>
+                        <div className="confidence-score">
+                          {analysisResult.confidence}% Confidence
+                        </div>
+                      </div>
+                      <div className="findings-text">
+                        <strong>AI Summary:</strong> {analysisResult.findings}
+                      </div>
+                      <div className="disclaimer">
+                        *This results is generated by AI and should be reviewed by a certified radiologist.
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
             </div>
           </div>
 
-          {/* Right column: chat + capabilities */}
-          <div className="right-column">
-            {/* Chat assistant */}
-            <div className="capabilities-card">
-              <div className="section-header">
-                <h3 className="section-title">Assistant</h3>
-                <div className="section-sub">AI-powered chat</div>
-              </div>
+          {/* Right Column: Chat & Recent */}
+          <div className="side-column">
 
-              <div className="chat-box">
-                <div ref={chatRef} className="chatList">
-                  {chatMessages.map((m) => (
-                    <div
-                      key={m.id}
-                      className={`chat-msg ${m.from === 'user' ? 'chat-msg-user' : 'chat-msg-bot'}`}
-                    >
+            {/* AI Chat */}
+            <div className="content-card">
+              <h2 className="card-title">Assistant</h2>
+              <div className="chat-container">
+                <div className="chat-messages" ref={chatRef}>
+                  {chatMessages.map(m => (
+                    <div key={m.id} className={`chat-bubble ${m.from}`}>
                       {m.text}
                     </div>
                   ))}
                 </div>
-
-                <div className="chat-input-row">
+                <div className="chat-input-area">
                   <input
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendChat()}
-                    placeholder="Ask the assistant (e.g. 'Show high priority cases')"
                     className="chat-input"
+                    placeholder="Ask about findings..."
+                    value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
+                    onKeyPress={e => e.key === 'Enter' && sendChat()}
                   />
-                  <button onClick={sendChat} className="chat-send-btn">
-                    <Send className="chat-send-icon" /> Send
+                  <button onClick={sendChat} className="send-btn">
+                    <Send size={16} />
                   </button>
                 </div>
               </div>
-
-              {/* Capabilities condensed */}
-              <div>
-                <h4 className="capabilities-header-text">AI Capabilities</h4>
-                <div className="capabilities-list">
-                  {[
-                    { title: "Fracture Detection", accuracy: 96, description: "Detects bone fractures in X-ray/CT" },
-                    { title: "Tumor Recognition", accuracy: 92, description: "Finds potential tumors in MRI/CT" },
-                    { title: "Pneumonia Detection", accuracy: 94, description: "Chest X-ray pneumonia indicators" },
-                  ].map((c, idx) => (
-                    <div key={idx} className="capabilities-item">
-                      <div className="capability-header">
-                        <div className="capability-title">{c.title}</div>
-                        <div className="capability-score">{c.accuracy}%</div>
-                      </div>
-                      <div className="capability-desc">{c.description}</div>
-                      <div className="capability-bar-bg">
-                        <div className="capability-bar-fill" style={{ '--width': `${c.accuracy}%` }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
 
-            {/* Recent analyses */}
-            <div className="recent-card">
-              <h3 className="recent-title">Recent Analyses</h3>
+            {/* Recent Scans (Compact) */}
+            <div className="content-card">
+              <h2 className="card-title">Recent History</h2>
               <div className="recent-list">
-                {recentAnalyses.map((r) => (
-                  <div key={r.id} className="recent-item">
-                    <div className="recent-header">
-                      <div>
-                        <div className="recent-type">{r.type}</div>
-                        <div className="recent-patient">Record ID: {r.id}</div>
+                {recentAnalyses.length > 0 ? (
+                  recentAnalyses.map(scan => (
+                    <div key={scan.id} className="recent-item">
+                      <div className="recent-header">
+                        <span className="recent-type">{scan.type}</span>
+                        <span className="recent-date">{scan.date}</span>
                       </div>
-                      <div className={`priority-badge ${getPriorityClass(r.priority)}`}>{(r.priority || "normal").toUpperCase()}</div>
+                      <div className="recent-snippet">{scan.findings}</div>
                     </div>
-                    <div className="recent-findings">{r.findings}</div>
-                    <div className="recent-footer">
-                      <div>{r.date}</div>
-                      <div className="recent-confidence">Confidence: {r.confidence}%</div>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <div className="empty-state">No recent scans found</div>
+                )}
               </div>
             </div>
 
-            {/* Security & compliance */}
-            <div className="security-card">
-              <div className="security-content">
-                <Shield className="security-icon" />
-                <div>
-                  <div className="security-title">Medical Data Security & Compliance</div>
-                  <div className="security-text">
-                    Our AI system adheres to HIPAA and international healthcare data protection standards. Images are encrypted in transit & at rest.
-                  </div>
-                  <div className="security-badges">
-                    <div className="security-badge">
-                      <div className="badge-title">🔒 HIPAA Compliant</div>
-                      <div className="badge-sub">Privacy-first</div>
-                    </div>
-                    <div className="security-badge">
-                      <div className="badge-title">🛡️ E2E Encryption</div>
-                      <div className="badge-sub">256-bit AES</div>
-                    </div>
-                    <div className="security-badge">
-                      <div className="badge-title">👨‍⚕️ Physician Oversight</div>
-                      <div className="badge-sub">Doctor validation required</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Footer spacing */}
-        <div className="footer-spacing" />
       </div>
     </div>
   );
 }
+
