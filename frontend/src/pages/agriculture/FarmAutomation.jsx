@@ -3,37 +3,16 @@ import {
   Zap, Activity, ShieldCheck, Search, Plus,
   Settings, Power, Battery, Wifi, MoreVertical,
   Droplets, Thermometer, Leaf, Navigation, Bell,
-  ChevronRight, AlertCircle, TrendingUp, Cpu
+  ChevronRight, AlertCircle, TrendingUp, Cpu, Settings2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import './FarmAutomation.css';
 
 const FarmAutomation = () => {
   // Sentinel State Management
-  const [nodes, setNodes] = useState([
-    {
-      id: 1,
-      name: "Soil Sentinel Alpha",
-      type: "Eco-Monitor",
-      status: "active",
-      health: 98,
-      moisture: 62,
-      battery: 88,
-      signal: 5,
-      lastAction: "Moisture analysis complete"
-    },
-    {
-      id: 2,
-      name: "Irrigation Node 02",
-      type: "Automation",
-      status: "idle",
-      health: 100,
-      flowRate: 0,
-      battery: 92,
-      signal: 4,
-      lastAction: "Task scheduled: 06:00 PM"
-    }
-  ]);
+  const [nodes, setNodes] = useState([]);
+
+
 
   const [rules, setRules] = useState([]);
   const [activeFilter, setActiveFilter] = useState("all");
@@ -134,113 +113,75 @@ const FarmAutomation = () => {
   return (
     <div className="sentinel-hub-root">
       {/* 1. LEFT NAVIGATION: BRAND & CORE METRICS */}
-      <aside className="sentinel-sidebar-left">
-        <motion.div
-          className="sentinel-brand"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-        >
-          <div className="brand-hex-icon">
-            <ShieldCheck size={28} fill="white" strokeWidth={2.5} />
-          </div>
-          <div className="brand-labels">
-            <h1>EcoHealth</h1>
-            <span>SENTINEL COMMAND</span>
-          </div>
-        </motion.div>
-
-        <div className="sentinel-metrics-vertical">
-          <motion.div
-            className="metric-pill eco"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="pill-icon"><Leaf size={18} /></div>
-            <div className="pill-data">
-              <span className="p-label">ECO SAVINGS</span>
-              <h3>{stats.ecoSavings}</h3>
-              <span className="p-growth">Efficiency Optimized</span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="metric-pill active"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="pill-icon"><Activity size={18} /></div>
-            <div className="pill-data">
-              <span className="p-label">ACTIVE SENTINELS</span>
-              <h3>{stats.active} <small>/ {nodes.length}</small></h3>
-              <span className="p-growth">Global coverage: {nodes.length > 0 ? 'Optimal' : 'None'}</span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="metric-pill system"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <div className="pill-icon"><Cpu size={18} /></div>
-            <div className="pill-data">
-              <span className="p-label">AI INTEGRITY</span>
-              <h3>{stats.integrity}</h3>
-              <span className="p-growth">Neural-Link: Stable</span>
-            </div>
-          </motion.div>
-        </div>
-
-        <div className="sidebar-footer-info">
-          <div className="uptime-status">
-            <div className="dot pulse-green"></div>
-            Online Protection: 24/7
-          </div>
-        </div>
-      </aside>
-
+      {/* 1. LEFT NAVIGATION REMOVED - Metrics moved to Header */}
       {/* 2. MAIN WORKSPACE: SENTINEL NODES */}
       <main className="sentinel-main-frame">
         <header className="main-frame-header">
-          <div className="header-search-group">
-            <div className="sentinel-search">
-              <Search size={18} className="search-icon" />
-              <input
-                type="text"
-                placeholder="Locate Sentinel Nodes..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <nav className="filter-nav">
-              <button
-                className={activeFilter === 'all' ? 'active' : ''}
-                onClick={() => setActiveFilter('all')}
-              >All Infrastructure</button>
-              <button
-                className={activeFilter === 'active' ? 'active' : ''}
-                onClick={() => setActiveFilter('active')}
-              >Shield Active</button>
-            </nav>
+          <div className="sentinel-metrics-horizontal">
+            <motion.div className="metric-pill-horizontal eco" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+              <div className="pill-icon"><Leaf size={16} /></div>
+              <div className="pill-data-row">
+                <span className="p-label">ECO SAVINGS</span>
+                <h3>{stats.ecoSavings}</h3>
+              </div>
+            </motion.div>
+
+            <motion.div className="metric-pill-horizontal active" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <div className="pill-icon"><Activity size={16} /></div>
+              <div className="pill-data-row">
+                <span className="p-label">ACTIVE NODES</span>
+                <h3>{stats.active}/{nodes.length}</h3>
+              </div>
+            </motion.div>
+
+            <motion.div className="metric-pill-horizontal system" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+              <div className="pill-icon"><Cpu size={16} /></div>
+              <div className="pill-data-row">
+                <span className="p-label">AI INTEGRITY</span>
+                <h3>{stats.integrity}</h3>
+              </div>
+            </motion.div>
           </div>
 
-          <button className="btn-provision-prime" onClick={() => setShowModal(true)}>
-            <Plus size={18} />
-            <span>Provision New Sentinel</span>
-          </button>
+          <div className="header-actions-right">
+            <div className="header-search-group">
+              <div className="sentinel-search">
+                <Search size={18} className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search Nodes..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <nav className="filter-nav">
+                <button
+                  className={activeFilter === 'all' ? 'active' : ''}
+                  onClick={() => setActiveFilter('all')}
+                >All</button>
+                <button
+                  className={activeFilter === 'active' ? 'active' : ''}
+                  onClick={() => setActiveFilter('active')}
+                >Active</button>
+              </nav>
+            </div>
+
+            <button className="btn-provision-prime" onClick={() => setShowModal(true)}>
+              <Plus size={18} />
+              <span>New Sentinel</span>
+            </button>
+          </div>
         </header>
 
         <section className="node-canvas-grid">
           {filteredNodes.length === 0 ? (
             <motion.div
               className="empty-sentinel-state"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
             >
               <div className="sentinel-hollow-logo">
-                <ShieldCheck size={48} color="#e2e8f0" />
+                <ShieldCheck size={48} />
               </div>
               <h3>No Sentinels Provisioned</h3>
               <p>Initialize your first Sentinel Node to begin autonomous ecological protection.</p>
@@ -315,69 +256,7 @@ const FarmAutomation = () => {
       </main>
 
       {/* 3. RIGHT SIDEBAR: INTELLIGENCE & LOGS */}
-      <aside className="sentinel-sidebar-right">
-        <section className="intelligence-panel">
-          <div className="section-title-box">
-            <TrendingUp size={20} className="title-icon" />
-            <h3>Autonomous Logic</h3>
-          </div>
-
-          <div className="logic-card-sentinel">
-            {rules.length === 0 ? (
-              <div className="logic-empty-prompt">
-                <Settings size={32} className="spin-icon-slow" />
-                <h4>Zero Intelligence Rules</h4>
-                <p>Automate your farm with eco-conscious triggers based on real-time climate data.</p>
-                <button className="btn-add-logic" onClick={addLogicRule}>+ Configure Logic</button>
-              </div>
-            ) : (
-              <div className="rules-list-v2">
-                {rules.map(rule => (
-                  <div key={rule.id} className="rule-item-v2">
-                    <p><strong>IF:</strong> {rule.condition}</p>
-                    <p><strong>THEN:</strong> {rule.action}</p>
-                  </div>
-                ))}
-                <button className="btn-add-logic-small" onClick={addLogicRule}>+ Add Rule</button>
-              </div>
-            )}
-          </div>
-        </section>
-
-        <section className="sentinel-log-panel">
-          <div className="section-title-box">
-            <Activity size={20} className="title-icon" />
-            <h3>Sentinel Feed</h3>
-          </div>
-
-          <div className="feed-card-white">
-            <div className="feed-scroll-box">
-              <AnimatePresence initial={false}>
-                {feed.map(item => (
-                  <motion.div
-                    key={item.id}
-                    className={`feed-item ${item.type}`}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                  >
-                    <div className={`feed-marker ${item.type}`}></div>
-                    <div className="feed-content">
-                      <p>{item.text}</p>
-                      <span>{item.time}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-
-            <div className="feed-placeholder">
-              <ShieldCheck size={16} />
-              Environmental Shield Status: Healthy
-            </div>
-          </div>
-        </section>
-      </aside>
-      {/* 4. PROVISION MODAL */}
+      {/* 3. RIGHT SIDEBAR REMOVED */}      {/* 4. PROVISION MODAL */}
       <AnimatePresence>
         {showModal && (
           <motion.div

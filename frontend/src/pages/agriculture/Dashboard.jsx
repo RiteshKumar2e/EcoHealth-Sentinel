@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Droplets, Leaf, AlertCircle, Sun, Cloud, Home, Sprout, Settings, BarChart, Truck, Bug, MessageSquare, Users, Cog, Menu, X, ChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { TrendingUp, Droplets, Leaf, AlertCircle, Sun, Cloud, Home, Sprout, Settings, BarChart, Truck, Bug, MessageSquare, Users, Cog, Menu, X, ChevronLeft, Bell, Activity } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const [farmData] = useState({
+  const [farmData, setFarmData] = useState({
     soilMoisture: 0,
     temperature: 0,
     humidity: 0,
     cropHealth: 0,
     efficiency: 0
   });
-
   const [predictions, setPredictions] = useState([]);
   const [alerts, setAlerts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoaded(true);
@@ -25,18 +26,15 @@ const Dashboard = () => {
 
   const runPredictiveModels = () => {
     setPredictions([
-      { title: 'Yield Prediction', value: '0 kg/hectare', confidence: 0, trend: 'neutral', details: 'Waiting for sensor data...' },
-      { title: 'Weather Impact', value: 'Monitoring...', confidence: 0, trend: 'neutral', details: 'Analyzing local weather station' },
-      { title: 'Water Optimization', value: 'Syncing...', confidence: 0, trend: 'neutral', details: 'Calculating irrigation needs' }
+      { title: 'Yield Prediction', value: '--', confidence: 0, trend: 'neutral', details: 'Awaiting data...' },
+      { title: 'Weather Impact', value: '--', confidence: 0, trend: 'neutral', details: 'Awaiting data...' },
+      { title: 'Water Optimization', value: '--', confidence: 0, trend: 'neutral', details: 'Awaiting data...' }
     ]);
   };
 
   const generateAlerts = () => {
-    setAlerts([]); // Clear all demo alerts
-  };
-
-  const navigate = (path) => {
-    window.location.href = path;
+    // Currently set to empty to comply with "No Demo Data" rule
+    setAlerts([]);
   };
 
   const SidebarItem = ({ path, icon: Icon, label, isActive }) => {
@@ -51,9 +49,9 @@ const Dashboard = () => {
     );
   };
 
-  const MetricCard = ({ icon: Icon, iconColor, badge, badgeType, label, value, info, progress }) => {
+  const MetricCard = ({ icon: Icon, iconColor, badge, badgeType, label, value, info, progress, onClick }) => {
     return (
-      <div className="metric-card">
+      <div className="metric-card" onClick={onClick}>
         <div className="metric-top">
           <div className="metric-icon-group">
             <div className="metric-icon-box" style={{ background: `${iconColor}15` }}>
@@ -112,10 +110,46 @@ const Dashboard = () => {
       </div>
 
       <div className="metrics-grid">
-        <MetricCard icon={Droplets} iconColor="#2563eb" badge="Live" badgeType="live" label="Soil Moisture" value={`${farmData.soilMoisture}%`} progress={farmData.soilMoisture} />
-        <MetricCard icon={Sun} iconColor="#ea580c" badge="Live" badgeType="live" label="Temperature" value={`${farmData.temperature}°C`} info={<><Cloud size={14} /> Humidity: {farmData.humidity}%</>} />
-        <MetricCard icon={Leaf} iconColor="#059669" badge="AI" badgeType="ai" label="Crop Health" value={`${farmData.cropHealth}%`} info={<span style={{ color: '#64748b', fontWeight: 600 }}>Analyzing health...</span>} />
-        <MetricCard icon={TrendingUp} iconColor="#7c3aed" badge="AI" badgeType="ai" label="Efficiency Score" value={`${farmData.efficiency}%`} info={<span style={{ color: '#64748b', fontWeight: 600 }}>Calculating...</span>} />
+        <MetricCard
+          icon={Droplets}
+          iconColor="#2563eb"
+          badge="Live"
+          badgeType="live"
+          label="Soil Moisture"
+          value={`${farmData.soilMoisture}%`}
+          progress={farmData.soilMoisture}
+          onClick={() => navigate('/agriculture/irrigation')}
+        />
+        <MetricCard
+          icon={Sun}
+          iconColor="#ea580c"
+          badge="Live"
+          badgeType="live"
+          label="Temperature"
+          value={`${farmData.temperature}°C`}
+          info={<><Cloud size={14} /> Humidity: {farmData.humidity}%</>}
+          onClick={() => navigate('/agriculture/weather')}
+        />
+        <MetricCard
+          icon={Leaf}
+          iconColor="#059669"
+          badge="AI"
+          badgeType="ai"
+          label="Crop Health"
+          value={`${farmData.cropHealth}%`}
+          info={<span style={{ color: '#64748b', fontWeight: 600 }}>Analyzing health...</span>}
+          onClick={() => navigate('/agriculture/crop-disease')}
+        />
+        <MetricCard
+          icon={TrendingUp}
+          iconColor="#7c3aed"
+          badge="AI"
+          badgeType="ai"
+          label="Efficiency Score"
+          value={`${farmData.efficiency}%`}
+          info={<span style={{ color: '#64748b', fontWeight: 600 }}>Calculating...</span>}
+          onClick={() => navigate('/agriculture/reports')}
+        />
       </div>
 
       <div className="predictions-grid">
@@ -142,8 +176,8 @@ const Dashboard = () => {
 
       <div className="alerts-section">
         <h2 className="alerts-header">
-          <AlertCircle size={28} color="#ea580c" />
-          AI Alerts & Recommendations
+          <Bell size={24} className="icon-pulse" />
+          AI Monitor & Alerts
         </h2>
         <div className="alerts-list">
           {alerts.length > 0 ? (
@@ -171,8 +205,8 @@ const Dashboard = () => {
 
       <div className="impact-section">
         <h2 className="impact-header">
-          <TrendingUp size={28} />
-          AI Impact on Your Farm
+          <Activity size={24} />
+          Operational Efficiency Gains
         </h2>
         <div className="impact-grid">
           {[

@@ -3,37 +3,8 @@ import { Users, MessageSquare, Share2, ThumbsUp, AlertCircle, Shield, Send, MapP
 import './CommunityHub.css';
 
 const CommunityHub = () => {
-  // Inject some pre-populated data for visual demo as per USER image
-  const [posts, setPosts] = useState([
-    {
-      _id: 'p1',
-      author: 'Priya Sharma',
-      verified: true,
-      location: 'Maharashtra',
-      createdAt: new Date().toISOString(),
-      category: 'Crop Health',
-      content: 'AI disease detection helped save my tomato crop. Early detection is key!',
-      likesCount: 46,
-      comments: [
-        { author: 'Anil K', text: 'This is so useful!' },
-        { author: 'Farmer John', text: 'Which tool did you use?' }
-      ]
-    },
-    {
-      _id: 'p2',
-      author: 'Rajesh Kumar',
-      verified: true,
-      location: 'Punjab',
-      createdAt: new Date().toISOString(),
-      category: 'Water Management',
-      content: 'Successfully implemented drip irrigation. Water usage reduced by 40%!',
-      likesCount: 25,
-      comments: [
-        { author: 'Suresh Raina', text: 'Great work!' },
-        { author: 'Dr. Mehta', text: 'Inspiring initiative 👏' }
-      ]
-    }
-  ]);
+  // Inject initial placeholder data
+  const [posts, setPosts] = useState([]);
 
   const [newPost, setNewPost] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('General');
@@ -42,7 +13,7 @@ const CommunityHub = () => {
   const [commentInputs, setCommentInputs] = useState({});
 
   useEffect(() => {
-    // fetchPosts(); // In production, this would fetch from real API
+    fetchPosts();
   }, []);
 
   const fetchPosts = async () => {

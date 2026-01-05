@@ -47,8 +47,8 @@ const WeatherForecast = () => {
     'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri']
   };
 
-  // OpenWeatherMap API Key - Replace with your actual API key
-  const API_KEY = 'bd5e378503939ddaee76f12ad7a97608'; // Get free key from https://openweathermap.org/api
+  // OpenWeatherMap API Key - Use environment variables for production
+  const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
   const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
   // Fetch weather data from OpenWeatherMap API
@@ -57,6 +57,10 @@ const WeatherForecast = () => {
       try {
         setLoading(true);
         setError(null);
+
+        if (!API_KEY) {
+          throw new Error('API_KEY_MISSING');
+        }
 
         const cacheKey = `weather_data_${location.city}`;
         const timestampKey = `weather_timestamp_${location.city}`;
@@ -78,12 +82,21 @@ const WeatherForecast = () => {
           `${BASE_URL}/weather?q=${location.city},${location.state},${location.country}&units=metric&appid=${API_KEY}`
         );
 
-        if (!currentResponse.ok) throw new Error('API_ERROR');
+        if (!currentResponse.ok) {
+          const errorData = await currentResponse.json();
+          throw new Error(errorData.message || 'Failed to fetch current weather data');
+        }
 
         const currentData = await currentResponse.json();
         const forecastResponse = await fetch(
           `${BASE_URL}/forecast?q=${location.city},${location.state},${location.country}&units=metric&appid=${API_KEY}`
         );
+
+        if (!forecastResponse.ok) {
+          const errorData = await forecastResponse.json();
+          throw new Error(errorData.message || 'Failed to fetch forecast data');
+        }
+
         const forecastData = await forecastResponse.json();
 
         const processedCurrent = {
@@ -94,7 +107,7 @@ const WeatherForecast = () => {
           rainfall: currentData.rain ? currentData.rain['1h'] || 0 : 0,
           condition: currentData.weather[0].main,
           description: currentData.weather[0].description,
-          uvIndex: 6,
+          uvIndex: 6, // OpenWeatherMap free tier doesn't provide UV index directly, using a placeholder
           icon: currentData.weather[0].icon,
           pressure: currentData.main.pressure,
           visibility: currentData.visibility / 1000
@@ -130,33 +143,13 @@ const WeatherForecast = () => {
         setRecommendations(generateRecommendations(processedCurrent, dailyForecasts));
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching weather:', err);
-        const fallbackData = {
-          temperature: 24,
-          feelsLike: 26,
-          humidity: 65,
-          windSpeed: 12,
-          rainfall: 0,
-          condition: 'Clear',
-          description: 'clear sky (Offline Mode)',
-          visibility: 10,
-          pressure: 1012,
-          icon: '01d'
-        };
-        setCurrentWeather(fallbackData);
-        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const fullForecast = days.map((day, i) => ({
-          day,
-          date: `Jan ${4 + i}`,
-          temp: 24 + Math.floor(Math.random() * 5),
-          condition: i % 3 === 0 ? 'Clear' : i % 3 === 1 ? 'Clouds' : 'Rain',
-          rain: i % 3 === 2 ? 60 : 10,
-          icon: i % 3 === 0 ? 'sun' : i % 3 === 1 ? 'cloud' : 'rain'
-        }));
-        setForecast(fullForecast);
-        setAlerts(generateAlerts(fallbackData, fullForecast));
-        setRecommendations(generateRecommendations(fallbackData, fullForecast));
+        console.error("Failed to fetch weather data:", err);
+        setError(err.message === 'API_KEY_MISSING' ? 'OpenWeatherMap API key is missing. Please set VITE_OPENWEATHER_API_KEY in your .env file.' : 'Failed to load weather data. Please try again later.');
         setLoading(false);
+        setCurrentWeather(null);
+        setForecast([]);
+        setAlerts([]);
+        setRecommendations([]);
       }
     };
 
@@ -165,14 +158,17 @@ const WeatherForecast = () => {
     // Refresh data every 10 minutes
     const interval = setInterval(fetchWeatherData, 600000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+  }, [location, API_KEY]); // Added API_KEY to dependency array
 
   // Convert OpenWeather condition to local icon type
   const getLocalIcon = (condition) => {
     const conditionLower = condition.toLowerCase();
     if (conditionLower.includes('clear') || conditionLower.includes('sun')) return 'sun';
-    if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) return 'rain';
+    if (conditionLower.includes('rain') || conditionLower.includes('drizzle') || conditionLower.includes('shower')) return 'rain';
+    if (conditionLower.includes('cloud') || conditionLower.includes('overcast')) return 'cloud';
+    if (conditionLower.includes('thunderstorm')) return 'rain'; // Or a specific thunderstorm icon if available
+    if (conditionLower.includes('snow')) return 'snow'; // Assuming a snow icon exists
+    if (conditionLower.includes('mist') || conditionLower.includes('fog') || conditionLower.includes('haze')) return 'cloud'; // Use cloud for mist/fog
     return 'cloud';
   };
 
@@ -227,6 +223,17 @@ const WeatherForecast = () => {
       });
     }
 
+    // Check for strong winds
+    if (current && current.windSpeed > 25) { // Assuming >25 km/h is strong
+      alerts.push({
+        type: 'warning',
+        title: 'Strong Wind Warning',
+        message: 'Potential for crop damage and soil erosion. Secure light structures.',
+        action: 'Consider windbreaks or temporary covers',
+        severity: 'medium'
+      });
+    }
+
     return alerts.length > 0 ? alerts : [{
       type: 'info',
       title: 'Normal Conditions',
@@ -246,21 +253,21 @@ const WeatherForecast = () => {
       recs.push({
         title: 'Irrigation',
         advice: 'Pause irrigation for 48-72 hours due to expected rainfall',
-        impact: 'Save 300-500L of water',
+        impact: 'Save 300-500L of water per acre',
         icon: Droplets
       });
-    } else if (current && current.humidity < 40) {
+    } else if (current && current.humidity < 40 && current.temperature > 28) {
       recs.push({
         title: 'Irrigation',
-        advice: 'Increase irrigation frequency due to low humidity and dry conditions',
-        impact: 'Maintain optimal soil moisture',
+        advice: 'Increase irrigation frequency due to low humidity and high temperatures',
+        impact: 'Maintain optimal soil moisture and prevent heat stress',
         icon: Droplets
       });
     } else {
       recs.push({
         title: 'Irrigation',
-        advice: 'Continue regular irrigation schedule',
-        impact: 'Optimal water usage',
+        advice: 'Continue regular irrigation schedule, monitor soil moisture',
+        impact: 'Optimal water usage and crop health',
         icon: Droplets
       });
     }

@@ -68,10 +68,10 @@ const AgriChatbot = () => {
     };
 
     const suggestions = [
-        "Best crops for monsoon?",
-        "How to treat tomato blight?",
-        "Organic pesticide recipes",
-        "Market price for Wheat"
+        "Soil PH management tips",
+        "Latest market price trends",
+        "Organic pest control methods",
+        "Smart irrigation optimization"
     ];
 
     return (

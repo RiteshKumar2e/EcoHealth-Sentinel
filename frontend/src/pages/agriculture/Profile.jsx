@@ -6,14 +6,14 @@ import './Profile.css';
 const Profile = () => {
     const navigate = useNavigate();
     const [profile, setProfile] = useState({
-        name: 'Anmol Sharma',
-        email: 'anmol.agri@example.com',
-        phone: '+91 98765 43210',
-        location: 'Punjab, India',
-        farmSize: '15 Acres',
-        primaryCrop: 'Wheat & Rice',
-        joinedDate: 'March 2024',
-        avatar: null // Will store image data URL
+        name: '',
+        email: '',
+        phone: '',
+        location: '',
+        farmSize: '',
+        primaryCrop: '',
+        joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+        avatar: null
     });
 
     const [settings, setSettings] = useState({

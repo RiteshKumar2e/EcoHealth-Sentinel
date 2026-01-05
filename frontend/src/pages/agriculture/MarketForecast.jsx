@@ -23,7 +23,14 @@ const MarketForecast = () => {
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [showAllCrops, setShowAllCrops] = useState(false);
 
-  const [marketData, setMarketData] = useState(null);
+  const [marketData, setMarketData] = useState({
+    tomato: { current: 0, trend: 'up', change: '0%', demand: 'Stable', forecast: [], recommendation: '', factors: [] },
+    wheat: { current: 0, trend: 'up', change: '0%', demand: 'Stable', forecast: [], recommendation: '', factors: [] },
+    potato: { current: 0, trend: 'up', change: '0%', demand: 'Stable', forecast: [], recommendation: '', factors: [] },
+    onion: { current: 0, trend: 'up', change: '0%', demand: 'Stable', forecast: [], recommendation: '', factors: [] },
+    rice: { current: 0, trend: 'up', change: '0%', demand: 'Stable', forecast: [], recommendation: '', factors: [] },
+    cotton: { current: 0, trend: 'up', change: '0%', demand: 'Stable', forecast: [], recommendation: '', factors: [] }
+  });
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [tradeQuantity, setTradeQuantity] = useState(100);
 
@@ -39,18 +46,8 @@ const MarketForecast = () => {
         throw new Error('Backend API error');
       }
     } catch (error) {
-      console.warn('Backend unavailable, using local simulation:', error);
-
-      // Fallback: Real-time Simulation Logic
-      setMarketData(prev => {
-        const updated = { ...prev };
-        Object.keys(updated).forEach(crop => {
-          const drift = (Math.random() - 0.45) * 0.8;
-          updated[crop].current = parseFloat((updated[crop].current + drift).toFixed(2));
-          updated[crop].forecast[0].price = updated[crop].current;
-        });
-        return updated;
-      });
+      console.warn('Backend unavailable:', error);
+      // Removed local simulation to ensure no demo data is shown
     } finally {
       setLastUpdated(new Date());
       setTimeout(() => setIsRefreshing(false), 800);
@@ -65,12 +62,12 @@ const MarketForecast = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (!marketData) {
+  if (!marketData || Object.values(marketData).every(c => c.current === 0)) {
     return (
       <div className="market-forecast-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <div style={{ textAlign: 'center' }}>
           <RefreshCw className="spinning" size={48} color="var(--primary)" />
-          <p style={{ marginTop: '1rem', color: 'var(--text-muted)', fontSize: '1.2rem' }}>Initializing Market Intelligence...</p>
+          <p style={{ marginTop: '1rem', color: 'var(--text-muted)', fontSize: '1.2rem' }}>No Market Data Available. Connect to API...</p>
         </div>
       </div>
     );

@@ -48,10 +48,23 @@ const AgricultureLayout = () => {
         <div className="dashboard-page-container">
             <div className="agri-bg-overlay"></div>
             {/* Sidebar */}
-            <div className={`sidebar ${!isSidebarOpen ? 'hidden' : ''}`}>
+            <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
                 <div className="sidebar-header">
-                    <h2 className="sidebar-logo">AgriAI</h2>
-                    <p className="sidebar-tagline">Smart Farming Solutions</p>
+                    <div className="sidebar-brand-container">
+                        <div className="brand-logo-hex">
+                            <Sprout size={22} color="white" fill="white" />
+                        </div>
+                        <div className="brand-text-block">
+                            <h1 className="brand-title">AgriAI</h1>
+                            <p className="brand-subtitle">SENTINEL COMMAND</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setIsSidebarOpen(false)}
+                        className="sidebar-close-btn"
+                    >
+                        <X size={18} />
+                    </button>
                 </div>
                 <div className="sidebar-nav">
                     {menuItems.map((item) => (
@@ -68,12 +81,14 @@ const AgricultureLayout = () => {
             </div>
 
             {/* Menu Toggle Button */}
-            <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className={`menu-toggle ${isSidebarOpen ? 'open' : 'closed'}`}
-            >
-                {isSidebarOpen ? <X size={24} color="#1f2937" /> : <Menu size={24} color="#1f2937" />}
-            </button>
+            {!isSidebarOpen && (
+                <button
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="menu-toggle closed"
+                >
+                    <Menu size={24} color="#1f2937" />
+                </button>
+            )}
 
             {/* Main Content Area */}
             <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>

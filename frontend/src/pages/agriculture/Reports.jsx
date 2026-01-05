@@ -40,9 +40,10 @@ const Reports = () => {
         showNotification('Failed to fetch reports from server', 'error');
       }
     } catch (error) {
-      console.error('Error fetching reports:', error);
-      showNotification('Server connection error', 'error');
-    } finally {
+      console.error('Failed to fetch reports:', error);
+      showNotification('Failed to fetch reports from server', 'error');
+    }
+    finally {
       setIsDataLoading(false);
     }
   };

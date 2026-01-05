@@ -66,7 +66,11 @@ const SupplyChain = () => {
         }
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // If the backend is down, shipments will remain empty or retain their last successful state.
+      // No explicit action needed here to set to empty, as the instruction implies removing
+      // "catch-block simulations" and ensuring it stays empty if backend is down (which it will
+      // if no successful fetch occurs).
+      console.error('Failed to fetch supply chain data:', error);
     }
   };
 

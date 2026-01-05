@@ -47,27 +47,22 @@ const CropDiseaseDetection = () => {
     }
   };
 
-  const analyzeImage = () => {
+  const analyzeImage = async () => {
     setAnalyzing(true);
     setResult(null);
 
-    setTimeout(() => {
-      const diseases = Object.keys(diseaseDatabase);
-      const randomDisease = diseases[Math.floor(Math.random() * diseases.length)];
-      const detection = diseaseDatabase[randomDisease];
+    try {
+      // In a real scenario, we would send the image to a backend AI model
+      // const response = await fetch('/api/agriculture/crop-disease/analyze', { ... });
+      // const detection = await response.json();
 
-      let conf = 0;
-      const interval = setInterval(() => {
-        conf += 5;
-        setConfidence(conf);
-        if (conf >= detection.confidence * 100) {
-          clearInterval(interval);
-        }
-      }, 50);
-
-      setResult(detection);
+      // For now, we set null to indicate no data without a backend
+      setResult(null);
+    } catch (error) {
+      console.error('Analysis failed:', error);
+    } finally {
       setAnalyzing(false);
-    }, 2000);
+    }
   };
 
   const handleImageUpload = (e) => {
@@ -164,9 +159,9 @@ const CropDiseaseDetection = () => {
               Upload Crop Image
             </h2>
 
-            <div className="upload-box" onClick={() => !selectedImage && document.getElementById('crop-upload').click()}>
+            <div className="upload-box">
               {selectedImage ? (
-                <div className="flex-col gap-16">
+                <div className="flex-col gap-16 w-full flex-center">
                   <img
                     src={selectedImage}
                     alt="Uploaded crop"
@@ -185,7 +180,7 @@ const CropDiseaseDetection = () => {
                   </label>
                 </div>
               ) : (
-                <label className="upload-label" onClick={(e) => e.stopPropagation()}>
+                <label className="upload-label">
                   <Upload className="upload-icon-rel" />
                   <p className="upload-text-primary">Click to select folder or drag image</p>
                   <p className="upload-text-secondary">Supported: PNG, JPG, WEBP (Max 10MB)</p>

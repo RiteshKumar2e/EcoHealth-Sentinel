@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bug, Shield, AlertTriangle, Leaf, Camera, CheckCircle, Send, Bot, X, Upload, Calendar, MapPin, Phone, Mail, Clock, XCircle, Check, Search, Filter, CloudRain, Thermometer, Wind, Activity, TrendingUp } from 'lucide-react';
+import { Bug, Shield, AlertTriangle, Leaf, Camera, CheckCircle, Send, Bot, X, Upload, Calendar, MapPin, Phone, Mail, Clock, XCircle, Check, Search, Filter, CloudRain, Thermometer, Wind, Activity, TrendingUp, Cloud, ShieldCheck, ChevronRight } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import './PestControl.css';
 
 const PestControl = () => {
@@ -16,8 +17,25 @@ const PestControl = () => {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showExpertModal, setShowExpertModal] = useState(false);
   const [notification, setNotification] = useState(null);
-  const [detectionResult, setDetectionResult] = useState(null);
   const [showError, setShowError] = useState(false);
+
+  // Simulation Analytics Data
+  const trendData = [
+    { name: 'Mon', active: 4, treated: 2 },
+    { name: 'Tue', active: 3, treated: 3 },
+    { name: 'Wed', active: 5, treated: 4 },
+    { name: 'Thu', active: 2, treated: 5 },
+    { name: 'Fri', active: 6, treated: 4 },
+    { name: 'Sat', active: 4, treated: 6 },
+    { name: 'Sun', active: 2, treated: 4 },
+  ];
+
+  const distributionData = [
+    { name: 'Aphids', value: 35, color: '#6366f1' },
+    { name: 'Whitefly', value: 25, color: '#8b5cf6' },
+    { name: 'Locusts', value: 15, color: '#f59e0b' },
+    { name: 'Armyworm', value: 25, color: '#ef4444' },
+  ];
 
   // Backend Data State
   const [pests, setPests] = useState([]);
@@ -38,19 +56,59 @@ const PestControl = () => {
   }, []);
 
   const fetchData = async () => {
+    setIsDataLoading(true);
+
+    const fallbackPests = [
+      { id: 1, name: 'Aphids', severity: 'Medium', crops: ['Tomato', 'Cucumber', 'Peas'], organicControl: ['Neem Oil Spray', 'Ladybugs', 'Soap Water'], chemicalControl: 'Imidacloprid', image: '🐛' },
+      { id: 2, name: 'Locusts', severity: 'High', crops: ['Wheat', 'Maize', 'Rice'], organicControl: ['Metarhizium acridum', 'Trenching'], chemicalControl: 'Malathion', image: '🦗' },
+      { id: 3, name: 'Whitefly', severity: 'High', crops: ['Cotton', 'Tomato', 'Potato'], organicControl: ['Yellow Sticky Traps', 'Neem Oil'], chemicalControl: 'Acetamiprid', image: '🦋' },
+      { id: 4, name: 'Fall Armyworm', severity: 'High', crops: ['Maize', 'Sugarcane', 'Rice'], organicControl: ['Pheromone Traps', 'Bt spray'], chemicalControl: 'Spinosad', image: '🐛' },
+      { id: 5, name: 'Spider Mites', severity: 'Medium', crops: ['Beans', 'Strawberry', 'Roses'], organicControl: ['Water Jetting', 'Predatory Mites'], chemicalControl: 'Abamectin', image: '🕷️' },
+      { id: 6, name: 'Thrips', severity: 'Medium', crops: ['Onion', 'Chillies', 'Grapes'], organicControl: ['Blue Sticky Traps', 'Neem oil'], chemicalControl: 'Spinetoram', image: '🪲' },
+      { id: 7, name: 'Mealybugs', severity: 'Medium', crops: ['Papaya', 'Hibiscus', 'Mango'], organicControl: ['Alcohol rub', 'Cryptolaemus beetles'], chemicalControl: 'Buprofezin', image: '🌫️' },
+      { id: 8, name: 'Rice Weevil', severity: 'Low', crops: ['Rice', 'Wheat'], organicControl: ['Drying under sun', 'Neem leaves'], chemicalControl: 'Phosphine fumigation', image: '🪲' },
+      { id: 9, name: 'Fruit Borer', severity: 'High', crops: ['Brinjal', 'Tomato', 'Okra'], organicControl: ['Pheromone traps', 'Trichogramma cards'], chemicalControl: 'Chlorantraniliprole', image: '🐛' },
+      { id: 10, name: 'Cutworm', severity: 'Medium', crops: ['Potato', 'Tobacco', 'Corn'], organicControl: ['Collars around stems', 'Handpicking'], chemicalControl: 'Cypermethrin', image: '🐛' },
+      { id: 11, name: 'Leafhopper', severity: 'Medium', crops: ['Potato', 'Cotton'], organicControl: ['Sticky traps', 'Neem spray'], chemicalControl: 'Fipronil', image: '🦟' },
+      { id: 12, name: 'Root Knot Nematode', severity: 'High', crops: ['Carrot', 'Tomato'], organicControl: ['Crop rotation', 'Solarization'], chemicalControl: 'Fluopyram', image: '🪱' },
+      { id: 13, name: 'Scale Insects', severity: 'Medium', crops: ['Citrus', 'Apple'], organicControl: ['Horticultural oils', 'Scraping'], chemicalControl: 'Dinotefuran', image: '🐚' },
+      { id: 14, name: 'Wireworms', severity: 'High', crops: ['Potato', 'Maize'], organicControl: ['Tilling soil', 'Potato traps'], chemicalControl: 'Bifenthrin', image: '🐛' },
+      { id: 15, name: 'Japanese Beetle', severity: 'High', crops: ['Soybean', 'Corn'], organicControl: ['Handpicking', 'Milky spore'], chemicalControl: 'Carbaryl', image: '🪲' },
+      { id: 16, name: 'Cabbage Looper', severity: 'Medium', crops: ['Cabbage', 'Broccoli'], organicControl: ['Bt spray', 'Row covers'], chemicalControl: 'Indoxacarb', image: '🐛' },
+      { id: 17, name: 'Colorado Potato Beetle', severity: 'High', crops: ['Potato', 'Tomato'], organicControl: ['Crop rotation', 'Mulching'], chemicalControl: 'Abamectin', image: '🪲' },
+      { id: 18, name: 'Diamondback Moth', severity: 'High', crops: ['Cabbage', 'Mustard'], organicControl: ['Sticky traps', 'Bt spray'], chemicalControl: 'Chlorantraniliprole', image: '🦋' },
+      { id: 19, name: 'Brown Planthopper', severity: 'High', crops: ['Rice'], organicControl: ['Proper spacing', 'Azyadirachtin'], chemicalControl: 'Pymetrozine', image: '🦗' },
+      { id: 20, name: 'Pink Bollworm', severity: 'High', crops: ['Cotton'], organicControl: ['Pheromone traps', 'Sanitation'], chemicalControl: 'Emamectin Benzoate', image: '🐛' },
+      { id: 21, name: 'Citrus Psylla', severity: 'Medium', crops: ['Orange', 'Lemon'], organicControl: ['Oil sprays', 'Pruning'], chemicalControl: 'Thiamethoxam', image: '🦟' },
+      { id: 22, name: 'Stem Borer', severity: 'High', crops: ['Rice', 'Maize'], organicControl: ['Pheromone traps', 'Light traps'], chemicalControl: 'Cartap Hydrochloride', image: '🐛' },
+      { id: 23, name: 'Grasshopper', severity: 'Medium', crops: ['Grains', 'Vegetables'], organicControl: ['Birds/Poultry', 'Tilling'], chemicalControl: 'Lambda-cyhalothrin', image: '🦗' },
+      { id: 24, name: 'Bollworm', severity: 'High', crops: ['Cotton', 'Pigeon Pea'], organicControl: ['NPV spray', 'Handpicking'], chemicalControl: 'Profenofos', image: '🐛' },
+      { id: 25, name: 'Armyworm', severity: 'High', crops: ['Rice', 'Maize'], organicControl: ['Trenches', 'Deep plowing'], chemicalControl: 'Quinalphos', image: '🐛' }
+    ];
+
     try {
-      setIsDataLoading(true);
       const [pestsRes, treatmentsRes] = await Promise.all([
-        fetch('/api/agriculture/pests'),
-        fetch('/api/agriculture/treatments')
+        fetch('/api/agriculture/pests').catch(() => null),
+        fetch('/api/agriculture/treatments').catch(() => null)
       ]);
 
-      if (pestsRes.ok) setPests(await pestsRes.json());
-      if (treatmentsRes.ok) setScheduledTreatments(await treatmentsRes.json());
+      if (pestsRes && pestsRes.ok) {
+        const data = await pestsRes.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setPests(data);
+        } else {
+          setPests(fallbackPests);
+        }
+      } else {
+        setPests(fallbackPests);
+      }
 
+      if (treatmentsRes && treatmentsRes.ok) {
+        setScheduledTreatments(await treatmentsRes.json());
+      }
     } catch (error) {
-      console.error('Error fetching data:', error);
-      showNotification('Failed to connect to server', 'error');
+      console.error('Data fetch failed, using fallbacks:', error);
+      setPests(fallbackPests);
     } finally {
       setIsDataLoading(false);
     }
@@ -297,22 +355,21 @@ const PestControl = () => {
       {/* Schedule Modal */}
       {showScheduleModal && (
         <div className="modal-overlay">
-          <div className="modal-content glass-card fade-in" style={{ padding: '2rem', maxWidth: '500px', width: '90%' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
-              <h3 style={{ margin: 0, color: '#1e293b' }}>Schedule Treatment</h3>
-              <button onClick={() => setShowScheduleModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                <X size={24} color="#64748b" />
+          <div className="modal-content pest-modal fade-in">
+            <div className="modal-header">
+              <h3>Schedule Treatment</h3>
+              <button onClick={() => setShowScheduleModal(false)} className="modal-close-btn">
+                <X size={24} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmitSchedule} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', color: '#64748b', marginBottom: '0.3rem' }}>Pest Target</label>
+            <form onSubmit={handleSubmitSchedule} className="modal-form">
+              <div className="form-group">
+                <label>Pest Target</label>
                 <select
                   value={scheduleForm.pest}
                   onChange={handlePestChange}
-                  className="form-input"
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white' }}
+                  className="pest-select-input"
                 >
                   <option value="">Select a pest...</option>
                   {pests.map(p => (
@@ -320,39 +377,39 @@ const PestControl = () => {
                   ))}
                 </select>
               </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', color: '#64748b', marginBottom: '0.3rem' }}>Treatment Method</label>
+              <div className="form-group">
+                <label>Treatment Method</label>
                 <input
                   type="text"
                   value={scheduleForm.treatment}
                   onChange={e => setScheduleForm({ ...scheduleForm, treatment: e.target.value })}
-                  className="form-input"
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                  placeholder="e.g. Neem Oil Spray"
+                  className="pest-text-input"
                 />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.9rem', color: '#64748b', marginBottom: '0.3rem' }}>Date</label>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Date</label>
                   <input
                     type="date"
                     value={scheduleForm.date}
                     onChange={e => setScheduleForm({ ...scheduleForm, date: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                    className="pest-date-input"
                   />
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.9rem', color: '#64748b', marginBottom: '0.3rem' }}>Area (Ha)</label>
+                <div className="form-group">
+                  <label>Area (Ha)</label>
                   <input
                     type="text"
                     placeholder="e.g. 2 Acre"
                     value={scheduleForm.area}
                     onChange={e => setScheduleForm({ ...scheduleForm, area: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                    className="pest-text-input"
                   />
                 </div>
               </div>
 
-              <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem', width: '100%' }}>
+              <button type="submit" className="btn btn-primary-full">
                 Confirm Schedule
               </button>
             </form>
@@ -360,26 +417,26 @@ const PestControl = () => {
         </div>
       )}
 
-      <div className="main-content">
+      <div className="pest-workspace">
         {/* Header */}
         <header className="header-card">
           <div className="header-flex">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <div className="header-identity">
               <div className="header-icon-box">
                 <Bug size={32} color="white" />
               </div>
-              <div className="header-title">
+              <div className="header-title-group">
                 <h1>AI Pest Control</h1>
                 <p>Smart detection & eco-friendly solutions</p>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <div className="header-widgets">
               <div className="weather-widget">
-                <CloudRain size={16} color="#059669" />
+                <Cloud size={16} />
                 <span>24°C | 60% Hum</span>
               </div>
               <div className="organic-badge">
-                <Shield size={16} />
+                <ShieldCheck size={16} />
                 Organic First Approach
               </div>
             </div>
@@ -388,31 +445,31 @@ const PestControl = () => {
 
         {/* Quick Stats Dashboard */}
         <div className="stats-dashboard">
-          <div className="stat-card">
-            <div className="stat-icon" style={{ background: '#fee2e2', color: '#dc2626' }}>
-              <Activity size={20} />
+          <div className="stat-card blue">
+            <div className="stat-icon">
+              <Activity size={24} />
             </div>
-            <div>
+            <div className="stat-content">
               <div className="stat-value">2</div>
-              <div className="stat-label">Active Threats</div>
+              <div className="stat-label">ACTIVE THREATS</div>
             </div>
           </div>
-          <div className="stat-card">
-            <div className="stat-icon" style={{ background: '#dbeafe', color: '#2563eb' }}>
-              <Calendar size={20} />
+          <div className="stat-card purple">
+            <div className="stat-icon">
+              <Calendar size={24} />
             </div>
-            <div>
+            <div className="stat-content">
               <div className="stat-value">{scheduledTreatments.filter(t => t.status === 'scheduled').length}</div>
-              <div className="stat-label">Treatments Due</div>
+              <div className="stat-label">TREATMENTS DUE</div>
             </div>
           </div>
-          <div className="stat-card">
-            <div className="stat-icon" style={{ background: '#dcfce7', color: '#16a34a' }}>
-              <TrendingUp size={20} />
+          <div className="stat-card green">
+            <div className="stat-icon">
+              <TrendingUp size={24} />
             </div>
-            <div>
+            <div className="stat-content">
               <div className="stat-value">92%</div>
-              <div className="stat-label">Crop Health</div>
+              <div className="stat-label">CROP HEALTH</div>
             </div>
           </div>
         </div>
@@ -420,15 +477,24 @@ const PestControl = () => {
         {/* Tabs */}
         <div className="tabs-container">
           <div className="tabs-header">
-            {['detection', 'treatments', 'analytics'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`tab-btn ${activeTab === tab ? 'tab-btn-active' : ''}`}
-              >
-                {tab === 'detection' ? '🔍 Pest Detection' : tab === 'treatments' ? '📅 Treatment Schedule' : '📊 Analytics'}
-              </button>
-            ))}
+            <button
+              onClick={() => setActiveTab('detection')}
+              className={`tab-btn ${activeTab === 'detection' ? 'tab-btn-active' : ''}`}
+            >
+              <Search size={18} /> Pest Detection
+            </button>
+            <button
+              onClick={() => setActiveTab('treatments')}
+              className={`tab-btn ${activeTab === 'treatments' ? 'tab-btn-active' : ''}`}
+            >
+              <Calendar size={18} /> Treatment Schedule
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`tab-btn ${activeTab === 'analytics' ? 'tab-btn-active' : ''}`}
+            >
+              <Activity size={18} /> Analytics
+            </button>
           </div>
 
           {/* Detection Tab */}
@@ -436,7 +502,7 @@ const PestControl = () => {
             <div>
               <div className="detection-grid">
                 {/* Upload Section */}
-                <div>
+                <div className="pest-upload-column">
                   <div className="upload-section">
                     <input
                       type="file"
@@ -446,19 +512,30 @@ const PestControl = () => {
                     />
 
                     {uploadedImage ? (
-                      <div className="fade-in" style={{ width: '100%', pointerEvents: 'none', position: 'relative', zIndex: 30 }}>
+                      <div className="upload-content fade-in">
                         <img src={uploadedImage} alt="Uploaded" className="uploaded-img" />
                         {isLoading ? (
-                          <div style={{ color: '#10B981', fontWeight: '600' }}>Analyzing image...</div>
-                        ) : detectionResult && (
-                          <div style={{ padding: '12px', background: '#D1FAE5', borderRadius: '8px', border: '1px solid #10B981' }}>
-                            <p style={{ color: '#065F46', fontWeight: '700', margin: 0 }}>
-                              ✅ Detection Complete!
-                            </p>
-                            <p style={{ fontSize: '14px', color: '#065F46', margin: '4px 0 0' }}>
-                              {detectionResult.pest.name} detected ({detectionResult.confidence}%)
-                            </p>
+                          <div className="analysis-status">
+                            <Activity className="icon-spin" size={20} />
+                            <span>AI Neural Analysis...</span>
                           </div>
+                        ) : detectionResult ? (
+                          <div className="detection-success-card">
+                            <div className="success-header">
+                              <CheckCircle size={18} />
+                              <span>Detection Complete</span>
+                            </div>
+                            <p>
+                              <strong>{detectionResult.pest.name}</strong> identified ({detectionResult.confidence}%)
+                            </p>
+                            <button className="btn-change-image" onClick={() => { setUploadedImage(null); setDetectionResult(null); }}>
+                              <Upload size={14} /> Change Image
+                            </button>
+                          </div>
+                        ) : (
+                          <label className="change-image-label">
+                            <Plus size={16} /> Try Different Photo
+                          </label>
                         )}
                       </div>
                     ) : (
@@ -468,54 +545,36 @@ const PestControl = () => {
                         </div>
                         <div className="upload-text-group">
                           <h3>AI Image Detection</h3>
-                          <p>Upload a photo of your crop to identify pests</p>
+                          <p>Upload a photo to identify pests</p>
                         </div>
                         <div className="upload-btn-style">
                           <Upload size={20} /> Upload Photo
                         </div>
-                        <p className="helper-text">
-                          Supports JPG, PNG (Max 5MB)
-                        </p>
                       </div>
                     )}
                   </div>
                 </div>
 
                 {/* Pest Database */}
-                <div className="pest-database-section">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>
-                      Common Pests Database
-                    </h3>
+                <div className="pest-database-column">
+                  <div className="database-header-compact">
+                    <h3>Common Pests Database</h3>
                   </div>
 
-                  {/* Pest Dropdown Selection */}
-                  <div style={{ background: 'white', padding: '1rem', borderRadius: '16px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                    <div style={{ marginBottom: '0.75rem', color: '#64748b', fontSize: '0.9rem' }}>
-                      Select a pest from the list below to view treatment details and solution.
-                    </div>
+                  <div className="pest-dropdown-hub">
+                    <p>Select a pest to view autonomous treatment protocols.</p>
                     <select
                       onChange={(e) => {
                         const pest = pests.find(p => p.name === e.target.value);
                         setSelectedPest(pest || null);
                       }}
-                      style={{
-                        width: '100%',
-                        padding: '1rem',
-                        borderRadius: '12px',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '1rem',
-                        color: '#1e293b',
-                        cursor: 'pointer',
-                        outline: 'none',
-                        backgroundColor: '#f8fafc'
-                      }}
+                      className="pest-main-dropdown"
                       value={selectedPest ? selectedPest.name : ""}
                     >
                       <option value="">Select a Pest</option>
                       {pests.map((pest) => (
                         <option key={pest._id || pest.id} value={pest.name}>
-                          {pest.image || '🐛'} {pest.name}
+                          {pest.image || '🐛'} {pest.name} (Rx: {pest.chemicalControl})
                         </option>
                       ))}
                     </select>
@@ -523,23 +582,23 @@ const PestControl = () => {
 
                   {selectedPest && (
                     <div className="fade-in" style={{ marginTop: '0.5rem' }}>
-                      <div className="pest-detail-card fade-in">
-                        <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                          <AlertTriangle color="#f59e0b" />
-                          Treatment Solutions for {selectedPest.name}
-                        </h3>
+                      <div className="pest-protocol-card fade-in">
+                        <div className="protocol-title">
+                          <AlertTriangle size={18} />
+                          <h3>Treatment Protocol: {selectedPest.name}</h3>
+                        </div>
 
                         <div className="solutions-grid">
                           {/* Organic Solutions */}
                           <div className="solution-box organic">
-                            <h4 style={{ color: '#065F46', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                              <Leaf size={18} /> Organic (Recommended)
+                            <h4 className="organic-label">
+                              <Leaf size={16} /> Organic Recommendation
                             </h4>
-                            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                            <ul className="protocol-list organic">
                               {selectedPest.organicControl.map((method, idx) => (
-                                <li key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.95rem', color: '#064e3b' }}>
-                                  <CheckCircle size={16} color="#10B981" style={{ marginTop: '2px' }} />
-                                  {method}
+                                <li key={idx}>
+                                  <CheckCircle size={14} />
+                                  <span>{method}</span>
                                 </li>
                               ))}
                             </ul>
@@ -547,24 +606,25 @@ const PestControl = () => {
 
                           {/* Chemical Control */}
                           <div className="solution-box chemical">
-                            <h4 style={{ color: '#9a3412', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                              <AlertTriangle size={18} /> Chemical Control
+                            <h4 className="chemical-label">
+                              <AlertTriangle size={16} /> Chemical Protocol
                             </h4>
-                            <p style={{ margin: 0, color: '#7c2d12', fontSize: '0.95rem' }}>
-                              {selectedPest.chemicalControl}
-                            </p>
-                            <div style={{ marginTop: '1rem', fontSize: '0.85rem', color: '#dc2626', background: '#fecaca', padding: '0.5rem', borderRadius: '6px' }}>
-                              ⚠️ Use only as last resort.
+                            <div className="chemical-info-block">
+                              <span className="chem-label">Recommended Pesticide:</span>
+                              <span className="chem-value">{selectedPest.chemicalControl}</span>
+                            </div>
+                            <div className="protocol-warning">
+                              ⚠️ Deploy only if threshold exceeds 20%.
                             </div>
                           </div>
                         </div>
 
-                        <div className="action-buttons" style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
-                          <button onClick={handleScheduleTreatment} className="btn btn-primary">
-                            <Calendar size={18} /> Schedule Treatment
+                        <div className="protocol-actions">
+                          <button onClick={handleScheduleTreatment} className="btn-protocol-primary">
+                            <Calendar size={18} /> Deploy Treatment
                           </button>
-                          <button onClick={handleContactExpert} className="btn btn-outline">
-                            <Phone size={18} /> Contact Agri-Expert
+                          <button onClick={handleContactExpert} className="btn-protocol-outline">
+                            Expert Consultation
                           </button>
                         </div>
                       </div>
@@ -575,77 +635,229 @@ const PestControl = () => {
             </div>
           )}
 
-          {/* Treatments Tab */}
-          {
-            activeTab === 'treatments' && (
-              <div style={{ padding: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h3 style={{ margin: 0, color: '#1e293b' }}>Upcoming Treatments</h3>
-                  <button onClick={() => {
-                    setScheduleForm({ pest: '', treatment: '', date: '', area: '', notes: '' });
-                    setShowScheduleModal(true);
-                  }} className="btn btn-primary" style={{ padding: '0.6rem 1.2rem', fontSize: '0.9rem' }}>
-                    <Calendar size={18} /> Add New
-                  </button>
+          {activeTab === 'treatments' && (
+            <div className="schedule-workspace fade-in">
+              <div className="schedule-grid">
+                {/* Main Schedule Column */}
+                <div className="schedule-main-column">
+                  <div className="schedule-header">
+                    <h3>Autonomous Treatment Schedule</h3>
+                    <button
+                      onClick={() => {
+                        setScheduleForm({ pest: '', treatment: '', date: '', area: '', notes: '' });
+                        setShowScheduleModal(true);
+                      }}
+                      className="btn-add-treatment"
+                    >
+                      <Calendar size={16} /> Add New Plan
+                    </button>
+                  </div>
+
+                  <div className="treatment-list">
+                    {scheduledTreatments.length === 0 ? (
+                      <div className="empty-state-box">
+                        <Calendar size={48} className="empty-icon" />
+                        <p>No treatments currently scheduled in the system.</p>
+                      </div>
+                    ) : (
+                      scheduledTreatments.map((treatment) => (
+                        <div key={treatment._id} className="treatment-card">
+                          <div className="treatment-card-header">
+                            <div className="treatment-info">
+                              <h4>{treatment.pest}</h4>
+                              <p>{treatment.treatment}</p>
+                            </div>
+                            <span className={`status-pill ${treatment.status}`}>
+                              {treatment.status}
+                            </span>
+                          </div>
+
+                          <div className="treatment-details">
+                            <div className="detail-item">
+                              <Calendar size={14} />
+                              <span>{new Date(treatment.date).toLocaleDateString()}</span>
+                            </div>
+                            <div className="detail-item">
+                              <MapPin size={14} />
+                              <span>{treatment.area}</span>
+                            </div>
+                          </div>
+
+                          <div className="treatment-actions">
+                            {treatment.status === 'scheduled' && (
+                              <button onClick={() => handleCompleteTreatment(treatment._id)} className="btn-complete">
+                                <CheckCircle size={16} /> Complete
+                              </button>
+                            )}
+                            <button onClick={() => handleDeleteTreatment(treatment._id)} className="btn-delete">
+                              <XCircle size={16} /> Remove
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {scheduledTreatments.length === 0 && (
-                    <div style={{ textAlign: 'center', color: '#64748b', padding: '2rem' }}>
-                      No treatments scheduled.
+
+                {/* Right Side Summary Column */}
+                <div className="schedule-side-column">
+                  <div className="side-panel-card">
+                    <h4>Management Summary</h4>
+                    <div className="side-metric-row">
+                      <span>Active Plans</span>
+                      <span className="count blue">{scheduledTreatments.filter(t => t.status !== 'completed').length}</span>
                     </div>
-                  )}
-                  {scheduledTreatments.map((treatment) => (
-                    <div key={treatment._id} className="pest-card" style={{ cursor: 'default' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                        <h4 style={{ margin: 0 }}>{treatment.pest}</h4>
-                        <span className={`severity-badge ${treatment.status === 'completed' ? 'severity-low' : 'severity-medium'}`} style={{ background: treatment.status === 'completed' ? '#dcfce7' : '#dbeafe', color: treatment.status === 'completed' ? '#166534' : '#1e40af' }}>
-                          {treatment.status}
-                        </span>
-                      </div>
-                      <p style={{ color: '#64748b', fontSize: '0.9rem' }}>{treatment.treatment}</p>
-                      <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem', display: 'flex', gap: '1rem' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> {new Date(treatment.date).toLocaleDateString()}</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} /> {treatment.area}</span>
-                      </div>
-                      <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                        {treatment.status === 'scheduled' && (
-                          <button onClick={() => handleCompleteTreatment(treatment._id)} className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>Complete</button>
-                        )}
-                        <button onClick={() => handleDeleteTreatment(treatment._id)} className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', color: '#ef4444', borderColor: '#fee2e2' }}>Delete</button>
-                      </div>
+                    <div className="side-metric-row">
+                      <span>Completed</span>
+                      <span className="count green">{scheduledTreatments.filter(t => t.status === 'completed').length}</span>
                     </div>
-                  ))}
+                  </div>
+
+                  <div className="side-info-card">
+                    <div className="info-title">
+                      <ShieldCheck size={18} />
+                      <h5>Organic Protocol</h5>
+                    </div>
+                    <p>Always verify the local moisture thresholds before deploying neem-based solutions.</p>
+                  </div>
                 </div>
               </div>
-            )
-          }
+            </div>
+          )}
 
-          {/* Analytics Tab (Placeholder for "Featured" look) */}
           {activeTab === 'analytics' && (
-            <div style={{ padding: '2rem', textAlign: 'center' }}>
-              <TrendingUp size={48} color="#cbd5e1" style={{ margin: '0 auto 1rem' }} />
-              <h3 style={{ color: '#1e293b' }}>Detailed Analytics Coming Soon</h3>
-              <p style={{ color: '#64748b' }}>Track your pest control history and crop health trends over time.</p>
+            <div className="analytics-workspace fade-in">
+              <div className="analytics-layout-grid">
+                {/* Main Large Charts Column */}
+                <div className="analytics-main-column">
+                  {/* Trend Chart */}
+                  <div className="analytics-card full-width">
+                    <div className="analytics-card-header">
+                      <h4>Infestation vs Treatment Trend</h4>
+                      <p>7 Day Activity overview</p>
+                    </div>
+                    <div className="chart-container">
+                      <ResponsiveContainer width="100%" height={380}>
+                        <LineChart data={trendData}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                          <Tooltip
+                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                          />
+                          <Line type="monotone" dataKey="active" stroke="#ef4444" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                          <Line type="monotone" dataKey="treated" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="chart-legend-custom">
+                      <div className="legend-item"><span className="dot red"></span> Active Threats</div>
+                      <div className="legend-item"><span className="dot green"></span> Successfully Treated</div>
+                    </div>
+                  </div>
+
+                  <div className="analytics-sub-grid">
+                    {/* Efficiency Stats */}
+                    <div className="analytics-card">
+                      <div className="analytics-card-header">
+                        <h4>Resource Efficiency</h4>
+                        <p>Autonomous vs Manual</p>
+                      </div>
+                      <div className="efficiency-box">
+                        <div className="efficiency-metric">
+                          <div className="metric-header">
+                            <span>Response Time</span>
+                            <span className="positive">-4.2 Hours</span>
+                          </div>
+                          <div className="progress-bg"><div className="progress-fill" style={{ width: '85%' }}></div></div>
+                        </div>
+                        <div className="efficiency-metric">
+                          <div className="metric-header">
+                            <span>Pesticide Save</span>
+                            <span className="positive">120 Liters</span>
+                          </div>
+                          <div className="progress-bg"><div className="progress-fill purple" style={{ width: '68%' }}></div></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="analytics-card">
+                      <div className="analytics-card-header">
+                        <h4>Intelligence Status</h4>
+                        <p>Neural Network Health</p>
+                      </div>
+                      <div className="id-status-box">
+                        <div className="id-check"><Check size={14} /> Satellite Link: Stable</div>
+                        <div className="id-check"><Check size={14} /> AI Nodes: Active</div>
+                        <div className="id-check"><Check size={14} /> Local Sensors: Syncing</div>
+                      </div>
+                      <button className="btn-full-report">
+                        View Neural Report <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side Mini Column */}
+                <div className="analytics-side-column">
+                  <div className="analytics-card side-db">
+                    <div className="analytics-card-header">
+                      <h4>Species Mix</h4>
+                      <p>Detection Bias</p>
+                    </div>
+                    <div className="chart-container-flex">
+                      <ResponsiveContainer width="100%" height={200}>
+                        <PieChart>
+                          <Pie
+                            data={distributionData}
+                            innerRadius={60}
+                            outerRadius={80}
+                            paddingAngle={5}
+                            dataKey="value"
+                          >
+                            {distributionData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="pie-legend vertical">
+                        {distributionData.map((item, i) => (
+                          <div key={i} className="pie-legend-item compact">
+                            <span className="pie-dot" style={{ background: item.color }}></span>
+                            <span className="pie-label">{item.name}</span>
+                            <span className="pie-value">{item.value}%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
 
         {/* AI Impact */}
-        <div className="impact-card" style={{ marginTop: '2rem' }}>
-          <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Shield size={24} /> Smart Pest Management Impact
-          </h3>
-          <div className="impact-grid">
+        <div className="impact-hub-bottom">
+          <div className="impact-header-box">
+            <ShieldCheck size={24} className="impact-shield-icon" />
+            <h3>Eco-Protection Summary</h3>
+          </div>
+          <div className="impact-grid-cards">
             {[
               { value: '50%', label: 'Pesticide Reduction', icon: '🌿' },
-              { value: '85%', label: 'Early Detection Rate', icon: '🎯' },
-              { value: '60%', label: 'Cost Savings', icon: '💰' },
-              { value: '100%', label: 'Eco-Friendly Options', icon: '♻️' }
+              { value: '85%', label: 'Detection Accuracy', icon: '🎯' },
+              { value: '60%', label: 'Asset Savings', icon: '💰' },
+              { value: '100%', label: 'Organic First', icon: '♻️' }
             ].map((metric, idx) => (
-              <div key={idx} className="metric-card">
-                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{metric.icon}</div>
-                <div style={{ fontSize: '1.75rem', fontWeight: '800', marginBottom: '0.25rem' }}>{metric.value}</div>
-                <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>{metric.label}</div>
+              <div key={idx} className="impact-metric-card">
+                <div className="impact-metric-icon">{metric.icon}</div>
+                <div className="impact-metric-data">
+                  <span className="impact-metric-value">{metric.value}</span>
+                  <span className="impact-metric-label">{metric.label}</span>
+                </div>
               </div>
             ))}
           </div>

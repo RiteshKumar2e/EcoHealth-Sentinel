@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/landing/Landing.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
@@ -98,6 +98,7 @@ const App = () => {
 
         {/* Agriculture Routes */}
         <Route path="/agriculture" element={<AgricultureLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<FarmDashboard />} />
           <Route path="community" element={<CommunityHub />} />
           <Route path="crop-disease" element={<CropDiseaseDetection />} />
