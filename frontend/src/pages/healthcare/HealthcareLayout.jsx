@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Users, Calendar, Stethoscope, Activity, AlertCircle, Video, Heart, FileText, MessageSquare, Settings, Menu, X, User } from 'lucide-react';
 import './Dashboard.css'; // Reusing dashboard styles for consistent sidebar
+import HealthFloatingChatbot from '../../components/healthcare/HealthFloatingChatbot';
 
 const HealthcareLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
@@ -40,7 +41,6 @@ const HealthcareLayout = () => {
         { path: '/healthcare/telemedicine', icon: Video, label: 'Consult Doctor' },
         { path: '/healthcare/monitoring', icon: Heart, label: 'Vitals Sync' },
         { path: '/healthcare/reports', icon: FileText, label: 'Med Reports' },
-        { path: '/healthcare/chatbot', icon: MessageSquare, label: 'Health Assistant' },
         { path: '/healthcare/settings', icon: Settings, label: 'Settings' },
     ];
 
@@ -84,6 +84,7 @@ const HealthcareLayout = () => {
                         <Outlet />
                     </div>
                 </div>
+                <HealthFloatingChatbot />
             </div>
         </div>
     );

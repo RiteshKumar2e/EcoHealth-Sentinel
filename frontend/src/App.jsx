@@ -131,7 +131,6 @@ const App = () => {
         <Route path="/healthcare" element={<HealthcareLayout />}>
           <Route path="dashboard" element={<HealthDashboard />} />
           <Route path="appointments" element={<AppointmentScheduling />} />
-          <Route path="chatbot" element={<HealthChatbot />} />
           <Route path="diagnosis" element={<DiagnosisAssistant />} />
           <Route path="emergency" element={<EmergencyPrediction />} />
           <Route path="medical-images" element={<MedicalImageAnalysis />} />
