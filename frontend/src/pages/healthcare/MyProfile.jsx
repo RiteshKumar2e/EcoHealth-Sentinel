@@ -5,17 +5,20 @@ import './MyProfile.css';
 
 const MyProfile = () => {
     const navigate = useNavigate();
-    const [profile, setProfile] = useState({
-        name: 'Anmol Sharma',
-        email: 'anmol.patient@example.com',
-        phone: '+91 98765 43210',
-        location: 'Chandigarh, India',
-        bloodGroup: 'O+ Positive',
-        age: '26 Years',
-        height: '175 cm',
-        weight: '72 kg',
-        joinedDate: 'January 2024',
-        avatar: null // Will store image data URL
+    const [profile, setProfile] = useState(() => {
+        const saved = localStorage.getItem('userProfile');
+        return saved ? JSON.parse(saved) : {
+            name: 'Anmol Sharma',
+            email: 'anmol.patient@example.com',
+            phone: '+91 98765 43210',
+            location: 'Chandigarh, India',
+            bloodGroup: 'O+ Positive',
+            age: '26 Years',
+            height: '175 cm',
+            weight: '72 kg',
+            joinedDate: 'January 2024',
+            avatar: null
+        };
     });
 
     const [settings, setSettings] = useState({
@@ -28,7 +31,8 @@ const MyProfile = () => {
 
     const handleSave = () => {
         setIsSaving(true);
-        // Simulate API call
+        localStorage.setItem('userProfile', JSON.stringify(profile));
+        // Simulate API call to persist changes
         setTimeout(() => {
             setIsSaving(false);
             alert('Health profile updated successfully! ❤️');
