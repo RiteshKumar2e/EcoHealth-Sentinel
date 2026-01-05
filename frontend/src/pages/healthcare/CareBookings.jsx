@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, Bell, Activity, Sparkles, Database, Trash2, Edit, Eye, Download, Filter, Search, RefreshCw } from 'lucide-react';
-import './AppointmentScheduling.css';
+import './CareBookings.css';
 
 // MongoDB API Simulation (Replace with actual MongoDB API calls)
 class MongoDBService {
@@ -91,7 +91,7 @@ class MongoDBService {
 
 const mongoService = new MongoDBService();
 
-const AppointmentScheduling = () => {
+const CareBookings = () => {
   const [appointments, setAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [availableSlots, setAvailableSlots] = useState([]);
@@ -743,4 +743,4 @@ const AppointmentScheduling = () => {
   );
 };
 
-export default AppointmentScheduling;
+export default CareBookings;

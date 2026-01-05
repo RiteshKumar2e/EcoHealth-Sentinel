@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { User, Heart, Activity, FileText, Calendar, AlertCircle, Search, Lock, Eye, Download, Edit, Plus, RefreshCw, TrendingUp, Clock, CheckCircle, XCircle, ShieldCheck, Microscope } from 'lucide-react';
-import './PatientRecords.css';
+import './MyMedicalVault.css';
 
-export default function MyHealthRecords() {
+export default function MyMedicalVault() {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('overview');

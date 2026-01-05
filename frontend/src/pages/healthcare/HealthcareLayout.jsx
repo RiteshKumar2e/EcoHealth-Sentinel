@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Users, Calendar, Stethoscope, Activity, AlertCircle, Video, Heart, FileText, MessageSquare, Settings, Menu, X, User } from 'lucide-react';
-import './Dashboard.css'; // Reusing dashboard styles for consistent sidebar
+import './HealthOverview.css'; // Reusing dashboard styles for consistent sidebar
 import HealthFloatingChatbot from '../../components/healthcare/HealthFloatingChatbot';
 
 const HealthcareLayout = () => {
@@ -32,16 +32,17 @@ const HealthcareLayout = () => {
 
     const menuItems = [
         { path: '/healthcare/profile', icon: User, label: 'My Profile' },
-        { path: '/healthcare/dashboard', icon: Home, label: 'Health Overview' },
-        { path: '/healthcare/patients', icon: FileText, label: 'My Records' },
-        { path: '/healthcare/appointments', icon: Calendar, label: 'Bookings' },
-        { path: '/healthcare/diagnosis', icon: Stethoscope, label: 'Symptom Checker' },
-        { path: '/healthcare/medical-images', icon: Activity, label: 'My Scans' },
-        { path: '/healthcare/emergency', icon: AlertCircle, label: 'Health Risks' },
-        { path: '/healthcare/telemedicine', icon: Video, label: 'Consult Doctor' },
-        { path: '/healthcare/monitoring', icon: Heart, label: 'Vitals Sync' },
-        { path: '/healthcare/reports', icon: FileText, label: 'Med Reports' },
-        { path: '/healthcare/settings', icon: Settings, label: 'Settings' },
+        { path: '/healthcare/overview', icon: Home, label: 'Health Overview' },
+        { path: '/healthcare/medical-vault', icon: FileText, label: 'My Records' },
+        { path: '/healthcare/bookings', icon: Calendar, label: 'Bookings' },
+        { path: '/healthcare/symptom-checker', icon: Stethoscope, label: 'Symptom Checker' },
+        { path: '/healthcare/my-scans', icon: Activity, label: 'My Scans' },
+        { path: '/healthcare/health-risks', icon: AlertCircle, label: 'Health Risks' },
+        { path: '/healthcare/consultations', icon: Video, label: 'Consult Doctor' },
+        { path: '/healthcare/vitals-hub', icon: Heart, label: 'Vitals Sync' },
+        { path: '/healthcare/my-meds', icon: Activity, label: 'My Meds' },
+        { path: '/healthcare/health-reports', icon: FileText, label: 'Med Reports' },
+
     ];
 
     return (

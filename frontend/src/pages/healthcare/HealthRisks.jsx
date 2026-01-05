@@ -8,7 +8,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, Line
 } from 'recharts';
-import './EmergencyPrediction.css';
+import './HealthRisks.css';
 
 const HealthRisks = () => {
   const [riskPredictions, setRiskPredictions] = useState([]);

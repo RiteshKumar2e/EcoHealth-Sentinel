@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Pill, AlertTriangle, CheckCircle, User, Calendar, Bell, Shield, Heart, Clock, Search } from 'lucide-react';
-import './MedicineRecommendations.css';
+import './MyMedsCare.css';
 
 export default function MyMedsCare() {
   const [selectedConcern, setSelectedConcern] = useState('');

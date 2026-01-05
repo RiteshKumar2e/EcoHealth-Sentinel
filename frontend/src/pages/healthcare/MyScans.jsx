@@ -14,11 +14,11 @@ import {
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, MeshWobbleMaterial } from "@react-three/drei";
 import { motion } from "framer-motion";
-import './MedicalImageAnalysis.css';
+import './MyScans.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
-export default function MedicalImageAnalysis() {
+export default function MyScans() {
   // UI state
   const [selectedScan, setSelectedScan] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);

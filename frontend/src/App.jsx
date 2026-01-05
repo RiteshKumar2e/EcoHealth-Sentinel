@@ -51,19 +51,18 @@ import WasteManagement from "./pages/environment/WasteManagement.jsx";
 import WildlifeConservation from "./pages/environment/WildlifeConservation.jsx";
 
 // Import Healthcare Modules
-import AppointmentScheduling from "./pages/healthcare/AppointmentScheduling.jsx";
-import HealthChatbot from "./pages/healthcare/Chatbot.jsx";
-import HealthDashboard from "./pages/healthcare/Dashboard.jsx";
-import DiagnosisAssistant from "./pages/healthcare/DiagnosisAssistant.jsx";
-import EmergencyPrediction from "./pages/healthcare/EmergencyPrediction.jsx";
-import MedicalImageAnalysis from "./pages/healthcare/MedicalImageAnalysis.jsx";
-import MedicineRecommendations from "./pages/healthcare/MedicineRecommendations.jsx";
-import PatientRecords from "./pages/healthcare/PatientRecords.jsx";
-import RemoteMonitoring from "./pages/healthcare/RemoteMonitoring.jsx";
-import HealthReports from "./pages/healthcare/Reports.jsx";
-import HealthSettings from "./pages/healthcare/Settings.jsx";
-import Telemedicine from "./pages/healthcare/Telemedicine.jsx";
-import HealthProfile from "./pages/healthcare/Profile.jsx";
+import CareBookings from "./pages/healthcare/CareBookings.jsx";
+import HealthOverview from "./pages/healthcare/HealthOverview.jsx";
+import SymptomChecker from "./pages/healthcare/SymptomChecker.jsx";
+import HealthRisks from "./pages/healthcare/HealthRisks.jsx";
+import MyScans from "./pages/healthcare/MyScans.jsx";
+import MyMedsCare from "./pages/healthcare/MyMedsCare.jsx";
+import MyMedicalVault from "./pages/healthcare/MyMedicalVault.jsx";
+import VitalsHub from "./pages/healthcare/VitalsHub.jsx";
+import MyHealthReports from "./pages/healthcare/MyHealthReports.jsx";
+
+import MyConsultations from "./pages/healthcare/MyConsultations.jsx";
+import MyProfile from "./pages/healthcare/MyProfile.jsx";
 import HealthcareLayout from "./pages/healthcare/HealthcareLayout.jsx";
 
 // Simple Placeholder Chat Page
@@ -129,18 +128,18 @@ const App = () => {
 
         {/* Healthcare Routes */}
         <Route path="/healthcare" element={<HealthcareLayout />}>
-          <Route path="dashboard" element={<HealthDashboard />} />
-          <Route path="appointments" element={<AppointmentScheduling />} />
-          <Route path="diagnosis" element={<DiagnosisAssistant />} />
-          <Route path="emergency" element={<EmergencyPrediction />} />
-          <Route path="medical-images" element={<MedicalImageAnalysis />} />
-          <Route path="medicine" element={<MedicineRecommendations />} />
-          <Route path="patients" element={<PatientRecords />} />
-          <Route path="monitoring" element={<RemoteMonitoring />} />
-          <Route path="reports" element={<HealthReports />} />
-          <Route path="settings" element={<HealthSettings />} />
-          <Route path="telemedicine" element={<Telemedicine />} />
-          <Route path="profile" element={<HealthProfile />} />
+          <Route path="overview" element={<HealthOverview />} />
+          <Route path="bookings" element={<CareBookings />} />
+          <Route path="symptom-checker" element={<SymptomChecker />} />
+          <Route path="health-risks" element={<HealthRisks />} />
+          <Route path="my-scans" element={<MyScans />} />
+          <Route path="my-meds" element={<MyMedsCare />} />
+          <Route path="medical-vault" element={<MyMedicalVault />} />
+          <Route path="vitals-hub" element={<VitalsHub />} />
+          <Route path="health-reports" element={<MyHealthReports />} />
+
+          <Route path="consultations" element={<MyConsultations />} />
+          <Route path="profile" element={<MyProfile />} />
         </Route>
 
         {/* 404 Page */}

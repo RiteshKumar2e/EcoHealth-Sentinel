@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Brain, Stethoscope, Activity, AlertTriangle, CheckCircle, TrendingUp, FileText, Send, Bot, User, Sparkles, Zap, HeartPulse, Microscope } from 'lucide-react';
-import './DiagnosisAssistant.css';
+import './SymptomChecker.css';
 
 const SymptomChecker = () => {
   const [step, setStep] = useState(1);

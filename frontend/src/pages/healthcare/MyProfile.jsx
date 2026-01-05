@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, MapPin, Activity, Save, Bell, Shield, LogOut, Camera, Heart, Stethoscope, Ruler, Scale, Hash } from 'lucide-react';
-import './Profile.css';
+import './MyProfile.css';
 
-const Profile = () => {
+const MyProfile = () => {
     const navigate = useNavigate();
     const [profile, setProfile] = useState({
         name: 'Anmol Sharma',
@@ -279,4 +279,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default MyProfile;

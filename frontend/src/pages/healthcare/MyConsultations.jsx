@@ -8,7 +8,7 @@ import {
   BarChart3, Zap, Shield, User
 } from 'lucide-react';
 
-const Telemedicine = () => {
+const MyConsultations = () => {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [stats, setStats] = useState([
     { label: 'Upcoming', value: '2', icon: Calendar, color: '#3b82f6' },
@@ -129,4 +129,4 @@ const Telemedicine = () => {
   );
 };
 
-export default Telemedicine;
+export default MyConsultations;

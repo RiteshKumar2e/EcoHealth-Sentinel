@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Activity, Heart, Zap, Clock, CheckCircle, XCircle, TrendingUp, TrendingDown, FileText, Plus, Bell, RefreshCw, AlertCircle, MessageSquare } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import './Dashboard.css';
+import './HealthOverview.css';
 
-const HealthDashboard = () => {
+const HealthOverview = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [notifications, setNotifications] = useState([]);
@@ -229,4 +229,4 @@ const HealthDashboard = () => {
   );
 };
 
-export default HealthDashboard;
+export default HealthOverview;

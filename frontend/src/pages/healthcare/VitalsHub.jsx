@@ -11,7 +11,7 @@ import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar
 } from 'recharts';
-import './RemoteMonitoring.css';
+import './VitalsHub.css';
 
 const VitalsHub = () => {
   const [activeDevice, setActiveDevice] = useState('Smart Watch');
