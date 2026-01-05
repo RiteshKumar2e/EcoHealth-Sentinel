@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Brain, Activity, AlertTriangle, CheckCircle, Send, User, ChevronRight, Stethoscope, MessageSquare, History, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Brain, Activity, AlertTriangle, CheckCircle, Send, User, ChevronRight, Stethoscope, MessageSquare, History, Trash2, Calendar, Pill } from 'lucide-react';
 import './SymptomChecker.css';
 
 const SymptomChecker = () => {
@@ -23,6 +24,7 @@ const SymptomChecker = () => {
   ]);
   const [chatInput, setChatInput] = useState('');
   const chatEndRef = useRef(null);
+  const navigate = useNavigate();
 
   const symptomsList = [
     'Fever', 'Cough', 'Shortness of Breath', 'Fatigue', 'Headache',
@@ -231,6 +233,15 @@ const SymptomChecker = () => {
                 </div>
               </div>
 
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <button onClick={() => navigate('/healthcare/bookings')} className="btn-primary" style={{ flex: 1, background: '#8b5cf6' }}>
+                  <Calendar size={18} /> Book Consultant
+                </button>
+                <button onClick={() => navigate('/healthcare/my-meds')} className="btn-primary" style={{ flex: 1, background: '#10b981' }}>
+                  <Pill size={18} /> Manage Meds
+                </button>
+              </div>
+
               <button onClick={() => setStep(1)} className="btn-outline mt-24 w-full">Start New Assessment</button>
             </div>
           )}
@@ -316,7 +327,7 @@ const SymptomChecker = () => {
                       </td>
                       <td style={{ fontWeight: '600', color: '#334155' }}>{record.condition}</td>
                       <td>
-                        <span className={`status-badge ${record.urgency === 'Self-Care' ? 'self-care' : 'urgent'}`}>
+                        <span className={`status - badge ${record.urgency === 'Self-Care' ? 'self-care' : 'urgent'} `}>
                           {record.urgency}
                         </span>
                       </td>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Activity, Heart, Zap, Clock, CheckCircle, XCircle, TrendingUp, TrendingDown, FileText, Plus, Bell, RefreshCw, AlertCircle, MessageSquare, Footprints, Moon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Activity, Heart, Zap, Clock, CheckCircle, XCircle, TrendingUp, TrendingDown, FileText, Plus, Bell, RefreshCw, AlertCircle, MessageSquare, Footprints, Moon, ChevronRight } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import './HealthOverview.css';
 
@@ -8,6 +9,7 @@ const HealthOverview = () => {
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [notifications, setNotifications] = useState([]);
   const [alertsProcessing, setAlertsProcessing] = useState({});
+  const navigate = useNavigate();
 
   // Patient Data States
   const [healthTrendData, setHealthTrendData] = useState([]);
@@ -53,13 +55,16 @@ const HealthOverview = () => {
     }, 1000);
   };
 
-  const StatCard = ({ icon: Icon, title, value, unit, trend, color, detail }) => (
-    <div className={`stat-card ${color}`}>
+  const StatCard = ({ icon: Icon, title, value, unit, trend, color, detail, path }) => (
+    <div
+      className={`stat-card ${color}`}
+      onClick={() => path && navigate(path)}
+      style={{ cursor: path ? 'pointer' : 'default' }}
+    >
       <div className="stat-card-header">
         <div className="stat-icon-wrapper">
           <Icon className="stat-icon" color="white" size={28} strokeWidth={2.5} />
         </div>
-        {/* Trend removed or made conditional on actual data */}
         {trend && value !== '--' && (
           <div className={`stat-trend ${trend === 'up' ? 'trend-up' : 'trend-down'}`}>
             {trend === 'up' ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
@@ -69,7 +74,10 @@ const HealthOverview = () => {
       </div>
       <h3 className="stat-title">{title}</h3>
       <p className="stat-value">{value}<span style={{ fontSize: '1rem', marginLeft: '4px', opacity: 0.8 }}>{unit}</span></p>
-      <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px' }}>{detail}</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+        <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: 0 }}>{detail}</p>
+        {path && <ChevronRight size={14} color="#94a3b8" />}
+      </div>
     </div>
   );
 
@@ -182,17 +190,22 @@ const HealthOverview = () => {
 
       {/* Stats Grid */}
       <div className="stats-grid">
-        <StatCard icon={Heart} title="Heart Rate" value={personalStats.heartRate} unit="bpm" color="red" detail="No recent data" />
-        <StatCard icon={Activity} title="Blood Pressure" value={personalStats.bloodPressure} unit="mmHg" color="blue" detail="No recent data" />
-        <StatCard icon={Footprints} title="Daily Steps" value={personalStats.steps} unit="steps" color="orange" detail="Waiting for sync" />
-        <StatCard icon={Moon} title="Sleep Quality" value={personalStats.sleep} unit="hrs" color="indigo" detail="No sleep record" />
+        <StatCard icon={Heart} title="Heart Rate" value={personalStats.heartRate} unit="bpm" color="red" detail="Live Monitoring" path="/healthcare/vitals-hub" />
+        <StatCard icon={Activity} title="Blood Pressure" value={personalStats.bloodPressure} unit="mmHg" color="blue" detail="Cardiovascular Health" path="/healthcare/vitals-hub" />
+        <StatCard icon={Footprints} title="Daily Steps" value={personalStats.steps} unit="steps" color="orange" detail="Activity Tracking" path="/healthcare/vitals-hub" />
+        <StatCard icon={Zap} title="AI Scans" value="0" unit="scans" color="purple" detail="Diagnostics" path="/healthcare/my-scans" />
       </div>
 
       {/* Main Content Grid */}
       <div className="charts-grid">
         {/* Health Trends */}
-        <div className="card">
-          <h2 className="card-title">Weekly Vitals Trend</h2>
+        <div className="card" onClick={() => navigate('/healthcare/health-reports')} style={{ cursor: 'pointer' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2 className="card-title" style={{ margin: 0 }}>Weekly Vitals Trend</h2>
+            <button className="text-btn" style={{ background: 'none', border: 'none', color: '#3b82f6', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              Full Report <ChevronRight size={14} />
+            </button>
+          </div>
           {healthTrendData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={healthTrendData}>
@@ -242,9 +255,17 @@ const HealthOverview = () => {
       <div className="charts-grid" style={{ marginTop: '24px' }}>
         {/* Insights Section */}
         <div className="card" style={{ flex: 2 }}>
-          <div className="card-header">
-            <AlertCircle size={20} color="#f59e0b" />
-            <h2 className="card-title">Personal AI Health Insights</h2>
+          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <AlertCircle size={20} color="#f59e0b" />
+              <h2 className="card-title" style={{ margin: 0 }}>Personal AI Health Insights</h2>
+            </div>
+            <button
+              onClick={() => navigate('/healthcare/health-reports')}
+              style={{ background: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: '#475569', cursor: 'pointer' }}
+            >
+              View Reports
+            </button>
           </div>
           <div className="alerts-container">
             {insights.length > 0 ? insights.map((insight) => (

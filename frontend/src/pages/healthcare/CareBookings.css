@@ -767,44 +767,53 @@
 
     .apt-card-3d,
     .apt-form-card {
-        padding: 20px;
+        padding: 24px 20px;
     }
 
-    .apt-title {
-        font-size: 20px;
+    .apt-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .apt-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
     }
 
     .apt-btn {
-        padding: 8px 16px;
-        font-size: 13px;
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+    }
+
+    .apt-title {
+        font-size: 22px;
     }
 
     .apt-stats-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
-}
 
-@media (max-width: 480px) {
-    .apt-header-content {
+    .apt-list-header {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .apt-stats-grid {
-        grid-template-columns: 1fr;
+    .apt-search-wrapper,
+    .apt-search-input {
+        width: 100%;
     }
 
-    .apt-grid-2,
-    .apt-grid-3 {
-        grid-template-columns: 1fr;
-    }
-
-    .apt-slots-grid {
-        grid-template-columns: 1fr;
+    .apt-filter-group {
+        width: 100%;
+        overflow-x: auto;
     }
 
     .apt-item-content {
         flex-direction: column;
+        align-items: flex-start;
     }
 
     .apt-appointment-meta {

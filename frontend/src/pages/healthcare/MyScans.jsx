@@ -1,5 +1,5 @@
-// MedicalImageAnalysis.jsx
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Upload,
   Image as ImageIcon,
@@ -22,6 +22,7 @@ export default function MyScans() {
   const [selectedScan, setSelectedScan] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
+  const navigate = useNavigate();
 
   // dynamic content from backend
   const [recentAnalyses, setRecentAnalyses] = useState([]);

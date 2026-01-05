@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   FileText, Download, TrendingUp, Calendar, BarChart3,
   Filter, Search, Printer, Share2, Mail, Clock, Shield,
@@ -18,6 +19,7 @@ const MyHealthReports = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('Last 7 Days');
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const reportRef = React.useRef(null);
+  const navigate = useNavigate();
 
   const vitalsTrend = [];
   const reportsList = [];
@@ -280,7 +282,7 @@ const MyHealthReports = () => {
                   </div>
                 )}
               </div>
-              <button className="btn-view-all">View Document Archive</button>
+              <button className="btn-view-all" onClick={() => navigate('/healthcare/medical-vault')}>View Document Archive</button>
             </section>
           </div>
         </div>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Pill, AlertTriangle, CheckCircle, Heart, Clock,
   Bell, Activity, Search, Shield, Info, Zap, Database,
-  ChevronRight, ArrowRight, RefreshCw, Trash2, Calendar
+  ChevronRight, ArrowRight, RefreshCw, Trash2, Calendar, Stethoscope
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './MyMedsCare.css';
@@ -18,7 +19,7 @@ const ICON_MAP = {
 const MyMedsCare = () => {
   // Persistence Helper: Load from LocalStorage
   const loadState = (key, defaultValue) => {
-    const saved = localStorage.getItem(`medscare_${key}`);
+    const saved = localStorage.getItem(`medscare_${key} `);
     try {
       if (!saved) return defaultValue;
       const parsed = JSON.parse(saved);
@@ -46,6 +47,7 @@ const MyMedsCare = () => {
   const [medsTaken, setMedsTaken] = useState(loadState('medsTaken', {}));
   const [analysisResult, setAnalysisResult] = useState(loadState('analysisResult', null));
   const [reminderSet, setReminderSet] = useState(loadState('reminderSet', false));
+  const navigate = useNavigate();
 
   // Sync with LocalStorage
   useEffect(() => {
@@ -60,7 +62,7 @@ const MyMedsCare = () => {
       reminderSet
     };
     Object.entries(dataToSave).forEach(([key, value]) => {
-      localStorage.setItem(`medscare_${key}`, JSON.stringify(value));
+      localStorage.setItem(`medscare_${key} `, JSON.stringify(value));
     });
   }, [symptoms, hasData, activeMeds, careInsights, healthJourneys, medsTaken, analysisResult, reminderSet]);
 
@@ -73,7 +75,7 @@ const MyMedsCare = () => {
     },
     {
       label: 'Adherence',
-      value: activeMeds.length ? `${Math.floor(activeMeds.reduce((acc, m) => acc + m.adherence, 0) / activeMeds.length)}%` : '--',
+      value: activeMeds.length ? `${Math.floor(activeMeds.reduce((acc, m) => acc + m.adherence, 0) / activeMeds.length)}% ` : '--',
       color: '#10b981',
       icon: CheckCircle
     },
@@ -218,7 +220,14 @@ const MyMedsCare = () => {
               <p className="medicine-subtitle">Manage your health plan with local persistence</p>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <div className={`status-badge ${hasData ? 'active' : 'inactive'}`}
+              <button
+                onClick={() => navigate('/healthcare/symptom-checker')}
+                className="btn-header-action"
+                style={{ background: '#eff6ff', color: '#3b82f6', border: '1px solid #dbeafe', borderRadius: '10px', padding: '10px 16px', fontSize: '13px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <Stethoscope size={16} /> Advanced Diagnostics
+              </button>
+              <div className={`status - badge ${hasData ? 'active' : 'inactive'} `}
                 style={{ background: hasData ? '#f0fdf4' : '#f8fafc', color: hasData ? '#16a34a' : '#94a3b8' }}>
                 <Shield size={16} />
                 <span>{hasData ? 'Plan Persisted' : 'Ready'}</span>
@@ -321,7 +330,7 @@ const MyMedsCare = () => {
                         </div>
                       </div>
                       <button
-                        className={`medicine-add-btn ${medsTaken[med.id] ? 'taken' : ''}`}
+                        className={`medicine - add - btn ${medsTaken[med.id] ? 'taken' : ''} `}
                         onClick={() => handleToggleMed(med.id)}
                       >
                         {medsTaken[med.id] ? 'Confirmed for Today' : 'Mark as Taken'}
@@ -346,7 +355,7 @@ const MyMedsCare = () => {
                   careInsights.map((insight) => {
                     const InsightIcon = insight.icon && typeof insight.icon === 'function' ? insight.icon : Info;
                     return (
-                      <div key={insight.id} className={`medicine-insight-item priority-${insight.priority}`}>
+                      <div key={insight.id} className={`medicine - insight - item priority - ${insight.priority} `}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                           <InsightIcon size={16} color={insight.priority === 'high' ? '#ef4444' : '#3b82f6'} />
                           <span className="medicine-insight-title">{insight.title}</span>
@@ -378,7 +387,7 @@ const MyMedsCare = () => {
                     <Clock size={16} /> Next: {activeMeds[0].dosage.includes('6h') ? '3:00 PM' : '9:00 PM'}
                   </div>
                   <button
-                    className={`btn-reminder-action ${reminderSet ? 'active' : ''}`}
+                    className={`btn - reminder - action ${reminderSet ? 'active' : ''} `}
                     onClick={() => {
                       setReminderSet(!reminderSet);
                       if (!reminderSet) {
@@ -423,7 +432,7 @@ const MyMedsCare = () => {
                     <motion.div
                       className="progress-bar-fill"
                       initial={{ width: 0 }}
-                      animate={{ width: `${plan.progress}%` }}
+                      animate={{ width: `${plan.progress}% ` }}
                       transition={{ duration: 1 }}
                     />
                   </div>
@@ -473,7 +482,7 @@ const MyMedsCare = () => {
                       </td>
                       <td>
                         <div className="adherence-mini-progress">
-                          <div className="mini-progress-fill" style={{ width: `${med.adherence}%`, background: med.adherence > 90 ? '#10b981' : '#f59e0b' }} />
+                          <div className="mini-progress-fill" style={{ width: `${med.adherence}% `, background: med.adherence > 90 ? '#10b981' : '#f59e0b' }} />
                           <span>{med.adherence}%</span>
                         </div>
                       </td>

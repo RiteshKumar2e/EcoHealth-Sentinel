@@ -74,51 +74,54 @@
 .step-indicator {
     display: flex;
     align-items: center;
-    margin-bottom: 32px;
+    justify-content: center;
+    margin-bottom: 40px;
+    padding: 0 40px;
 }
 
 .step-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 8px;
+    position: relative;
+    z-index: 1;
 }
 
 .step-number {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: #f1f5f9;
+    background: #ffffff;
     color: #94a3b8;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    font-weight: 700;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .step-number.active {
     background: #3b82f6;
     color: white;
     border-color: #3b82f6;
-}
-
-.step-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #64748b;
-}
-
-.step-label.active {
-    color: #0f172a;
-    font-weight: 600;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
 .step-line {
     flex: 1;
-    height: 1px;
+    height: 2px;
     background: #e2e8f0;
-    margin: 0 12px;
+    margin: 0 -10px;
+    margin-top: -32px;
+    /* Pull it up to align with circles */
+    transition: all 0.3s ease;
+}
+
+.step-item.active~.step-line {
+    background: #3b82f6;
 }
 
 /* Form Elements */
@@ -143,27 +146,37 @@
 }
 
 .btn-toggle {
-    padding: 10px 16px;
-    background: white;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
+    padding: 12px 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
     font-size: 14px;
-    color: #475569;
+    font-weight: 600;
+    color: #334155;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     text-align: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    line-height: 1.2;
 }
 
 .btn-toggle:hover {
-    border-color: #94a3b8;
-    background: #f8fafc;
+    border-color: #3b82f6;
+    background: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .btn-toggle.active {
-    background: #eff6ff;
-    border-color: #3b82f6;
-    color: #1d4ed8;
-    font-weight: 500;
+    background: #3b82f6;
+    border-color: #2563eb;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .input-field {
@@ -187,21 +200,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     width: 100%;
-    padding: 12px;
-    background: #3b82f6;
+    padding: 14px;
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 .btn-primary:hover {
-    background: #2563eb;
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
 }
 
 .btn-outline {
@@ -391,7 +411,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .diagnosis-wrapper {
         grid-template-columns: 1fr;
     }
@@ -399,6 +419,75 @@
     .chat-sidebar-card {
         height: 500px;
         position: static;
+        margin-top: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .diagnosis-container {
+        padding: 16px;
+    }
+
+    .diagnosis-card {
+        padding: 20px 16px;
+    }
+
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .step-label {
+        display: none;
+        /* Hide step labels on mobile to save space */
+    }
+
+    .step-item.active .step-label {
+        display: block;
+        font-size: 11px;
+    }
+
+    .header-icon-box {
+        width: 48px;
+        height: 48px;
+    }
+
+    .header-icon-box svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .card-title {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-toggle {
+        padding: 12px;
+    }
+
+    .chat-sidebar-card {
+        height: 450px;
+    }
+
+    .records-section {
+        padding: 16px 12px;
+    }
+
+    .records-table th:nth-child(2),
+    .records-table td:nth-child(2),
+    .records-table th:nth-child(3),
+    .records-table td:nth-child(3) {
+        display: none;
+        /* Hide symptoms and duration on very small screens */
     }
 }
 

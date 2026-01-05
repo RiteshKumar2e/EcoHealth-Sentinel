@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Heart, Activity, FileText, Calendar, AlertCircle, Search, Lock, Eye, Download, Edit, Plus, RefreshCw, TrendingUp, Clock, CheckCircle, XCircle, ShieldCheck, Microscope } from 'lucide-react';
 import VaultLogo from '../../components/VaultLogo';
 import jsPDF from 'jspdf';
@@ -16,6 +17,7 @@ export default function MyMedicalVault() {
   const [prescriptions, setPrescriptions] = useState([]);
   const [aiInsights, setAiInsights] = useState([]);
   const [stats, setStats] = useState([]);
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
@@ -207,7 +209,7 @@ export default function MyMedicalVault() {
 
       <div className="content-wrapper">
         <div className="header-card">
-          <div className="header-content" style={{ justifyContent: 'flex-start', gap: '24px' }}>
+          <div className="header-content" style={{ justifyContent: 'flex-start', gap: '24px', cursor: 'pointer' }} onClick={() => navigate('/healthcare/overview')}>
             <VaultLogo size={56} />
             <div>
               <h1 className="header-title">My Medical Vault</h1>

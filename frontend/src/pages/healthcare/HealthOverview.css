@@ -436,6 +436,8 @@
   border: 1px solid #f1f5f9;
   padding: 24px;
   margin-bottom: 32px;
+  min-width: 0;
+  /* Help Recharts dimensions */
 }
 
 .card:hover {
@@ -626,6 +628,8 @@
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 24px;
   margin-bottom: 32px;
+  min-width: 0;
+  /* Help Recharts dimensions */
 }
 
 @media (max-width: 1024px) {

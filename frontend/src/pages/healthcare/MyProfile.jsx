@@ -8,15 +8,15 @@ const MyProfile = () => {
     const [profile, setProfile] = useState(() => {
         const saved = localStorage.getItem('userProfile');
         return saved ? JSON.parse(saved) : {
-            name: 'Anmol Sharma',
-            email: 'anmol.patient@example.com',
-            phone: '+91 98765 43210',
-            location: 'Chandigarh, India',
-            bloodGroup: 'O+ Positive',
-            age: '26 Years',
-            height: '175 cm',
-            weight: '72 kg',
-            joinedDate: 'January 2024',
+            name: '',
+            email: '',
+            phone: '',
+            location: '',
+            bloodGroup: '',
+            age: '',
+            height: '',
+            weight: '',
+            joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
             avatar: null
         };
     });
@@ -104,7 +104,7 @@ const MyProfile = () => {
                     </div>
                     <div className="stat-box">
                         <div className="stat-lab">BMI Status</div>
-                        <div className="stat-val">Healthy</div>
+                        <div className="stat-val">{profile.height && profile.weight ? 'Calculated' : '--'}</div>
                     </div>
                     <div className="stat-box">
                         <div className="stat-lab">Member Since</div>

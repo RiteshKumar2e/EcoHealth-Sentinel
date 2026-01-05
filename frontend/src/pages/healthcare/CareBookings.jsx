@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, Bell, Activity, Trash2, Edit, Eye, Download, Filter, Search } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -24,6 +25,7 @@ const CareBookings = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [viewDetails, setViewDetails] = useState(null);
+  const navigate = useNavigate();
 
   // Static doctors list
   const doctors = [
@@ -196,6 +198,13 @@ const CareBookings = () => {
               </div>
             </div>
             <div className="apt-header-actions">
+              <button
+                onClick={() => navigate('/healthcare/consultations')}
+                className="apt-btn"
+                style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b' }}
+              >
+                <Activity size={18} /> My Consultations
+              </button>
               <button onClick={handleExport} className="apt-btn apt-btn-export">
                 <Download className="apt-btn-icon" />
                 Export PDF

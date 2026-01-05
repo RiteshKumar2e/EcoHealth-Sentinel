@@ -632,6 +632,10 @@ body {
         position: static;
         max-height: 500px;
     }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -639,18 +643,91 @@ body {
         padding: 16px;
     }
 
+    .header-card {
+        padding: 24px 20px;
+    }
+
     .header-content {
         flex-direction: column;
         align-items: flex-start;
+        gap: 20px;
+    }
+
+    .header-title {
+        font-size: 1.75rem;
+    }
+
+    .header-subtitle {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .patient-overview-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+    }
+
+    .patient-avatar-section {
         gap: 16px;
     }
 
-    .stats-grid {
-        grid-template-columns: 1fr;
+    .patient-avatar {
+        width: 64px;
+        height: 64px;
+        font-size: 1.5rem;
+    }
+
+    .patient-name-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .action-buttons {
+        width: 100%;
+        flex-wrap: wrap;
     }
 
     .view-tabs {
         width: 100%;
         overflow-x: auto;
+        white-space: nowrap;
+        padding: 4px;
+    }
+
+    .tab-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .medical-vault-stat-card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .medical-vault-icon-wrapper {
+        margin-bottom: 0;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .security-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .security-notice {
+        padding: 24px 20px;
     }
 }

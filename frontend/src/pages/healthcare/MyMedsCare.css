@@ -598,26 +598,115 @@
     .medicine-main-grid {
         grid-template-columns: 1fr;
     }
+
+    .medicine-sidebar {
+        gap: 20px;
+    }
 }
 
 @media (max-width: 768px) {
     .medicine-container {
-        padding: 20px;
+        padding: 16px;
     }
 
     .medicine-header {
-        padding: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 24px 20px;
+        margin-bottom: 24px;
+        text-align: left;
     }
 
     .medicine-title {
-        font-size: 20px;
+        font-size: 24px;
+    }
+
+    .medicine-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .medicine-stat-card {
+        padding: 20px 16px;
     }
 
     .medicine-stat-value {
-        font-size: 28px;
+        font-size: 24px;
+    }
+
+    .medicine-rec-card {
+        padding: 20px;
     }
 
     .medicine-rec-details-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .med-records-table-section {
+        padding: 20px !important;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px;
+    }
+
+    .med-records-table th,
+    .med-records-table td {
+        padding: 12px 10px;
+        font-size: 13px;
+    }
+
+    .selective-delete-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .medicine-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .medicine-header {
+        padding: 20px 16px;
+    }
+
+    .add-to-plan-btn {
+        position: static !important;
+        width: 100%;
+        margin-top: 16px;
+    }
+
+    .medicine-stat-card {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+        text-align: left;
+    }
+
+    .medicine-stat-value {
+        font-size: 22px;
+        margin-top: 0;
+    }
+
+    .medicine-stat-label {
+        margin-bottom: 2px;
+    }
+
+    .care-journeys-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .med-records-table th:nth-child(2),
+    .med-records-table td:nth-child(2),
+    .med-records-table th:nth-child(4),
+    .med-records-table td:nth-child(4) {
+        display: none;
+        /* Hide Purpose and Inventory on very small screens to save space */
     }
 }
