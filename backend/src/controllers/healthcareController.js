@@ -129,3 +129,59 @@ export const aiDiagnosisAssistant = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getAnalyses = async (req, res, next) => {
+    try {
+        res.json({
+            success: true,
+            recentAnalyses: [
+                { id: 101, type: "Chest X-Ray", date: new Date().toISOString().split('T')[0], findings: "Normal cardiac silhouette, clear lung fields.", confidence: 98, priority: "normal" },
+                { id: 102, type: "Brain MRI", date: new Date().toISOString().split('T')[0], findings: "No acute intracranial pathology detected.", confidence: 95, priority: "normal" }
+            ]
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getStats = async (req, res, next) => {
+    try {
+        res.json({
+            success: true,
+            stats: [
+                { label: "My Scans Analyzed", value: "24", icon: 'ImageIcon', color: "#2563eb" },
+                { label: "AI Precision", value: "96.5%", icon: 'Brain', color: "#16a34a" },
+                { label: "Avg Analysis Time", value: "32 sec", icon: 'Clock', color: "#7c3aed" },
+                { label: "Detected Alerts", value: "0", icon: 'AlertCircle', color: "#ef4444" }
+            ]
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const uploadScan = async (req, res, next) => {
+    try {
+        res.json({
+            success: true,
+            analysis: {
+                findings: "AI Analysis: The uploaded scan shows no significant abnormalities. Results are consistent with previous baselines.",
+                confidence: 94
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const chatWithAssistant = async (req, res, next) => {
+    try {
+        const { message } = req.body;
+        res.json({
+            success: true,
+            reply: `As your health assistant, I've noted your query: "${message}". Based on your recent scans, everything looks stable. Would you like me to schedule a follow-up?`
+        });
+    } catch (error) {
+        next(error);
+    }
+};

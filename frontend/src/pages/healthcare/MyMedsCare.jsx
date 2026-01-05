@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pill, AlertTriangle, CheckCircle, User, Calendar, Bell, Shield, Heart, Clock, Search } from 'lucide-react';
+import { Pill, AlertTriangle, CheckCircle, User, Calendar, Bell, Shield, Heart, Clock, Search, Activity } from 'lucide-react';
 import './MyMedsCare.css';
 
 export default function MyMedsCare() {

@@ -19,12 +19,15 @@ const HealthcareLayout = () => {
 
     // Handle window resize
     useEffect(() => {
+        let lastWidth = window.innerWidth;
         const handleResize = () => {
-            if (window.innerWidth > 1024) {
+            const currentWidth = window.innerWidth;
+            if (lastWidth <= 1024 && currentWidth > 1024) {
                 setIsSidebarOpen(true);
-            } else {
+            } else if (lastWidth > 1024 && currentWidth <= 1024) {
                 setIsSidebarOpen(false);
             }
+            lastWidth = currentWidth;
         };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
