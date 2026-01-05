@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { User, Heart, Activity, FileText, Calendar, AlertCircle, Search, Lock, Eye, Download, Edit, Plus, RefreshCw, TrendingUp, Clock, CheckCircle, XCircle, ShieldCheck, Microscope } from 'lucide-react';
 import VaultLogo from '../../components/VaultLogo';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import './MyMedicalVault.css';
 
 export default function MyMedicalVault() {
@@ -43,12 +45,127 @@ export default function MyMedicalVault() {
   });
 
   const handleDownload = () => {
-    alert("Downloading Medical Vault Summary...");
+    const doc = new jsPDF();
+    const primaryColor = [59, 130, 246]; // Blue-500
+
+    // Header
+    doc.setFontSize(24);
+    doc.setTextColor(...primaryColor);
+    doc.text("My Medical Vault", 14, 20);
+
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 26);
+    doc.line(14, 30, 196, 30); // Divider
+
+    // Patient Profile Section
+    doc.setFontSize(14);
+    doc.setTextColor(30);
+    doc.text("Patient Profile", 14, 40);
+
+    autoTable(doc, {
+      startY: 45,
+      head: [['Field', 'Value']],
+      body: [
+        ['Name', userProfile.name],
+        ['Patient ID', userProfile.id],
+        ['Age', userProfile.age],
+        ['Blood Group', userProfile.bloodGroup],
+        ['Status', userProfile.status]
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: primaryColor, textColor: 255, fontStyle: 'bold' },
+      styles: { fontSize: 10, cellPadding: 6 },
+      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 50 } }
+    });
+
+    let finalY = doc.lastAutoTable.finalY + 15;
+
+    // Vitals Section
+    doc.setFontSize(14);
+    doc.setTextColor(30);
+    doc.text("Latest Vitals", 14, finalY);
+
+    const vitalsData = Object.entries(vitalSigns).map(([key, v]) => [
+      key.replace(/([A-Z])/g, ' $1').trim().replace(/^\w/, c => c.toUpperCase()),
+      v.value,
+      v.status,
+      v.timestamp
+    ]);
+
+    if (vitalsData.length > 0) {
+      autoTable(doc, {
+        startY: finalY + 5,
+        head: [['Vital Sign', 'Value', 'Status', 'Recorded At']],
+        body: vitalsData,
+        theme: 'striped',
+        headStyles: { fillColor: [71, 85, 105] }, // Slate-700
+      });
+      finalY = doc.lastAutoTable.finalY + 15;
+    } else {
+      doc.setFontSize(10);
+      doc.setTextColor(150);
+      doc.text("No vital signs recorded.", 14, finalY + 8);
+      finalY += 15;
+    }
+
+    // Medical History Section
+    doc.setFontSize(14);
+    doc.setTextColor(30);
+    doc.text("Medical History", 14, finalY);
+
+    const historyData = medicalHistory.map(h => [h.date, h.type, h.diagnosis, h.notes]);
+
+    if (historyData.length > 0) {
+      autoTable(doc, {
+        startY: finalY + 5,
+        head: [['Date', 'Type', 'Diagnosis', 'Notes']],
+        body: historyData,
+        theme: 'striped',
+        headStyles: { fillColor: [71, 85, 105] },
+      });
+      finalY = doc.lastAutoTable.finalY + 15;
+    } else {
+      doc.setFontSize(10);
+      doc.setTextColor(150);
+      doc.text("No medical history records available.", 14, finalY + 8);
+      finalY += 15;
+    }
+
+    // Prescriptions Section
+    doc.setFontSize(14);
+    doc.setTextColor(30);
+    doc.text("Active Medications", 14, finalY);
+
+    const medsData = prescriptions.map(p => [p.medicine, p.dosage, p.duration]);
+
+    if (medsData.length > 0) {
+      autoTable(doc, {
+        startY: finalY + 5,
+        head: [['Medicine', 'Dosage', 'Duration']],
+        body: medsData,
+        theme: 'striped',
+        headStyles: { fillColor: [71, 85, 105] },
+      });
+    } else {
+      doc.setFontSize(10);
+      doc.setTextColor(150);
+      doc.text("No active prescriptions.", 14, finalY + 8);
+    }
+
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text('EcoHealth Sentinel - Sensitive Medical Data', 105, 290, { align: 'center' });
+    }
+
+    doc.save(`Medical_Vault_${userProfile.name.replace(/\s+/g, '_')}.pdf`);
   };
 
-  const handleAddRecord = () => {
-    alert("Add New Record feature is coming soon!");
-  };
+  // const handleAddRecord removed
 
   const showNotification = useCallback((message, type) => {
     const id = Date.now();
@@ -166,7 +283,6 @@ export default function MyMedicalVault() {
                 </div>
                 <div className="action-buttons">
                   <button className="action-btn btn-blue" onClick={handleDownload}><Download size={20} /></button>
-                  <button className="action-btn btn-purple" onClick={handleAddRecord}><Plus size={20} /></button>
                 </div>
               </div>
             </div>
