@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, MapPin, Activity, Save, Bell, Shield, LogOut, Camera, Heart, Stethoscope, Ruler, Scale, Hash } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Activity, Save, Bell, Shield, LogOut, Camera, Heart, Stethoscope, Ruler, Scale, Hash, ChevronLeft } from 'lucide-react';
 import './MyProfile.css';
 
 const MyProfile = () => {
@@ -39,6 +39,14 @@ const MyProfile = () => {
         }, 1200);
     };
 
+    const handleLogout = () => {
+        if (window.confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            navigate('/auth/login');
+        }
+    };
+
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -54,6 +62,14 @@ const MyProfile = () => {
         <>
             {/* Profile Hero Card */}
             <div className="profile-card-hero">
+                <button className="back-portal-btn-profile" onClick={() => navigate('/auth/dashboard')}>
+                    <ChevronLeft size={20} />
+                    Back to Domain Portal
+                </button>
+                <button className="logout-btn-profile" onClick={handleLogout}>
+                    <LogOut size={16} />
+                    Logout
+                </button>
                 <div className="profile-hero-bg"></div>
                 <div className="profile-avatar-wrapper">
                     <div className="profile-avatar">

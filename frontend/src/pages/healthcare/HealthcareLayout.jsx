@@ -68,8 +68,21 @@ const HealthcareLayout = () => {
             {/* Sidebar */}
             <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
-                    <h2 className="sidebar-logo">PatientAid</h2>
-                    <p className="sidebar-tagline">Your Personal Health Companion</p>
+                    <div className="sidebar-brand-container">
+                        <div className="brand-logo-hex">
+                            <Heart size={22} color="white" fill="white" />
+                        </div>
+                        <div className="brand-text-block">
+                            <h1 className="brand-title">PatientAid</h1>
+                            <p className="brand-subtitle">PERSONAL HEALTH</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setIsSidebarOpen(false)}
+                        className="sidebar-close-btn"
+                    >
+                        <X size={18} />
+                    </button>
                 </div>
 
                 <div className="sidebar-nav">
@@ -91,12 +104,14 @@ const HealthcareLayout = () => {
             {/* Main Content Area */}
             <div className={`main-content ${!isSidebarOpen ? 'sidebar-closed' : ''}`}>
                 {/* Mobile Menu Toggle */}
-                <button
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className={`menu-toggle ${isSidebarOpen ? 'sidebar-open' : ''}`}
-                >
-                    {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
+                {!isSidebarOpen && (
+                    <button
+                        onClick={() => setIsSidebarOpen(true)}
+                        className="menu-toggle"
+                    >
+                        <Menu size={24} />
+                    </button>
+                )}
 
                 <div className="healthcare-content-wrapper">
                     <div className="healthcare-content-inner">
