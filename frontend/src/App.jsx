@@ -63,6 +63,8 @@ import RemoteMonitoring from "./pages/healthcare/RemoteMonitoring.jsx";
 import HealthReports from "./pages/healthcare/Reports.jsx";
 import HealthSettings from "./pages/healthcare/Settings.jsx";
 import Telemedicine from "./pages/healthcare/Telemedicine.jsx";
+import HealthProfile from "./pages/healthcare/Profile.jsx";
+import HealthcareLayout from "./pages/healthcare/HealthcareLayout.jsx";
 
 // Simple Placeholder Chat Page
 const ChatPage = () => (
@@ -126,18 +128,21 @@ const App = () => {
         <Route path="/environment/wildlife" element={<WildlifeConservation />} />
 
         {/* Healthcare Routes */}
-        <Route path="/healthcare/dashboard" element={<HealthDashboard />} />
-        <Route path="/healthcare/appointments" element={<AppointmentScheduling />} />
-        <Route path="/healthcare/chatbot" element={<HealthChatbot />} />
-        <Route path="/healthcare/diagnosis" element={<DiagnosisAssistant />} />
-        <Route path="/healthcare/emergency" element={<EmergencyPrediction />} />
-        <Route path="/healthcare/medical-images" element={<MedicalImageAnalysis />} />
-        <Route path="/healthcare/medicine" element={<MedicineRecommendations />} />
-        <Route path="/healthcare/patients" element={<PatientRecords />} />
-        <Route path="/healthcare/monitoring" element={<RemoteMonitoring />} />
-        <Route path="/healthcare/reports" element={<HealthReports />} />
-        <Route path="/healthcare/settings" element={<HealthSettings />} />
-        <Route path="/healthcare/telemedicine" element={<Telemedicine />} />
+        <Route path="/healthcare" element={<HealthcareLayout />}>
+          <Route path="dashboard" element={<HealthDashboard />} />
+          <Route path="appointments" element={<AppointmentScheduling />} />
+          <Route path="chatbot" element={<HealthChatbot />} />
+          <Route path="diagnosis" element={<DiagnosisAssistant />} />
+          <Route path="emergency" element={<EmergencyPrediction />} />
+          <Route path="medical-images" element={<MedicalImageAnalysis />} />
+          <Route path="medicine" element={<MedicineRecommendations />} />
+          <Route path="patients" element={<PatientRecords />} />
+          <Route path="monitoring" element={<RemoteMonitoring />} />
+          <Route path="reports" element={<HealthReports />} />
+          <Route path="settings" element={<HealthSettings />} />
+          <Route path="telemedicine" element={<Telemedicine />} />
+          <Route path="profile" element={<HealthProfile />} />
+        </Route>
 
         {/* 404 Page */}
         <Route path="*" element={<NotFound />} />

@@ -202,11 +202,13 @@
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
 }
 
-.content-wrapper {
+.content-wrapper,
+.healthcare-content-wrapper {
   padding: 24px;
 }
 
-.content-inner {
+.content-inner,
+.healthcare-content-inner {
   max-width: 1400px;
   margin: 0 auto;
 }

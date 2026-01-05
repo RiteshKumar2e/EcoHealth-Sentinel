@@ -340,11 +340,11 @@ const AppointmentScheduling = () => {
               </div>
               <div>
                 <h1 className="apt-title">
-                  AI-Powered Appointment System
+                  Personal Care Booking
                 </h1>
                 <p className="apt-subtitle">
                   <Database className="apt-status-icon" style={{ color: connectionStatus === 'connected' ? '#10b981' : '#ef4444' }} />
-                  MongoDB {connectionStatus === 'connected' ? 'Connected' : 'Disconnected'} • Real-time Sync • Collection: appointments
+                  Secure MongoDB Sync • Private Consultation Scheduling
                 </p>
               </div>
             </div>
@@ -367,7 +367,7 @@ const AppointmentScheduling = () => {
                 <Activity className="apt-stat-icon" />
                 <div>
                   <div className="apt-stat-value">{stats.total}</div>
-                  <div className="apt-stat-label">Total Appointments</div>
+                  <div className="apt-stat-label">My Total Bookings</div>
                 </div>
               </div>
             </div>
@@ -433,7 +433,7 @@ const AppointmentScheduling = () => {
           <div className="apt-form-card">
             <h2 className="apt-section-title">
               <User className="apt-section-icon" />
-              {editingId ? 'Edit Appointment' : 'Schedule Appointment'}
+              {editingId ? 'Reschedule Booking' : 'Book a Consultation'}
             </h2>
 
             <div className="apt-form-group">
@@ -505,7 +505,7 @@ const AppointmentScheduling = () => {
                   ) : (
                     <>
                       <Database style={{ width: '20px', height: '20px' }} />
-                      {editingId ? 'Update MongoDB' : 'Save to MongoDB'}
+                      {editingId ? 'Update My Booking' : 'Confirm My Booking'}
                     </>
                   )}
                 </button>
@@ -562,7 +562,7 @@ const AppointmentScheduling = () => {
           <div className="apt-list-header">
             <h2 className="apt-section-title">
               <Database className="apt-section-icon" style={{ color: '#10b981' }} />
-              MongoDB Records ({filteredAppointments.length})
+              My Appointment History ({filteredAppointments.length})
             </h2>
 
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>

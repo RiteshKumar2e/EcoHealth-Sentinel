@@ -39,7 +39,13 @@ export default function Dashboard() {
 
   const handleDomainSelect = (domainId) => {
     setSelectedDomain(domainId);
-    navigate(`/${domainId}/dashboard`); // ✅ Navigate to domain dashboard
+    if (domainId === 'agriculture') {
+      navigate('/agriculture/profile');
+    } else if (domainId === 'healthcare') {
+      navigate('/healthcare/profile');
+    } else {
+      navigate(`/${domainId}/dashboard`);
+    }
   };
 
   return (
@@ -136,6 +142,7 @@ export default function Dashboard() {
               key={domain.id}
               onMouseEnter={() => setHoveredCard(domain.id)}
               onMouseLeave={() => setHoveredCard(null)}
+              onClick={() => handleDomainSelect(domain.id)}
               style={{
                 position: 'relative',
                 backgroundColor: '#ffffff',
@@ -239,7 +246,7 @@ export default function Dashboard() {
                   transition: 'all 0.2s ease'
                 }}
               >
-                <span>Explore {domain.title}</span>
+                <span>{domain.id === 'agriculture' || domain.id === 'healthcare' ? 'My Profile' : `Explore ${domain.title}`}</span>
                 <ArrowRight style={{
                   width: '20px',
                   height: '20px',

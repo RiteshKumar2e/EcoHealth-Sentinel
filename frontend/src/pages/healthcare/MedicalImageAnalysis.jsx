@@ -68,31 +68,29 @@ export default function MedicalImageAnalysis() {
       setRecentAnalyses([
         {
           id: 1,
-          patientId: "P-2024-1547",
           type: "Chest X-Ray",
           date: "2025-10-04",
-          findings: "No significant abnormalities detected",
+          findings: "Clear lungs, no significant abnormalities detected",
           confidence: 94,
           priority: "normal",
         },
         {
           id: 2,
-          patientId: "P-2024-1548",
           type: "Brain MRI",
           date: "2025-10-03",
-          findings: "Possible lesion detected - requires specialist review",
+          findings: "Slight inflammation noted - consult your specialist",
           confidence: 87,
-          priority: "high",
+          priority: "medium",
         },
       ]);
     }
 
     function fallbackStats() {
       setStats([
-        { label: "Images Analyzed", value: "12,547", icon: ImageIcon, color: "#2563eb" },
-        { label: "Avg. Accuracy", value: "93.5%", icon: Brain, color: "#16a34a" },
-        { label: "Processing Time", value: "< 2 min", icon: Clock, color: "#7c3aed" },
-        { label: "Cases Flagged", value: "348", icon: AlertCircle, color: "#ef4444" },
+        { label: "My Scans Analyzed", value: "12", icon: ImageIcon, color: "#2563eb" },
+        { label: "AI Precision", value: "94.8%", icon: Brain, color: "#16a34a" },
+        { label: "Avg Analysis Time", value: "45 sec", icon: Clock, color: "#7c3aed" },
+        { label: "Detected Alerts", value: "2", icon: AlertCircle, color: "#ef4444" },
       ]);
     }
   }, []);
@@ -214,8 +212,8 @@ export default function MedicalImageAnalysis() {
         {/* Header */}
         <div className="mia-header">
           <div>
-            <h1 className="mia-title">AI Medical Image Analysis</h1>
-            <p className="mia-subtitle">Advanced deep learning for diagnostic imaging support</p>
+            <h1 className="mia-title">My Medical Scans</h1>
+            <p className="mia-subtitle">AI-powered insights for your personal diagnostic imaging</p>
           </div>
           <div className="mia-header-right">
             <Brain className="header-icon" />
@@ -336,9 +334,9 @@ export default function MedicalImageAnalysis() {
                       </div>
                       <div className="findings-box">
                         <div className="findings-text">
-                          <strong>Findings:</strong> {analysisResult.findings}
+                          <strong>AI Summary:</strong> {analysisResult.findings}
                         </div>
-                        <div className="findings-disclaimer">⚠️ AI provides decision support only. Final diagnosis requires physician review.</div>
+                        <div className="findings-disclaimer">⚠️ These results are AI-generated for your information. Please consult a qualified radiologist or your primary physician for a formal diagnosis.</div>
                       </div>
                     </div>
                   </div>
@@ -415,7 +413,7 @@ export default function MedicalImageAnalysis() {
                     <div className="recent-header">
                       <div>
                         <div className="recent-type">{r.type}</div>
-                        <div className="recent-patient">Patient: {r.patientId}</div>
+                        <div className="recent-patient">Record ID: {r.id}</div>
                       </div>
                       <div className={`priority-badge ${getPriorityClass(r.priority)}`}>{(r.priority || "normal").toUpperCase()}</div>
                     </div>
