@@ -103,18 +103,45 @@ const EnvironmentLayout = () => {
                 </div>
 
                 <div className="sidebar-nav">
-                    {menuItems.map((item) => (
-                        <div
-                            key={item.path}
-                            onClick={() => handleNavigation(item.path)}
-                            className={`sidebar-item ${location.pathname === item.path ? 'sidebar-item-active' : ''}`}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            <item.icon size={20} />
-                            <span>{item.label}</span>
-                            {location.pathname === item.path && <div className="sidebar-indicator" style={{ background: '#10b981' }} />}
-                        </div>
-                    ))}
+                    {menuItems.map((item) => {
+                        const isActive = location.pathname === item.path;
+                        return (
+                            <div
+                                key={item.path}
+                                onClick={() => handleNavigation(item.path)}
+                                className={`sidebar-item ${isActive ? 'sidebar-item-active' : ''}`}
+                                style={{
+                                    cursor: 'pointer',
+                                    backgroundColor: isActive ? '#ecfdf5' : 'transparent', // Light green background for active
+                                    color: isActive ? '#059669' : '#475569', // Green text for active
+                                    borderRadius: '12px',
+                                    marginBottom: '4px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    padding: '12px 16px', // Ensure consistent padding
+                                    transition: 'all 0.2s ease',
+                                    fontWeight: isActive ? '600' : '500'
+                                }}
+                            >
+                                <item.icon size={20} color={isActive ? '#059669' : '#64748b'} />
+                                <span style={{ marginLeft: '12px' }}>{item.label}</span>
+                                {isActive && (
+                                    <div
+                                        className="sidebar-indicator"
+                                        style={{
+                                            position: 'absolute',
+                                            left: '0',
+                                            width: '4px',
+                                            height: '24px',
+                                            background: '#059669',
+                                            borderTopRightRadius: '4px',
+                                            borderBottomRightRadius: '4px'
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 
