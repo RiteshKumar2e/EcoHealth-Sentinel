@@ -8,17 +8,18 @@
 }
 
 .header-card {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: white;
     border-radius: 1.5rem;
     padding: 2.5rem;
-    color: white;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    color: #1e293b;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     margin-bottom: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 2rem;
+    border: 1px solid #f1f5f9;
 }
 
 .header-content {
@@ -28,22 +29,32 @@
 }
 
 .header-icon-container {
-    background: rgba(255, 255, 255, 0.2);
+    background: #ecfdf5;
     padding: 1.25rem;
     border-radius: 1rem;
-    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-icon-container svg {
+    color: #10b981;
+    /* Ensure icon is green */
 }
 
 .header-title {
     font-size: 2.5rem;
     font-weight: 800;
     margin: 0 0 0.5rem 0;
+    color: #1e293b;
+    letter-spacing: -0.025em;
 }
 
 .header-subtitle {
     font-size: 1.125rem;
-    opacity: 0.9;
+    opacity: 0.7;
     margin: 0;
+    color: #64748b;
 }
 
 .header-actions {
@@ -70,38 +81,44 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: white;
+    background: black;
     opacity: 0;
     transition: opacity 0.3s;
 }
 
 .action-btn:hover::after {
-    opacity: 0.1;
+    opacity: 0.05;
 }
 
 .action-btn.primary {
-    background: white;
+    background: #ecfdf5;
     color: #059669;
-    border: none;
+    border: 1px solid #d1fae5;
 }
 
 .action-btn.secondary {
     background: #3b82f6;
     color: white;
     border: none;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
 }
 
 .action-btn.outline {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(4px);
+    background: white;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+}
+
+.action-btn.outline:hover {
+    border-color: #9ca3af;
+    background: #f9fafb;
 }
 
 .action-btn.danger {
     background: #ef4444;
     color: white;
     border: none;
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);
 }
 
 .action-btn:hover {
@@ -133,108 +150,97 @@
     gap: 1.5rem;
 }
 
+
 .input-card {
     background: white;
-    border-radius: 1.25rem;
+    border-radius: 1rem;
     padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    border-top: 4px solid transparent;
+    /* Prepare for colored top borders */
 }
 
 .input-card:hover {
-    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
 }
 
-.card-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1.5rem;
+.input-card:nth-child(1) {
+    border-top-color: #3b82f6;
 }
 
-.card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0;
+/* Transport - Blue */
+.input-card:nth-child(2) {
+    border-top-color: #f59e0b;
 }
 
-.input-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+/* Energy - Amber */
+.input-card:nth-child(3) {
+    border-top-color: #8b5cf6;
 }
 
-.input-label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #64748b;
-    margin-bottom: 0.5rem;
+/* Plane - Purple */
+.input-card:nth-child(4) {
+    border-top-color: #10b981;
 }
+
+/* Shopping - Green */
 
 .input-field {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 0.75rem;
-    font-size: 0.9375rem;
-    transition: all 0.3s;
-    background: #f8fafc;
+    padding: 0.875rem 1rem;
+    border: 1px solid #cbd5e1;
+    /* Lighter border */
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    color: #334155;
+    transition: all 0.2s;
+    background: white;
+    /* Clean white bg */
 }
 
 .input-field:focus {
     border-color: #10b981;
-    background: white;
     outline: none;
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-}
-
-.info-banner {
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    background: #ecfdf5;
-    border-radius: 0.75rem;
-    color: #065f46;
-    font-size: 0.875rem;
-    font-weight: 600;
-    border-left: 4px solid #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .result-card {
-    background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    /* Deep Professional Green */
     border-radius: 1.5rem;
     padding: 2.5rem;
     color: white;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
-}
-
-.result-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .comparison-card {
     background: white;
-    border-radius: 1.25rem;
+    border-radius: 1rem;
     padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
 }
 
 .recommendation-card {
-    padding: 1rem;
+    padding: 1.25rem;
     border-radius: 0.75rem;
-    background: #f8fafc;
+    background: white;
     border: 1px solid #e2e8f0;
-    border-left-width: 6px;
-    animation: slideIn 0.5s ease-out forwards;
-    opacity: 0;
+    border-left-width: 4px;
+    /* Thinner accent line */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.recommendation-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .history-modal {
@@ -598,6 +604,26 @@
 
 .border-green-success {
     border-color: #10b981;
+}
+
+.p-0 {
+    padding: 0 !important;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.min-h-300 {
+    min-height: 300px;
+}
+
+.gap-0 {
+    gap: 0 !important;
+}
+
+.b-b-1 {
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .spin {

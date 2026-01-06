@@ -7,7 +7,7 @@ import './CarbonCalculator.css';
 
 export default function CarbonCalculator() {
   const [calculations, setCalculations] = useState({
-    transportation: { distance: 0, vehicleType: 'car' },
+    transportation: { distance: 0, vehicleType: '' },
     electricity: { usage: 0 },
     heating: { usage: 0, type: 'gas' },
     flights: { shortHaul: 0, longHaul: 0 },
@@ -32,8 +32,13 @@ export default function CarbonCalculator() {
 
   const emissionFactors = {
     car: 0.21,
+    suv: 0.28,
+    hybrid: 0.12,
+    electric: 0.05,
     motorcycle: 0.103,
     bus: 0.089,
+    train: 0.041,
+    bicycle: 0,
     electricity: 0.82,
     naturalGas: 0.18,
     shortFlight: 0.255,
@@ -49,8 +54,8 @@ export default function CarbonCalculator() {
   }, [calculations]);
 
   const calculateTotalEmissions = () => {
-    const transportEmissions = calculations.transportation.distance *
-      emissionFactors[calculations.transportation.vehicleType] * 365;
+    const transportFactor = emissionFactors[calculations.transportation.vehicleType] || 0;
+    const transportEmissions = calculations.transportation.distance * transportFactor * 365;
 
     const electricityEmissions = calculations.electricity.usage *
       emissionFactors.electricity * 12;
@@ -473,12 +478,7 @@ export default function CarbonCalculator() {
                 <span>Share</span>
               </div>
             </button>
-            <button className="action-btn danger" onClick={resetCalculator}>
-              <div className="flex-center gap-8 pos-relative z-1">
-                <RefreshCw size={18} />
-                <span>Reset</span>
-              </div>
-            </button>
+            {/* Reset button removed */}
           </div>
         </div>
 
@@ -491,7 +491,7 @@ export default function CarbonCalculator() {
                 <Car size={24} className="text-blue-500 mr-12 icon-bounce" />
                 <h2 className="card-title">Daily Transportation</h2>
               </div>
-              <div className="input-grid">
+              <div className="col-flex gap-16">
                 <div>
                   <label className="input-label">Vehicle Type</label>
                   <select
@@ -499,20 +499,39 @@ export default function CarbonCalculator() {
                     onChange={(e) => handleInputChange('transportation', 'vehicleType', e.target.value)}
                     className="input-field"
                   >
-                    <option value="car">🚗 Car (0.21 kg CO2/km)</option>
-                    <option value="motorcycle">🏍️ Motorcycle (0.103 kg CO2/km)</option>
-                    <option value="bus">🚌 Bus (0.089 kg CO2/km)</option>
+                    <option value="" disabled>Select a vehicle</option>
+                    <option value="car">🚗 Car (Petrol/Diesel) (0.21 kg/km)</option>
+                    <option value="suv">🚙 SUV / 4x4 (0.28 kg/km)</option>
+                    <option value="hybrid">🔋 Hybrid Car (0.12 kg/km)</option>
+                    <option value="electric">⚡ Electric Vehicle (0.05 kg/km)</option>
+                    <option value="motorcycle">🏍️ Motorcycle (0.103 kg/km)</option>
+                    <option value="bus">🚌 Bus (Public) (0.089 kg/km)</option>
+                    <option value="train">🚆 Train / Metro (0.041 kg/km)</option>
+                    <option value="bicycle">🚲 Bicycle / Walk (0 kg/km)</option>
                   </select>
                 </div>
                 <div>
-                  <label className="input-label">Daily Distance (km)</label>
+                  <div className="flex-between mb-8">
+                    <label className="input-label m-0">Daily Distance</label>
+                    <span className="text-13 font-600 text-slate-500">{calculations.transportation.distance} km</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="200"
+                    step="1"
+                    value={calculations.transportation.distance}
+                    onChange={(e) => handleInputChange('transportation', 'distance', e.target.value)}
+                    className="w-100 mb-8 cursor-pointer accent-blue-500"
+                    style={{ height: '6px', background: '#e2e8f0', borderRadius: '4px', appearance: 'none' }}
+                  />
                   <input
                     type="number"
                     min="0"
                     value={calculations.transportation.distance}
                     onChange={(e) => handleInputChange('transportation', 'distance', e.target.value)}
                     className="input-field"
-                    placeholder="Enter distance"
+                    placeholder="Enter distance (km)"
                   />
                 </div>
               </div>
@@ -529,9 +548,22 @@ export default function CarbonCalculator() {
                 <Zap size={24} className="text-amber-500 mr-12 icon-bounce" />
                 <h2 className="card-title">Energy Consumption</h2>
               </div>
-              <div className="input-grid">
+              <div className="col-flex gap-16">
                 <div>
-                  <label className="input-label">Monthly Electricity (kWh)</label>
+                  <div className="flex-between mb-8">
+                    <label className="input-label m-0">Monthly Electricity</label>
+                    <span className="text-13 font-600 text-slate-500">{calculations.electricity.usage} kWh</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1000"
+                    step="10"
+                    value={calculations.electricity.usage}
+                    onChange={(e) => handleInputChange('electricity', 'usage', e.target.value)}
+                    className="w-100 mb-8 cursor-pointer accent-amber-500"
+                    style={{ height: '6px', background: '#e2e8f0', borderRadius: '4px', appearance: 'none' }}
+                  />
                   <input
                     type="number"
                     min="0"
@@ -542,7 +574,20 @@ export default function CarbonCalculator() {
                   />
                 </div>
                 <div>
-                  <label className="input-label">Monthly Heating (m³ gas)</label>
+                  <div className="flex-between mb-8">
+                    <label className="input-label m-0">Monthly Heating (Gas)</label>
+                    <span className="text-13 font-600 text-slate-500">{calculations.heating.usage} m³</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="500"
+                    step="5"
+                    value={calculations.heating.usage}
+                    onChange={(e) => handleInputChange('heating', 'usage', e.target.value)}
+                    className="w-100 mb-8 cursor-pointer accent-amber-500"
+                    style={{ height: '6px', background: '#e2e8f0', borderRadius: '4px', appearance: 'none' }}
+                  />
                   <input
                     type="number"
                     min="0"
@@ -563,26 +608,28 @@ export default function CarbonCalculator() {
               </div>
               <div className="input-grid">
                 <div>
-                  <label className="input-label">Short-haul Flights (&lt;1500km)</label>
+                  <label className="input-label">Short-haul (&lt;1500km)</label>
                   <input
                     type="number"
                     min="0"
                     value={calculations.flights.shortHaul}
                     onChange={(e) => handleInputChange('flights', 'shortHaul', e.target.value)}
                     className="input-field"
-                    placeholder="Number of flights"
+                    placeholder="Count"
                   />
+                  <p className="text-12 text-slate-500 mt-8">e.g., Domestic flights</p>
                 </div>
                 <div>
-                  <label className="input-label">Long-haul Flights (&gt;1500km)</label>
+                  <label className="input-label">Long-haul (&gt;1500km)</label>
                   <input
                     type="number"
                     min="0"
                     value={calculations.flights.longHaul}
                     onChange={(e) => handleInputChange('flights', 'longHaul', e.target.value)}
                     className="input-field"
-                    placeholder="Number of flights"
+                    placeholder="Count"
                   />
+                  <p className="text-12 text-slate-500 mt-8">e.g., International</p>
                 </div>
               </div>
             </div>
@@ -594,14 +641,27 @@ export default function CarbonCalculator() {
                 <h2 className="card-title">Shopping & Consumption</h2>
               </div>
               <div>
-                <label className="input-label">Monthly Spending (₹)</label>
+                <div className="flex-between mb-8">
+                  <label className="input-label m-0">Monthly Spending</label>
+                  <span className="text-13 font-600 text-slate-500">₹{calculations.shopping.amount}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="50000"
+                  step="500"
+                  value={calculations.shopping.amount}
+                  onChange={(e) => handleInputChange('shopping', 'amount', e.target.value)}
+                  className="w-100 mb-8 cursor-pointer accent-green-500"
+                  style={{ height: '6px', background: '#e2e8f0', borderRadius: '4px', appearance: 'none' }}
+                />
                 <input
                   type="number"
                   min="0"
                   value={calculations.shopping.amount}
                   onChange={(e) => handleInputChange('shopping', 'amount', e.target.value)}
                   className="input-field"
-                  placeholder="Enter amount"
+                  placeholder="Enter amount (₹)"
                 />
               </div>
             </div>
@@ -609,50 +669,58 @@ export default function CarbonCalculator() {
 
           {/* Results Section */}
           <div className="col-flex">
-            {/* Total Emissions */}
-            <div className="result-card">
-              <div className="pos-relative z-1">
-                <div className="flex-center gap-12 mb-12 justify-start">
-                  <Leaf size={32} className="floating-icon" />
-                  <h2 className="text-20 font-700 m-0">Your Annual Carbon Footprint</h2>
+            {/* Merged Results & Breakdown Dashboard */}
+            <div className="comparison-card p-0 overflow-hidden mb-24">
+              <div className="grid-2-col gap-0">
+                {/* Left Panel: Total Score */}
+                <div className="p-40 bg-gradient-impact b-b-1">
+                  <div className="flex-center gap-12 mb-12 justify-start">
+                    <Leaf size={32} className="text-green-600" />
+                    <h2 className="text-20 font-700 m-0 text-slate-700">Annual Footprint</h2>
+                  </div>
+                  <div className="text-56 font-800 mb-8 text-slate-800">{totalEmissions.toFixed(2)}</div>
+                  <p className="text-18 opacity-0-9 mb-16 text-slate-600">tons CO2 equivalent</p>
+                  <div className="d-inline-block p-10-20 br-12 bg-white font-700 text-16 mb-12 text-slate-700 shadow-sm">
+                    Status: <span className={level.color === 'green' ? 'text-green-500' : level.color === 'amber' ? 'text-amber-500' : 'text-red-500'}>{level.text}</span>
+                  </div>
+                  <p className="text-14 text-slate-500 mt-8 max-w-xs">{level.message}</p>
                 </div>
-                <div className="text-56 font-800 mb-8">{totalEmissions.toFixed(2)}</div>
-                <p className="text-18 opacity-0-9 mb-16">tons CO2 equivalent</p>
-                <div className="d-inline-block p-10-20 br-12 bg-trans-white-2 backdrop-blur-10 font-700 text-16 mb-12">
-                  Status: {level.text}
+
+                {/* Right Panel: Chart */}
+                <div className="p-40 bg-white min-h-300">
+                  <div className="flex-between mb-16">
+                    <h3 className="card-title m-0">Breakdown</h3>
+                    <PieChartIcon size={20} className="text-blue-500" />
+                  </div>
+                  {showCharts && totalEmissions > 0 ? (
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart>
+                        <Pie
+                          data={chartData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {chartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend verticalAlign="bottom" height={36} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="flex-center flex-col h-100 justify-center opacity-50">
+                      <PieChartIcon size={48} className="mb-12 text-slate-300" />
+                      <p className="text-14 text-slate-400 text-center">Enter data to see breakdown</p>
+                    </div>
+                  )}
                 </div>
-                <p className="text-14 opacity-0-9 mt-8">{level.message}</p>
               </div>
             </div>
-
-            {/* Charts */}
-            {showCharts && totalEmissions > 0 && (
-              <div className="comparison-card">
-                <div className="flex-between mb-16">
-                  <h3 className="text-18 font-700 text-slate-700 m-0">Emissions Breakdown</h3>
-                  <PieChartIcon size={20} className="text-blue-500" />
-                </div>
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={chartData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={70}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            )}
 
             {/* Comparison */}
             <div className="comparison-card">
@@ -669,7 +737,7 @@ export default function CarbonCalculator() {
                       <div className="text-12 text-slate-500">Car Years</div>
                     </div>
                   </div>
-                  <div className="bg-gradient-impact border-l-4 border-green-success br-8 p-16">
+                  <div className="bg-slate-50 br-8 p-16 border-l-4 border-green-success">
                     <p className="text-14 text-slate-700 mb-8 flex-center gap-8 justify-start">
                       <strong>Global average:</strong> 4.7 tons/person
                       {totalEmissions > 4.7 ? <ArrowUp size={16} className="text-red-500" /> : <ArrowDown size={16} className="text-green-500" />}
