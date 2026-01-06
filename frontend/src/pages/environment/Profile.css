@@ -17,15 +17,17 @@
     min-height: 100vh;
     background: #f0fdf4;
     /* Light green bg */
-    padding: 2.5rem;
+    padding: 2.5rem !important;
+    padding-left: 280px !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: var(--text-main);
     position: relative;
+    transition: all 0.4s ease;
 }
 
 .profile-wrapper {
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 0 !important;
     position: relative;
     z-index: 10;
     padding-top: 1rem;
@@ -34,8 +36,9 @@
 /* --- Buttons --- */
 .back-portal-btn-profile {
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 25px;
+    left: 40px;
+    /* Positioned relative to the card's start, which is now well right of the sidebar */
     display: flex;
     align-items: center;
     gap: 8px;

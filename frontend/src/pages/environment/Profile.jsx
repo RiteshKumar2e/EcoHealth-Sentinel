@@ -12,10 +12,10 @@ const Profile = () => {
             email: '',
             phone: '',
             location: '',
-            carbonScore: '850',
-            treesPlanted: '12',
-            eventsJoined: '5',
-            impactLevel: 'Eco-Warrior',
+            carbonScore: '0',
+            treesPlanted: '0',
+            eventsJoined: '0',
+            impactLevel: 'New Member',
             joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
             avatar: null
         };

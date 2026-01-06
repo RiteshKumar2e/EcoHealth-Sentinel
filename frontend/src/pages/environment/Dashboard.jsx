@@ -26,8 +26,59 @@ export default function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  // State and District Selection
+  const [selectedState, setSelectedState] = useState('Bihar');
+  const [selectedDistrict, setSelectedDistrict] = useState('Darbhanga');
+
+  const locationData = {
+    'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Tirupati', 'Kakinada', 'Rajahmundry'],
+    'Arunachal Pradesh': ['Itanagar', 'Naharlagun'],
+    'Assam': ['Guwahati', 'Dibrugarh', 'Silchar', 'Jorhat'],
+    'Bihar': ['Darbhanga', 'Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia'],
+    'Chandigarh': ['Chandigarh'],
+    'Chhattisgarh': ['Raipur', 'Bilaspur', 'Durg'],
+    'Delhi': ['Delhi'],
+    'Goa': ['Panaji', 'Margao'],
+    'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Gandhinagar'],
+    'Haryana': ['Gurugram', 'Faridabad', 'Panipat', 'Rohtak', 'Hisar'],
+    'Himachal Pradesh': ['Shimla', 'Dharamshala'],
+    'Jammu & Kashmir': ['Srinagar', 'Jammu'],
+    'Jharkhand': ['Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro Steel City', 'Hazaribagh'],
+    'Karnataka': ['Bengaluru', 'Mysuru', 'Mangaluru', 'Hubli', 'Belagavi'],
+    'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur'],
+    'Ladakh': ['Leh'],
+    'Madhya Pradesh': ['Bhopal', 'Indore', 'Gwalior', 'Jabalpur', 'Ujjain'],
+    'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 'Aurangabad', 'Navi Mumbai'],
+    'Manipur': ['Imphal'],
+    'Meghalaya': ['Shillong'],
+    'Mizoram': ['Aizawl'],
+    'Nagaland': ['Kohima', 'Dimapur'],
+    'Odisha': ['Bhubaneswar', 'Cuttack', 'Rourkela'],
+    'Puducherry': ['Puducherry'],
+    'Punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala'],
+    'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Ajmer'],
+    'Sikkim': ['Gangtok'],
+    'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli'],
+    'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad'],
+    'Tripura': ['Agartala'],
+    'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Noida', 'Prayagraj'],
+    'Uttarakhand': ['Dehradun', 'Haridwar', 'Rishikesh'],
+    'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri'],
+    'Andaman & Nicobar Islands': ['Port Blair'],
+    'Lakshadweep': ['Kavaratti'],
+    'Dadra & Nagar Haveli and Daman & Diu': ['Daman']
+  };
+
+  // Placeholder Values for Initial State
+  const initialMetrics = [
+    { icon: 'Leaf', title: 'Air Quality Index', value: '--', unit: 'AQI', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' },
+    { icon: 'Droplets', title: 'Water Quality', value: '--', unit: '/100', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' },
+    { icon: 'Wind', title: 'CO2 Levels', value: '--', unit: 'ppm', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' },
+    { icon: 'Sun', title: 'Solar Radiation', value: '--', unit: 'kWh/m²', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' }
+  ];
+
   // Backend Data States
-  const [environmentalMetrics, setEnvironmentalMetrics] = useState([]);
+  const [environmentalMetrics, setEnvironmentalMetrics] = useState(initialMetrics);
   const [weeklyData, setWeeklyData] = useState([]);
   const [emissionsBySource, setEmissionsBySource] = useState([]);
   const [conservationProgress, setConservationProgress] = useState([]);
@@ -124,56 +175,18 @@ export default function Dashboard() {
 
   const loadDummyData = () => {
     setEnvironmentalMetrics([
-      { icon: 'Leaf', title: 'Air Quality Index', value: 156, unit: 'AQI', change: -12, status: 'moderate', color: '#f59e0b', bgColor: '#fef3c7', trend: 'down' },
-      { icon: 'Droplets', title: 'Water Quality', value: 78, unit: '/100', change: 5, status: 'good', color: '#3b82f6', bgColor: '#dbeafe', trend: 'up' },
-      { icon: 'Wind', title: 'CO2 Levels', value: 421, unit: 'ppm', change: 2.3, status: 'warning', color: '#ef4444', bgColor: '#fee2e2', trend: 'up' },
-      { icon: 'Sun', title: 'Solar Radiation', value: 5.2, unit: 'kWh/m²', change: 0.8, status: 'excellent', color: '#f97316', bgColor: '#ffedd5', trend: 'up' }
+      { icon: 'Leaf', title: 'Air Quality Index', value: '--', unit: 'AQI', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' },
+      { icon: 'Droplets', title: 'Water Quality', value: '--', unit: '/100', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' },
+      { icon: 'Wind', title: 'CO2 Levels', value: '--', unit: 'ppm', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' },
+      { icon: 'Sun', title: 'Solar Radiation', value: '--', unit: 'kWh/m²', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' }
     ]);
 
-    setWeeklyData([
-      { day: 'Mon', aqi: 145, water: 75, co2: 418, temp: 28 },
-      { day: 'Tue', aqi: 152, water: 76, co2: 419, temp: 29 },
-      { day: 'Wed', aqi: 168, water: 74, co2: 420, temp: 30 },
-      { day: 'Thu', aqi: 155, water: 77, co2: 421, temp: 29 },
-      { day: 'Fri', aqi: 149, water: 78, co2: 422, temp: 28 },
-      { day: 'Sat', aqi: 142, water: 79, co2: 420, temp: 27 },
-      { day: 'Sun', aqi: 156, water: 78, co2: 421, temp: 28 }
-    ]);
-
-    setEmissionsBySource([
-      { name: 'Transportation', value: 35, color: '#ef4444' },
-      { name: 'Industry', value: 28, color: '#f59e0b' },
-      { name: 'Agriculture', value: 18, color: '#10b981' },
-      { name: 'Residential', value: 12, color: '#3b82f6' },
-      { name: 'Commercial', value: 7, color: '#8b5cf6' }
-    ]);
-
-    setConservationProgress([
-      { category: 'Energy Saved', current: 2340, target: 3000, unit: 'kWh', percentage: 78 },
-      { category: 'Water Conserved', current: 18500, target: 25000, unit: 'L', percentage: 74 },
-      { category: 'Waste Recycled', current: 450, target: 600, unit: 'kg', percentage: 75 },
-      { category: 'Trees Planted', current: 1250, target: 1500, unit: 'trees', percentage: 83 }
-    ]);
-
-    setAlerts([
-      { severity: 'high', title: 'Air Quality Alert', message: 'AQI levels above safe threshold in industrial zones', time: '2 hours ago', icon: 'AlertCircle', color: '#ef4444' },
-      { severity: 'medium', title: 'Water Usage Spike', message: 'Unusual increase in water consumption detected', time: '5 hours ago', icon: 'Droplets', color: '#f59e0b' },
-      { severity: 'low', title: 'Renewable Energy Goal', message: 'Solar panel efficiency up by 12%', time: '1 day ago', icon: 'Sun', color: '#10b981' }
-    ]);
-
-    setRegionalComparison([
-      { region: 'Darbhanga', score: 68, trend: 'stable' },
-      { region: 'Bihar Avg', score: 62, trend: 'up' },
-      { region: 'National Avg', score: 58, trend: 'down' },
-      { region: 'Target', score: 80, trend: 'neutral' }
-    ]);
-
-    setAiInsights([
-      { title: '⚡ Immediate Action Required', message: 'Air quality in industrial zones requires intervention. Recommend increasing green cover and implementing emission controls.' },
-      { title: '📈 Positive Trend Detected', message: 'Water conservation efforts showing results. 18% improvement over last month with community participation.' },
-      { title: '🎯 Goal Achievement', message: 'Tree plantation campaign on track to exceed targets by 15%. Continue momentum through winter season.' },
-      { title: '⚠️ Risk Prediction', message: 'Model predicts increased heat stress next week. Prepare public health advisories and cooling centers.' }
-    ]);
+    setWeeklyData([]);
+    setEmissionsBySource([]);
+    setConservationProgress([]);
+    setAlerts([]);
+    setRegionalComparison([]);
+    setAiInsights([]);
   };
 
   const handleNavigation = (path) => {
@@ -189,7 +202,7 @@ export default function Dashboard() {
   };
 
   const getIconComponent = (iconName) => {
-    const icons = { Leaf, Droplets, Wind, Sun, AlertCircle };
+    const icons = { Leaf, Droplets, Wind, Sun, AlertCircle, Zap, Shield, MapPin, Activity };
     return icons[iconName] || Activity;
   };
 
@@ -208,16 +221,6 @@ export default function Dashboard() {
     { path: '/environment/settings', icon: Cog, label: 'Settings' }
   ];
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div>
-          <div className="loading-spinner"></div>
-          <p className="loading-text">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="dashboard-container">
@@ -242,220 +245,327 @@ export default function Dashboard() {
         </nav>
         <button className="toggle-btn" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
           {sidebarCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          <span className="toggle-btn-text">{sidebarCollapsed ? 'Expand' : 'Collapse'}</span>
+          <span className="toggle-btn-text">{sidebarCollapsed ? 'Expand Menu' : 'Collapse Menu'}</span>
         </button>
       </aside>
 
       {/* Main Content */}
       <main className={`main-content ${sidebarCollapsed ? 'expanded' : ''}`}>
-        <div className="max-w-1400 m-auto">
-          {/* Header */}
-          <div className="glass-card header-container" style={{ padding: '32px', marginBottom: '24px' }}>
+        <div className="max-w-1400">
+          {/* Header Section */}
+          <div className="glass-card header-container">
             <div className="header-left">
               <div className="header-icon-box">
-                <Activity className="metric-icon" size={48} style={{ color: '#3b82f6' }} />
+                <Leaf size={44} />
               </div>
-              <div>
+              <div className="header-info">
                 <h1 className="header-title">Environmental Dashboard</h1>
-                <p className="header-subtitle">Real-time monitoring and AI-powered insights for Darbhanga, Bihar</p>
+                <p className="header-subtitle">Real-time monitoring and AI insights for {selectedDistrict}, {selectedState}</p>
               </div>
             </div>
-            <button className={`refresh-btn ${refreshing ? 'refreshing' : ''}`} onClick={handleRefresh} disabled={refreshing}>
-              <RefreshCw size={18} />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
-            </button>
-          </div>
-
-          {/* Time Range Selector */}
-          <div className="glass-card" style={{ padding: '16px', marginBottom: '24px' }}>
-            <div className="time-range-selector">
-              {['day', 'week', 'month', 'year'].map((range) => (
-                <button
-                  key={range}
-                  onClick={() => setTimeRange(range)}
-                  className={`time-range-btn ${timeRange === range ? 'time-range-btn-active' : ''}`}
-                  style={{
-                    padding: '12px 24px',
-                    borderRadius: '10px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  {range.charAt(0).toUpperCase() + range.slice(1)}
-                </button>
-              ))}
+            <div className="header-right">
+              <div className="location-selectors">
+                <div className="select-wrapper">
+                  <MapPin size={14} className="select-icon" />
+                  <select
+                    value={selectedState}
+                    onChange={(e) => {
+                      setSelectedState(e.target.value);
+                      setSelectedDistrict(locationData[e.target.value][0]);
+                    }}
+                    className="location-select"
+                  >
+                    {Object.keys(locationData).map(state => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="select-wrapper">
+                  <Activity size={14} className="select-icon" />
+                  <select
+                    value={selectedDistrict}
+                    onChange={(e) => setSelectedDistrict(e.target.value)}
+                    className="location-select"
+                  >
+                    {locationData[selectedState].map(dist => (
+                      <option key={dist} value={dist}>{dist}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <button
+                className={`refresh-btn ${refreshing ? 'refreshing' : ''}`}
+                onClick={handleRefresh}
+                disabled={refreshing}
+              >
+                <RefreshCw size={20} />
+                <span>{refreshing ? 'Syncing...' : 'Sync Data'}</span>
+              </button>
             </div>
           </div>
 
-          {/* Key Metrics Cards */}
+          {/* Time Filter */}
+          <div className="time-range-container">
+            {['Day', 'Week', 'Month', 'Year'].map((range) => (
+              <button
+                key={range}
+                onClick={() => setTimeRange(range.toLowerCase())}
+                className={`time-range-btn ${timeRange === range.toLowerCase() ? 'active' : ''}`}
+              >
+                {range}
+              </button>
+            ))}
+          </div>
+
+          {/* Metrics Grid */}
           <div className="metrics-grid">
             {environmentalMetrics.map((metric, index) => {
               const Icon = getIconComponent(metric.icon);
-              const TrendIcon = metric.trend === 'up' ? TrendingUp : TrendingDown;
+              const isPositive = metric.change >= 0;
               return (
-                <div key={index} className="metric-card glass-card" style={{ padding: '24px', borderLeft: `4px solid ${metric.color}` }}>
-                  <div className="metric-card-header">
-                    <div className="metric-icon-box" style={{ background: metric.bgColor }}>
-                      <Icon className="metric-icon" size={24} style={{ color: metric.color }} />
+                <div key={index} className="glass-card metric-card">
+                  <div className="metric-header">
+                    <div className="metric-icon-box" style={{ background: `${metric.color}20`, color: metric.color }}>
+                      <Icon size={28} />
                     </div>
-                    <span className="metric-status-badge" style={{ background: metric.bgColor, color: metric.color }}>
-                      {metric.status.toUpperCase()}
+                    <span
+                      className="metric-status-badge"
+                      style={{ background: `${metric.color}15`, color: metric.color }}
+                    >
+                      {metric.status}
                     </span>
                   </div>
-                  <h3 className="metric-title-text">{metric.title}</h3>
-                  <div className="metric-value-container">
-                    <p className="metric-value-text">{metric.value}</p>
-                    <span className="metric-unit-text">{metric.unit}</span>
+
+                  <div className="metric-main-content">
+                    <h3 className="metric-label">{metric.title}</h3>
+                    <div className="metric-value-wrap">
+                      <span className="metric-val">{metric.value}</span>
+                      <span className="metric-unit-tag">{metric.unit}</span>
+                    </div>
                   </div>
-                  <div className="metric-change-box" style={{ background: metric.change > 0 ? '#fee2e2' : '#d1fae5' }}>
-                    <TrendIcon size={16} style={{ marginRight: '6px', color: metric.change > 0 ? '#ef4444' : '#10b981' }} />
-                    <span className="metric-change-text" style={{ color: metric.change > 0 ? '#ef4444' : '#10b981' }}>
-                      {Math.abs(metric.change)}% vs last {timeRange}
-                    </span>
+
+                  <div className={`metric-trend ${isPositive ? 'up' : 'down'}`}>
+                    {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                    <span>{Math.abs(metric.change)}% vs last {timeRange}</span>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          <div className="charts-layout-grid">
-            {/* Weekly Trends Chart */}
-            <div className="glass-card chart-container" style={{ padding: '24px', gridColumn: window.innerWidth > 1024 ? 'span 2' : 'span 1' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Weekly Environmental Trends</h2>
-              <ResponsiveContainer width="100%" height={300}>
+          {/* Charts Grid */}
+          <div className="charts-grid">
+            <div className="glass-card chart-card-large">
+              <div className="chart-header">
+                <h2>Environmental Trends</h2>
+                <Activity size={20} color="var(--text-muted)" />
+              </div>
+              <ResponsiveContainer width="100%" height={350}>
                 <LineChart data={weeklyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="day" stroke="#64748b" style={{ fontSize: '12px' }} />
-                  <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis
+                    dataKey="day"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    dy={10}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#64748b', fontSize: 12 }}
+                  />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #e2e8f0',
+                      backgroundColor: '#fff',
+                      border: 'none',
                       borderRadius: '12px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'
                     }}
                   />
-                  <Legend />
-                  <Line type="monotone" dataKey="aqi" stroke="#f59e0b" strokeWidth={3} name="AQI" dot={{ fill: '#f59e0b', r: 4 }} />
-                  <Line type="monotone" dataKey="water" stroke="#3b82f6" strokeWidth={3} name="Water Quality" dot={{ fill: '#3b82f6', r: 4 }} />
-                  <Line type="monotone" dataKey="temp" stroke="#ef4444" strokeWidth={3} name="Temperature (°C)" dot={{ fill: '#ef4444', r: 4 }} />
+                  <Legend iconType="circle" />
+                  <Line
+                    type="monotone"
+                    dataKey="aqi"
+                    stroke="var(--warning)"
+                    strokeWidth={4}
+                    dot={false}
+                    activeDot={{ r: 6, strokeWidth: 0 }}
+                    name="AQI Index"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="water"
+                    stroke="var(--primary)"
+                    strokeWidth={4}
+                    dot={false}
+                    activeDot={{ r: 6, strokeWidth: 0 }}
+                    name="Water Purity"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="temp"
+                    stroke="var(--danger)"
+                    strokeWidth={4}
+                    dot={false}
+                    activeDot={{ r: 6, strokeWidth: 0 }}
+                    name="Temp (°C)"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Emissions by Source */}
-            <div className="glass-card chart-container" style={{ padding: '24px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Emissions by Source</h2>
-              <ResponsiveContainer width="100%" height={250}>
+            <div className="glass-card chart-card-small">
+              <div className="chart-header">
+                <h2>Emission Sources</h2>
+                <Cloud size={20} color="var(--text-muted)" />
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
                     data={emissionsBySource}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    innerRadius={60}
                     outerRadius={80}
-                    fill="#8884d8"
+                    paddingAngle={5}
                     dataKey="value"
                   >
                     {emissionsBySource.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px' }} />
+                  <Tooltip
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'var(--shadow-lg)' }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
+              <div style={{ marginTop: '20px' }}>
+                {emissionsBySource.map((e, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: e.color }} />
+                    <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{e.name}</span>
+                    <span style={{ marginLeft: 'auto', fontWeight: '700' }}>{e.value}%</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Conservation Progress */}
-          <div className="glass-card" style={{ padding: '24px', marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', marginBottom: '24px' }}>Conservation Progress</h2>
+          {/* Conservation Section */}
+          <div className="conservation-section">
+            <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Conservation Impact</h2>
             <div className="conservation-grid">
               {conservationProgress.map((item, index) => (
-                <div key={index} className="conservation-card">
-                  <h3 className="conservation-label">{item.category}</h3>
-                  <div className="conservation-value-container">
-                    <span className="conservation-value-text">{item.current.toLocaleString()}</span>
-                    <span className="conservation-target-text">/ {item.target.toLocaleString()} {item.unit}</span>
+                <div key={index} className="conservation-item">
+                  <h3 className="conservation-title">{item.category}</h3>
+                  <div className="conservation-stats">
+                    <span className="current-value">{item.current.toLocaleString()}</span>
+                    <span className="target-value">/ {item.target.toLocaleString()} {item.unit}</span>
                   </div>
-                  <div className="progress-bar" style={{ width: '100%', height: '10px', borderRadius: '12px', marginBottom: '8px' }}>
-                    <div className="progress-fill" style={{ width: `${item.percentage}%`, background: 'linear-gradient(90deg, #10b981 0%, #3b82f6 100%)' }}></div>
+                  <div className="progress-track">
+                    <div className="progress-bar" style={{ width: `${item.percentage}%` }} />
                   </div>
-                  <p className="conservation-percentage-text">{item.percentage}% Complete</p>
+                  <p className="progress-percent">{item.percentage}% ACHIEVED</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="charts-layout-grid">
-            {/* Alerts Section */}
-            <div className="glass-card" style={{ padding: '24px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Recent Alerts</h2>
+          {/* Alerts & Comparison */}
+          <div className="bottom-grid">
+            <div className="glass-card">
+              <div className="chart-header">
+                <h2>Security & Safety Alerts</h2>
+                <AlertCircle size={20} color="var(--danger)" />
+              </div>
               <div className="alerts-list">
-                {alerts.map((alert, index) => {
-                  const Icon = getIconComponent(alert.icon);
-                  const bgColor = alert.severity === 'high' ? '#fef2f2' : alert.severity === 'medium' ? '#fefce8' : '#f0fdf4';
-                  const iconBg = alert.severity === 'high' ? '#fee2e2' : alert.severity === 'medium' ? '#fef3c7' : '#d1fae5';
+                {alerts.length > 0 ? alerts.map((alert, index) => {
+                  const AlertIcon = getIconComponent(alert.icon);
                   return (
-                    <div key={index} className="alert-item" style={{ background: bgColor, borderRadius: '12px', padding: '16px', borderLeft: `4px solid ${alert.color}` }}>
-                      <div style={{ display: 'flex', alignItems: 'start' }}>
-                        <div className="alert-icon-box" style={{ background: iconBg }}>
-                          <Icon size={20} style={{ color: alert.color }} />
+                    <div
+                      key={index}
+                      className="alert-card"
+                      style={{
+                        background: `${alert.color}08`,
+                        borderLeftColor: alert.color
+                      }}
+                    >
+                      <div className="alert-icon-box" style={{ background: `${alert.color}15`, color: alert.color }}>
+                        <AlertIcon size={20} />
+                      </div>
+                      <div className="alert-content">
+                        <div className="alert-card-header">
+                          <span className="alert-title">{alert.title}</span>
+                          <span className="alert-time">{alert.time}</span>
                         </div>
-                        <div className="alert-content">
-                          <div className="alert-header">
-                            <h3 className="alert-title-text">{alert.title}</h3>
-                            <span className="alert-time-text">{alert.time}</span>
-                          </div>
-                          <p className="alert-message-text">{alert.message}</p>
-                        </div>
+                        <p className="alert-msg">{alert.message}</p>
                       </div>
                     </div>
                   );
-                })}
+                }) : (
+                  <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+                    No active alerts in this period.
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Regional Comparison */}
-            <div className="glass-card chart-container" style={{ padding: '24px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Regional Comparison</h2>
-              <ResponsiveContainer width="100%" height={250}>
+            <div className="glass-card">
+              <div className="chart-header">
+                <h2>Regional Performance</h2>
+                <MapPin size={20} color="var(--primary)" />
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={regionalComparison} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis type="number" domain={[0, 100]} stroke="#64748b" style={{ fontSize: '12px' }} />
-                  <YAxis type="category" dataKey="region" stroke="#64748b" width={100} style={{ fontSize: '12px' }} />
-                  <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px' }} />
-                  <Bar dataKey="score" fill="#3b82f6" radius={[0, 8, 8, 0]} />
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                  <XAxis type="number" hide />
+                  <YAxis
+                    type="category"
+                    dataKey="region"
+                    axisLine={false}
+                    tickLine={false}
+                    width={100}
+                    tick={{ fill: '#64748b', fontSize: 13 }}
+                  />
+                  <Tooltip
+                    cursor={{ fill: '#f8fafc' }}
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'var(--shadow-lg)' }}
+                  />
+                  <Bar dataKey="score" fill="var(--primary)" radius={[0, 10, 10, 0]} barSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* AI Insights Panel */}
-          <div className="ai-insights-panel" style={{ marginBottom: '24px' }}>
-            <div className="ai-insights-layout">
-              <div className="ai-insights-icon-box">
-                <Activity size={32} />
-              </div>
-              <div className="ai-insights-content">
-                <h2 className="ai-insights-title">AI-Powered Insights</h2>
-                <div className="ai-insights-grid">
-                  {aiInsights.map((insight, index) => (
-                    <div key={index} className="ai-insight-card">
-                      <h3 className="ai-insight-title-text">{insight.title}</h3>
-                      <p className="ai-insight-message-text">{insight.message}</p>
-                    </div>
-                  ))}
-                </div>
+          <div className="ai-panel">
+            <div className="ai-icon-large">
+              <Zap size={40} />
+            </div>
+            <div className="ai-content">
+              <h2>Sentient Insights</h2>
+              <div className="ai-insights-grid">
+                {aiInsights.map((insight, index) => (
+                  <div key={index} className="ai-card">
+                    <h3>{insight.title}</h3>
+                    <p>{insight.message}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
           {error && (
-            <div className="error-notice">
-              <strong>⚠️ Note:</strong> {error}. Displaying sample data for demonstration.
+            <div style={{
+              marginTop: '32px',
+              padding: '16px',
+              borderRadius: '12px',
+              background: 'var(--warning-light)',
+              color: 'var(--warning)',
+              border: '1px solid var(--warning)',
+              fontSize: '14px',
+              fontWeight: '600'
+            }}>
+              ⚠️ {error}. Displaying localized simulation data.
             </div>
           )}
         </div>
