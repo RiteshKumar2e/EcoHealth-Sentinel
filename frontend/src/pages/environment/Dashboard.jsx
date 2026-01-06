@@ -22,13 +22,14 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [timeRange, setTimeRange] = useState('week');
+  const [timeRange, setTimeRange] = useState('Day');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   // State and District Selection
-  const [selectedState, setSelectedState] = useState('Bihar');
-  const [selectedDistrict, setSelectedDistrict] = useState('Darbhanga');
+  // State and District Selection
+  const [selectedState, setSelectedState] = useState('Select State');
+  const [selectedDistrict, setSelectedDistrict] = useState('Select City');
 
   const locationData = {
     'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Tirupati', 'Kakinada', 'Rajahmundry'],
@@ -58,16 +59,18 @@ export default function Dashboard() {
     'Punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala'],
     'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Ajmer'],
     'Sikkim': ['Gangtok'],
-    'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli'],
+    'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem'],
     'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad'],
     'Tripura': ['Agartala'],
-    'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Noida', 'Prayagraj'],
-    'Uttarakhand': ['Dehradun', 'Haridwar', 'Rishikesh'],
-    'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri'],
-    'Andaman & Nicobar Islands': ['Port Blair'],
-    'Lakshadweep': ['Kavaratti'],
-    'Dadra & Nagar Haveli and Daman & Diu': ['Daman']
+    'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Meerut', 'Prayagraj'],
+    'Uttarakhand': ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani'],
+    'West Bengal': ['Kolkata', 'Howrah', 'Siliguri', 'Durgapur', 'Asansol']
   };
+
+  useEffect(() => {
+    // Initial data fetch or setup if needed
+  }, []);
+
 
   // Placeholder Values for Initial State
   const initialMetrics = [
@@ -271,10 +274,12 @@ export default function Dashboard() {
                     value={selectedState}
                     onChange={(e) => {
                       setSelectedState(e.target.value);
-                      setSelectedDistrict(locationData[e.target.value][0]);
+                      const districts = locationData[e.target.value] || [];
+                      setSelectedDistrict(districts.length > 0 ? districts[0] : 'Select City');
                     }}
                     className="location-select"
                   >
+                    <option value="Select State">Select State</option>
                     {Object.keys(locationData).map(state => (
                       <option key={state} value={state}>{state}</option>
                     ))}
@@ -286,8 +291,10 @@ export default function Dashboard() {
                     value={selectedDistrict}
                     onChange={(e) => setSelectedDistrict(e.target.value)}
                     className="location-select"
+                    disabled={selectedState === 'Select State'}
                   >
-                    {locationData[selectedState].map(dist => (
+                    <option value="Select City">Select City</option>
+                    {(locationData[selectedState] || []).map(dist => (
                       <option key={dist} value={dist}>{dist}</option>
                     ))}
                   </select>
