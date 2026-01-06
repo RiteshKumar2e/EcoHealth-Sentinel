@@ -113,8 +113,8 @@
 
 .market-view-inner {
     width: 100%;
-    max-width: 1440px;
-    margin: 0 auto;
+    max-width: 1560px;
+    margin: 0;
     position: relative;
     z-index: 1;
     display: flex;

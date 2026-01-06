@@ -81,10 +81,11 @@
 
 /* --- Panel Header --- */
 .agri-panel-header {
-    background: #0f172a;
-    padding: 30px 24px;
+    background: #ffffff;
+    padding: 30px 24px 20px;
     position: relative;
-    color: white;
+    color: #0f172a;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .header-status-badge {
@@ -94,9 +95,10 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(16, 185, 129, 0.1);
+    background: #f0fdf4;
     padding: 4px 10px;
     border-radius: 100px;
+    border: 1px solid rgba(16, 185, 129, 0.1);
 }
 
 .status-dot {
@@ -119,7 +121,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-top: 5px;
+    margin-top: 15px;
 }
 
 .header-bot-icon {
@@ -130,34 +132,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 8px 16px rgba(16, 185, 129, 0.2);
 }
 
 .header-text h3 {
     margin: 0;
-    font-size: 17px;
-    font-weight: 800;
-    color: white;
+    font-size: 18px;
+    font-weight: 850;
+    color: #0f172a;
     font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.02em;
 }
 
 .header-text p {
     margin: 0;
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.5);
+    color: #64748b;
     font-weight: 600;
 }
 
 .close-btn {
     position: absolute;
-    top: 20px;
+    top: 24px;
     right: 20px;
-    background: rgba(255, 255, 255, 0.05);
+    background: #f1f5f9;
     border: none;
-    color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
+    color: #94a3b8;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -166,8 +169,8 @@
 }
 
 .close-btn:hover {
-    background: rgba(239, 68, 68, 0.2);
-    color: #f87171;
+    background: #fee2e2;
+    color: #ef4444;
     transform: rotate(90deg);
 }
 

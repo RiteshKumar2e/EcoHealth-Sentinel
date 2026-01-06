@@ -37,17 +37,6 @@ const Dashboard = () => {
     setAlerts([]);
   };
 
-  const SidebarItem = ({ path, icon: Icon, label, isActive }) => {
-    return (
-      <div
-        onClick={() => navigate(path)}
-        className={`sidebar-item ${isActive ? 'active' : ''}`}
-      >
-        <Icon size={20} />
-        {label}
-      </div>
-    );
-  };
 
   const MetricCard = ({ icon: Icon, iconColor, badge, badgeType, label, value, info, progress, onClick }) => {
     return (

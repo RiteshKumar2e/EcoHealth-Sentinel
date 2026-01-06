@@ -20,8 +20,9 @@
 
 /* Scoped Workspace Alignment */
 .pest-control-container .pest-workspace {
-    padding: 32px 40px;
+    padding: 0;
     width: 100%;
+    max-width: 1560px;
     margin: 0;
     display: flex;
     flex-direction: column;

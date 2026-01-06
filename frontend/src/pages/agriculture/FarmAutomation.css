@@ -11,17 +11,13 @@
 }
 
 .sentinel-hub-root {
-    display: grid;
-    grid-template-columns: 1fr 350px;
-    height: 100vh;
-    background-color: var(--sentinel-white);
-    background-color: var(--sentinel-white);
+    display: flex;
+    flex-direction: column;
+    max-width: 1560px;
+    margin: 0;
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: var(--sentinel-navy);
-    overflow: hidden;
 }
-
-/* 1. LEFT SIDEBAR REMOVED */
 
 /* METRICS HORIZONTAL HEADER */
 .sentinel-metrics-horizontal {
@@ -73,10 +69,9 @@
 /* 2. MAIN CENTER */
 .sentinel-main-frame {
     background: #f8fbff;
-    padding: 40px;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
 }
 
 .main-frame-header {
@@ -162,7 +157,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding-bottom: 100px;
+    padding: 60px 0;
 }
 
 .sentinel-hollow-logo {
@@ -208,9 +203,7 @@
 
 /* 3. RIGHT SIDEBAR */
 .sentinel-sidebar-right {
-    padding: 32px 24px;
-    background: var(--sentinel-white);
-    border-left: 1px solid var(--sentinel-border);
+    padding: 32px 0;
     display: flex;
     flex-direction: column;
     gap: 32px;
@@ -319,13 +312,27 @@
     align-items: center;
     justify-content: center;
 }
+
 /* Overrides for Metric Pill Icons */
-.eco .pill-icon { background: #f0fdf4; color: #10b981; }
-.active .pill-icon { background: #f0f9ff; color: #0ea5e9; }
-.system .pill-icon { background: #f5f3ff; color: #6366f1; }
+.eco .pill-icon {
+    background: #f0fdf4;
+    color: #10b981;
+}
+
+.active .pill-icon {
+    background: #f0f9ff;
+    color: #0ea5e9;
+}
+
+.system .pill-icon {
+    background: #f5f3ff;
+    color: #6366f1;
+}
 
 /* Force single column layout override */
-.sentinel-hub-root { grid-template-columns: 1fr !important; }
+.sentinel-hub-root {
+    grid-template-columns: 1fr !important;
+}
 
 /* 4. PROVISION MODAL STYLES */
 .sentinel-modal-overlay {
@@ -365,6 +372,7 @@
     margin: 0;
     background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -523,9 +531,19 @@
     box-shadow: 0 0 0 2px #f1f5f9;
 }
 
-.status-orb.idle { background: #cbd5e1; }
-.status-orb.active { background: #10b981; box-shadow: 0 0 0 2px #d1fae5; }
-.status-orb.scanning { background: #f59e0b; box-shadow: 0 0 0 2px #fde68a; }
+.status-orb.idle {
+    background: #cbd5e1;
+}
+
+.status-orb.active {
+    background: #10b981;
+    box-shadow: 0 0 0 2px #d1fae5;
+}
+
+.status-orb.scanning {
+    background: #f59e0b;
+    box-shadow: 0 0 0 2px #fde68a;
+}
 
 .node-identity h4 {
     margin: 0;
@@ -622,14 +640,33 @@
 }
 
 /* RESET: Ensure no conflicting styles on card elements */
-.sentinel-card-v2 h4 { margin: 0; line-height: 1.2; }
-.sentinel-card-v2 p { margin: 0; }
-.sentinel-card-v2 button { outline: none; }
+.sentinel-card-v2 h4 {
+    margin: 0;
+    line-height: 1.2;
+}
 
-.card-top-info { align-items: center; }
+.sentinel-card-v2 p {
+    margin: 0;
+}
+
+.sentinel-card-v2 button {
+    outline: none;
+}
+
+.card-top-info {
+    align-items: center;
+}
 
 /* Stronger specificities */
-.sentinel-cards-layout .sentinel-card-v2 { display: flex; flex-direction: column; background: white; border: 1px solid #e2e8f0; }
+.sentinel-cards-layout .sentinel-card-v2 {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1px solid #e2e8f0;
+}
 
-.sentinel-card-v2 .node-identity { display: flex; align-items: center; gap: 12px; }
-
+.sentinel-card-v2 .node-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}

@@ -63,14 +63,34 @@ const AgricultureLayout = () => {
 
             <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ backgroundColor: '#ffffff', borderRight: '1px solid #e2e8f0' }}>
                 <div className="sidebar-header" style={{ padding: '24px' }}>
-                    <div className="sidebar-brand-container" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div className="brand-logo-hex" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', width: '42px', height: '42px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Sprout size={24} color="white" fill="white" />
+                    <div className="sidebar-brand-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div className="brand-logo-hex" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', width: '42px', height: '42px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Sprout size={24} color="white" fill="white" />
+                            </div>
+                            <div className="brand-text-block">
+                                <h1 className="brand-title" style={{ fontSize: '20px', fontWeight: '800', margin: 0, color: '#0f172a' }}>AgriAI</h1>
+                                <p className="brand-subtitle" style={{ fontSize: '10px', color: '#10b981', fontWeight: '700', margin: 0 }}>SENTINEL COMMAND</p>
+                            </div>
                         </div>
-                        <div className="brand-text-block">
-                            <h1 className="brand-title" style={{ fontSize: '20px', fontWeight: '800', margin: 0, color: '#0f172a' }}>AgriAI</h1>
-                            <p className="brand-subtitle" style={{ fontSize: '10px', color: '#10b981', fontWeight: '700', margin: 0 }}>SENTINEL COMMAND</p>
-                        </div>
+                        <button
+                            onClick={() => setIsSidebarOpen(false)}
+                            style={{
+                                background: '#f1f5f9',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '6px',
+                                cursor: 'pointer',
+                                color: '#64748b',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s'
+                            }}
+                            className="sidebar-close-btn-inner"
+                        >
+                            <X size={18} />
+                        </button>
                     </div>
                 </div>
 
@@ -119,16 +139,18 @@ const AgricultureLayout = () => {
             </div>
 
             <div className={`main-content ${!isSidebarOpen ? 'sidebar-closed' : ''}`}>
-                <button
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className={`menu-toggle ${isSidebarOpen ? 'sidebar-open' : ''}`}
-                    style={{
-                        background: isSidebarOpen ? '#f1f5f9' : 'linear-gradient(135deg, #10b981, #059669)',
-                        color: isSidebarOpen ? '#64748b' : 'white'
-                    }}
-                >
-                    {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-                </button>
+                {!isSidebarOpen && (
+                    <button
+                        onClick={() => setIsSidebarOpen(true)}
+                        className="menu-toggle"
+                        style={{
+                            background: 'linear-gradient(135deg, #10b981, #059669)',
+                            color: 'white'
+                        }}
+                    >
+                        <Menu size={20} />
+                    </button>
+                )}
 
                 <div className="healthcare-content-wrapper">
                     <div className="healthcare-content-inner">

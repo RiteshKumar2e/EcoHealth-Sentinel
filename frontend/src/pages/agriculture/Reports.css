@@ -21,8 +21,8 @@
 }
 
 .reports-content-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1560px;
+    margin: 0;
     position: relative;
     z-index: 1;
 }
