@@ -206,7 +206,6 @@ export default function Dashboard() {
     { path: '/environment/dashboard', icon: Home, label: 'Dashboard' },
     { path: '/environment/awareness', icon: Leaf, label: 'Awareness Hub' },
     { path: '/environment/carbon', icon: Cloud, label: 'Carbon Calculator' },
-    { path: '/environment/chatbot', icon: MessageSquare, label: 'Chatbot' },
     { path: '/environment/climate', icon: Wind, label: 'Climate Predictions' },
     { path: '/environment/disaster', icon: Shield, label: 'Disaster Prediction' },
     { path: '/environment/pollution', icon: MapPin, label: 'Pollution Heatmap' },

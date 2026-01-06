@@ -41,7 +41,7 @@ import EnvironmentLayout from "./pages/environment/EnvironmentLayout.jsx";
 import EnvProfile from "./pages/environment/Profile.jsx";
 import AwarenessHub from "./pages/environment/AwarenessHub.jsx";
 import CarbonCalculator from "./pages/environment/CarbonCalculator.jsx";
-import EnvChatbot from "./pages/environment/Chatbot.jsx";
+// import EnvChatbot from "./pages/environment/Chatbot.jsx"; // Removed non-existent resource
 import ClimatePredictions from "./pages/environment/ClimatePredictions.jsx";
 import EnvDashboard from "./pages/environment/Dashboard.jsx";
 import DisasterPrediction from "./pages/environment/DisasterPrediction.jsx";
@@ -122,7 +122,7 @@ const App = () => {
           <Route path="dashboard" element={<EnvDashboard />} />
           <Route path="awareness" element={<AwarenessHub />} />
           <Route path="carbon" element={<CarbonCalculator />} />
-          <Route path="chatbot" element={<EnvChatbot />} />
+          {/* <Route path="chatbot" element={<EnvChatbot />} /> */}
           <Route path="climate" element={<ClimatePredictions />} />
           <Route path="disaster" element={<DisasterPrediction />} />
           <Route path="pollution" element={<PollutionHeatmap />} />

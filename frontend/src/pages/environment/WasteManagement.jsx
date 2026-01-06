@@ -115,164 +115,165 @@ export default function WasteManagement() {
   return (
     <>
       <div className="waste-container">
-        {/* Top Navigation */}
-        <div className="top-navbar">
-          <div className="nav-left">
-            <div className="flex-center gap-8">
-              <div className="p-8 bg-green-100 br-8">
-                <Recycle className="icon-20 text-green-600" />
+        <div className="max-w-1400">
+          {/* Top Navigation */}
+          <div className="top-navbar">
+            <div className="nav-left">
+              <div className="flex-center gap-8">
+                <div className="p-8 bg-green-100 br-8">
+                  <Recycle className="icon-20 text-green-600" />
+                </div>
+                <h2 className="nav-title m-0">Smart Waste Management</h2>
               </div>
-              <h2 className="nav-title m-0">Smart Waste Management</h2>
+            </div>
+
+            <div className="flex-center gap-16">
+
+              <div className="nav-actions">
+                <button className="icon-btn" onClick={exportData} title="Export Report">
+                  <Download className="icon-18 text-slate-600" />
+                </button>
+                <button className="notification-btn" onClick={toggleNotifications}>
+                  <Bell className="icon-18 text-slate-600" />
+                  {notifications > 0 && <span className="notification-badge">{notifications}</span>}
+                </button>
+                <button className="icon-btn icon-btn-primary" onClick={optimizeRoute} disabled={loading} title="Optimize Routes">
+                  {loading ? <Loader className="icon-18 spin" /> : <Zap className="icon-18" />}
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="flex-center gap-16">
+          <div className="container-wrapper">
+            {/* Main Content Grid */}
+            <div className="charts-grid">
 
-            <div className="nav-actions">
-              <button className="icon-btn" onClick={exportData} title="Export Report">
-                <Download className="icon-18 text-slate-600" />
-              </button>
-              <button className="notification-btn" onClick={toggleNotifications}>
-                <Bell className="icon-18 text-slate-600" />
-                {notifications > 0 && <span className="notification-badge">{notifications}</span>}
-              </button>
-              <button className="icon-btn icon-btn-primary" onClick={optimizeRoute} disabled={loading} title="Optimize Routes">
-                {loading ? <Loader className="icon-18 spin" /> : <Zap className="icon-18" />}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="container-wrapper">
-          {/* Main Content Grid */}
-          <div className="charts-grid">
-
-            {/* KPI Section */}
-            <div className="col-span-12 mb-24">
-              {kpiMetrics.length > 0 ? (
-                <div className="kpi-grid">
-                  {kpiMetrics.map((kpi, index) => (
-                    <div key={index} className="kpi-card" style={{ borderTopColor: kpi.color }}>
-                      {/* ... KPI Item Content ... */}
+              {/* KPI Section */}
+              <div className="col-span-12 mb-24">
+                {kpiMetrics.length > 0 ? (
+                  <div className="kpi-grid">
+                    {kpiMetrics.map((kpi, index) => (
+                      <div key={index} className="kpi-card" style={{ borderTopColor: kpi.color }}>
+                        {/* ... KPI Item Content ... */}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="kpi-grid">
+                    <div className="kpi-card flex-center flex-col p-24">
+                      <div className="flex-between w-full mb-8">
+                        <span className="text-sm text-slate-600">Collection Rate</span>
+                        <TrendingUp size={16} className="text-slate-400" />
+                      </div>
+                      <div className="text-2xl font-bold text-slate-800">--%</div>
                     </div>
-                  ))}
+                    <div className="kpi-card flex-center flex-col p-24">
+                      <div className="flex-between w-full mb-8">
+                        <span className="text-sm text-slate-600">Total Waste</span>
+                        <Trash2 size={16} className="text-slate-400" />
+                      </div>
+                      <div className="text-2xl font-bold text-slate-800">-- tons</div>
+                    </div>
+                    <div className="kpi-card flex-center flex-col p-24">
+                      <div className="flex-between w-full mb-8">
+                        <span className="text-sm text-slate-600">Efficiency</span>
+                        <Activity size={16} className="text-slate-400" />
+                      </div>
+                      <div className="text-2xl font-bold text-slate-800">--%</div>
+                    </div>
+                    <div className="kpi-card flex-center flex-col p-24">
+                      <div className="flex-between w-full mb-8">
+                        <span className="text-sm text-slate-600">Est. Cost</span>
+                        <DollarSign size={16} className="text-slate-400" />
+                      </div>
+                      <div className="text-2xl font-bold text-slate-800">$0</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Monthly Trends */}
+              <div className="chart-card col-span-8">
+                <div className="flex-between mb-16">
+                  <h3 className="chart-title m-0"><TrendingUp className="icon-20 text-green-500" /> Monthly Trends</h3>
                 </div>
-              ) : (
-                <div className="kpi-grid">
-                  <div className="kpi-card flex-center flex-col p-24">
-                    <div className="flex-between w-full mb-8">
-                      <span className="text-sm text-slate-600">Collection Rate</span>
-                      <TrendingUp size={16} className="text-slate-400" />
-                    </div>
-                    <div className="text-2xl font-bold text-slate-800">--%</div>
-                  </div>
-                  <div className="kpi-card flex-center flex-col p-24">
-                    <div className="flex-between w-full mb-8">
-                      <span className="text-sm text-slate-600">Total Waste</span>
-                      <Trash2 size={16} className="text-slate-400" />
-                    </div>
-                    <div className="text-2xl font-bold text-slate-800">-- tons</div>
-                  </div>
-                  <div className="kpi-card flex-center flex-col p-24">
-                    <div className="flex-between w-full mb-8">
-                      <span className="text-sm text-slate-600">Efficiency</span>
-                      <Activity size={16} className="text-slate-400" />
-                    </div>
-                    <div className="text-2xl font-bold text-slate-800">--%</div>
-                  </div>
-                  <div className="kpi-card flex-center flex-col p-24">
-                    <div className="flex-between w-full mb-8">
-                      <span className="text-sm text-slate-600">Est. Cost</span>
-                      <DollarSign size={16} className="text-slate-400" />
-                    </div>
-                    <div className="text-2xl font-bold text-slate-800">$0</div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Monthly Trends */}
-            <div className="chart-card col-span-8">
-              <div className="flex-between mb-16">
-                <h3 className="chart-title m-0"><TrendingUp className="icon-20 text-green-500" /> Monthly Trends</h3>
-              </div>
-              <div className="min-h-300 flex-center">
-                {monthlyTrends.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={320}>
-                    <AreaChart data={monthlyTrends}>
-                      {/* ... Chart Config ... */}
-                    </AreaChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <EmptyState icon={TrendingUp} message="No trend data available." />
-                )}
-              </div>
-            </div>
-
-            {/* Performance Radar */}
-            <div className="chart-card col-span-4">
-              <div className="flex-between mb-16">
-                <h3 className="chart-title m-0"><Target className="icon-20 text-blue-500" /> Metrics</h3>
-              </div>
-              <div className="min-h-300 flex-center">
-                {performanceMetrics.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={320}>
-                    <RadarChart data={performanceMetrics}>
-                      {/* ... Chart Config ... */}
-                    </RadarChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <EmptyState icon={Target} message="No performance metrics." />
-                )}
-              </div>
-            </div>
-
-            {/* Cost vs Revenue */}
-            <div className="chart-card col-span-6">
-              <div className="flex-between mb-16">
-                <h3 className="chart-title m-0"><DollarSign className="icon-20 text-orange-500" /> Financials</h3>
-              </div>
-              <div className="min-h-300 flex-center">
-                {monthlyTrends.length > 0 ? (
-                  <ResponsiveContainer hidden />
-                ) : (
-                  <EmptyState icon={DollarSign} message="No financial data recorded." />
-                )}
-              </div>
-            </div>
-
-            {/* Waste Composition */}
-            <div className="chart-card col-span-6">
-              <div className="flex-between mb-16">
-                <h3 className="chart-title m-0"><PieChartIcon className="icon-20 text-purple-500" /> Composition</h3>
-              </div>
-              <div className="min-h-300 flex-center">
-                {wasteComposition.length > 0 ? (
-                  <ResponsiveContainer hidden />
-                ) : (
-                  <EmptyState icon={PieChartIcon} message="No composition analysis." />
-                )}
-              </div>
-            </div>
-
-            {/* Collection Points Status */}
-            <div className="chart-card col-span-12">
-              <div className="flex-between mb-16">
-                <h3 className="chart-title m-0"><MapPin className="icon-20 text-blue-500" /> Live Collection Points</h3>
-                <div className="flex-center gap-8">
-                  <span className="badge bg-slate-100 text-slate-500 text-xs">Total: 0</span>
-                  <span className="badge bg-green-100 text-green-600 text-xs">Active: 0</span>
+                <div className="min-h-300 flex-center">
+                  {monthlyTrends.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={320}>
+                      <AreaChart data={monthlyTrends}>
+                        {/* ... Chart Config ... */}
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <EmptyState icon={TrendingUp} message="No trend data available." />
+                  )}
                 </div>
               </div>
-              <div className="min-h-300 flex-center bg-slate-50 br-12 border-dashed">
-                <div className="text-center">
-                  <MapPin className="icon-48 text-slate-300 mb-12" />
-                  <p className="font-600 text-slate-500">No Active Collection Points</p>
-                  <p className="text-sm text-slate-400">Map data is currently unavailable</p>
+
+              {/* Performance Radar */}
+              <div className="chart-card col-span-4">
+                <div className="flex-between mb-16">
+                  <h3 className="chart-title m-0"><Target className="icon-20 text-blue-500" /> Metrics</h3>
+                </div>
+                <div className="min-h-300 flex-center">
+                  {performanceMetrics.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={320}>
+                      <RadarChart data={performanceMetrics}>
+                        {/* ... Chart Config ... */}
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <EmptyState icon={Target} message="No performance metrics." />
+                  )}
+                </div>
+              </div>
+
+              {/* Cost vs Revenue */}
+              <div className="chart-card col-span-6">
+                <div className="flex-between mb-16">
+                  <h3 className="chart-title m-0"><DollarSign className="icon-20 text-orange-500" /> Financials</h3>
+                </div>
+                <div className="min-h-300 flex-center">
+                  {monthlyTrends.length > 0 ? (
+                    <ResponsiveContainer hidden />
+                  ) : (
+                    <EmptyState icon={DollarSign} message="No financial data recorded." />
+                  )}
+                </div>
+              </div>
+
+              {/* Waste Composition */}
+              <div className="chart-card col-span-6">
+                <div className="flex-between mb-16">
+                  <h3 className="chart-title m-0"><PieChartIcon className="icon-20 text-purple-500" /> Composition</h3>
+                </div>
+                <div className="min-h-300 flex-center">
+                  {wasteComposition.length > 0 ? (
+                    <ResponsiveContainer hidden />
+                  ) : (
+                    <EmptyState icon={PieChartIcon} message="No composition analysis." />
+                  )}
+                </div>
+              </div>
+
+              {/* Collection Points Status */}
+              <div className="chart-card col-span-12">
+                <div className="flex-between mb-16">
+                  <h3 className="chart-title m-0"><MapPin className="icon-20 text-blue-500" /> Live Collection Points</h3>
+                  <div className="flex-center gap-8">
+                    <span className="badge bg-slate-100 text-slate-500 text-xs">Total: 0</span>
+                    <span className="badge bg-green-100 text-green-600 text-xs">Active: 0</span>
+                  </div>
+                </div>
+                <div className="min-h-300 flex-center bg-slate-50 br-12 border-dashed">
+                  <div className="text-center">
+                    <MapPin className="icon-48 text-slate-300 mb-12" />
+                    <p className="font-600 text-slate-500">No Active Collection Points</p>
+                    <p className="text-sm text-slate-400">Map data is currently unavailable</p>
+                  </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
