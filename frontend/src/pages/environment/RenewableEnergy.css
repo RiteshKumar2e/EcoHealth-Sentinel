@@ -203,7 +203,7 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
 }
 
 .stat-card:hover {
@@ -236,6 +236,14 @@
     overflow: hidden;
     transition: all 0.3s ease;
     animation: fadeIn 0.6s ease;
+}
+
+.h-300 {
+    height: 300px;
+}
+
+.border-dashed {
+    border: 2px dashed #e2e8f0;
 }
 
 .source-card:hover {
@@ -276,10 +284,74 @@
 }
 
 .charts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
     gap: 24px;
     margin-bottom: 24px;
+}
+
+.charts-grid>* {
+    flex: 1;
+    min-width: 350px;
+}
+
+@media (max-width: 1024px) {
+    .charts-grid {
+        flex-direction: column;
+    }
+}
+
+/* Utility Classes */
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.h-300 {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.bg-gray-50 {
+    background-color: #f9fafb;
+    margin: 0 auto;
+}
+
+.br-12 {
+    border-radius: 12px;
+}
+
+.border-dashed {
+    border: 2px dashed #e5e7eb;
+}
+
+.text-gray-300 {
+    color: #d1d5db;
+}
+
+.text-gray-400 {
+    color: #9ca3af;
 }
 
 .chart-card-full {

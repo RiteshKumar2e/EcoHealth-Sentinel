@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Sun, Wind, Droplets, Zap, TrendingUp, Battery, DollarSign, Leaf, MessageSquare, Send, X, Mic, Download, RefreshCw, Bell, BarChart2, Maximize2, Minimize2, Users, Share2 } from 'lucide-react';
+import { Sun, Wind, Droplets, Zap, TrendingUp, Battery, DollarSign, Leaf, MessageSquare, Send, X, Mic, Download, RefreshCw, Bell, BarChart2, Maximize2, Minimize2, Users, Share2, PieChart as PieChartIcon } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './RenewableEnergy.css';
@@ -19,11 +19,7 @@ export default function RenewableEnergy() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [liveData, setLiveData] = useState(true);
-  const [notifications, setNotifications] = useState([
-    { id: 1, title: 'Solar Output Peak', message: 'Solar array 4 reaching peak efficiency.', time: '5 mins ago' },
-    { id: 2, title: 'Battery Alert', message: 'Storage unit B-3 at 95% capacity.', time: '20 mins ago' },
-    { id: 3, title: 'Maintenance Due', message: 'Wind turbine T-7 scheduled for inspection.', time: '2 hours ago' }
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -31,17 +27,12 @@ export default function RenewableEnergy() {
   const energyStats = [];
   const monthlyGeneration = [];
   const energyMix = [];
-  const activeProjects = [];
-  const aiPredictions = [];
-  const renewableBenefits = [];
+  const projects = [];
+  const predictions = [];
+  const benefits = [];
   const kpiMetrics = [];
 
-  const energySources = [
-    { type: 'Solar', icon: Sun, capacity: 2500, generation: 2180, efficiency: 87.2, color: '#f59e0b', bgColor: '#fef3c7', gradient: 'linear-gradient(135deg, #fbbf24, #f59e0b)' },
-    { type: 'Wind', icon: Wind, capacity: 1800, generation: 1440, efficiency: 80.0, color: '#3b82f6', bgColor: '#dbeafe', gradient: 'linear-gradient(135deg, #60a5fa, #3b82f6)' },
-    { type: 'Hydro', icon: Droplets, capacity: 3200, generation: 2880, efficiency: 90.0, color: '#06b6d4', bgColor: '#cffafe', gradient: 'linear-gradient(135deg, #22d3ee, #06b6d4)' },
-    { type: 'Biomass', icon: Leaf, capacity: 800, generation: 640, efficiency: 80.0, color: '#10b981', bgColor: '#d1fae5', gradient: 'linear-gradient(135deg, #34d399, #10b981)' }
-  ];
+  const energySources = [];
 
   const [stats, setStats] = useState({
     totalCapacity: 0,
@@ -62,12 +53,7 @@ export default function RenewableEnergy() {
   };
 
   useEffect(() => {
-    if (autoRefresh && liveData) {
-      const interval = setInterval(() => {
-        updateLiveData();
-      }, 5000);
-      return () => clearInterval(interval);
-    }
+    // Live data update logic would go here
   }, [autoRefresh, liveData]);
 
   useEffect(() => {
@@ -88,14 +74,6 @@ export default function RenewableEnergy() {
 
   const scrollChatToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const updateLiveData = () => {
-    setStats(prev => ({
-      ...prev,
-      currentGeneration: prev.currentGeneration + Math.floor(Math.random() * 10 - 5),
-      co2Saved: prev.co2Saved + Math.floor(Math.random() * 5)
-    }));
   };
 
   const handleChatSend = () => {
@@ -375,42 +353,58 @@ export default function RenewableEnergy() {
         <div className="charts-grid">
           <div className="energy-card chart-card-full">
             <h2 className="text-2xl font-bold text-gray-800 mb-16">Monthly Energy Generation</h2>
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={monthlyGeneration}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="month" stroke="#6b7280" style={{ fontSize: '12px' }} />
-                <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
-                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                <Legend />
-                <Bar dataKey="solar" stackId="a" fill="#f59e0b" name="Solar" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="wind" stackId="a" fill="#3b82f6" name="Wind" />
-                <Bar dataKey="hydro" stackId="a" fill="#06b6d4" name="Hydro" />
-                <Bar dataKey="biomass" stackId="a" fill="#10b981" name="Biomass" />
-              </BarChart>
-            </ResponsiveContainer>
+            {monthlyGeneration.length > 0 ? (
+              <ResponsiveContainer width="100%" height={350}>
+                <BarChart data={monthlyGeneration}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="month" stroke="#6b7280" style={{ fontSize: '12px' }} />
+                  <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
+                  <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                  <Legend />
+                  <Bar dataKey="solar" stackId="a" fill="#f59e0b" name="Solar" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="wind" stackId="a" fill="#3b82f6" name="Wind" />
+                  <Bar dataKey="hydro" stackId="a" fill="#06b6d4" name="Hydro" />
+                  <Bar dataKey="biomass" stackId="a" fill="#10b981" name="Biomass" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex-center flex-col h-300 w-full bg-gray-50 br-12 border-dashed">
+                <BarChart2 size={48} className="text-gray-300 mb-16" />
+                <p className="text-gray-400 font-bold m-0">No Generation Data Available</p>
+                <p className="text-xs text-gray-400 mt-4 m-0">Connect sensors to visualize monthly trends</p>
+              </div>
+            )}
           </div>
 
           <div className="energy-card">
             <h2 className="text-lg font-bold text-gray-800 mb-16">Energy Mix Distribution</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={energyMix}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}%`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {energyMix.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            {energyMix.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={energyMix}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {energyMix.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex-center flex-col h-300 w-full bg-gray-50 br-12 border-dashed">
+                <PieChartIcon size={48} className="text-gray-300 mb-16" />
+                <p className="text-gray-400 font-bold m-0">No Distribution Data</p>
+                <p className="text-xs text-gray-400 mt-4 m-0">Energy mix visualization will appear here</p>
+              </div>
+            )}
           </div>
         </div>
 
