@@ -94,16 +94,23 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-.header-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
-    animation: rotate3d 20s linear infinite;
-    pointer-events: none;
+
+.header-icon-box-green {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: #ecfdf5;
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d1fae5;
+    transition: all 0.3s ease;
+}
+
+.header-icon-box-green:hover {
+    transform: scale(1.05) rotate(5deg);
+    background: #d1fae5;
 }
 
 .refresh-btn {
@@ -227,6 +234,7 @@
 
 .tab-button.active {
     color: #22c55e;
+    background: #f0fdf4;
 }
 
 .tab-button:not(.active) {
@@ -239,17 +247,13 @@
 }
 
 .campaign-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+    background: white;
     border-radius: 20px;
     padding: 32px;
     border-left: 5px solid #22c55e;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    animation: slideInRight 0.6s ease-out;
-    animation-fill-mode: both;
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 1px solid #f1f5f9;
 }
 
 .campaign-card:nth-child(1) {
@@ -286,17 +290,13 @@
 }
 
 .module-card {
-    background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+    background: white;
     border-radius: 20px;
     padding: 32px;
     border-left: 5px solid #a855f7;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    animation: slideInRight 0.6s ease-out;
-    animation-fill-mode: both;
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 1px solid #f1f5f9;
 }
 
 .module-card:nth-child(1) {
@@ -373,17 +373,15 @@
 
 .btn-primary {
     width: 100%;
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    background: #22c55e;
     color: white;
     font-weight: 600;
-    padding: 14px 24px;
+    padding: 12px 24px;
     border-radius: 12px;
     border: none;
     cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
 }
 
 .btn-primary::before {
@@ -416,17 +414,15 @@
 
 .btn-secondary {
     width: 100%;
-    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+    background: #a855f7;
     color: white;
     font-weight: 600;
-    padding: 14px 24px;
+    padding: 12px 24px;
     border-radius: 12px;
     border: none;
     cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
 }
 
 .btn-secondary:hover {
@@ -435,14 +431,19 @@
 }
 
 .insight-card {
-    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    background: #eff6ff;
     border-radius: 24px;
-    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
     padding: 40px;
-    color: white;
-    position: relative;
-    overflow: hidden;
-    animation: fadeInUp 1s ease-out;
+    color: #1e293b;
+    border: 1px solid #dbeafe;
+}
+
+.insight-card .text-white {
+    color: #1e293b !important;
+}
+
+.insight-card h3 {
+    color: #1e293b;
 }
 
 .insight-card::before {

@@ -101,22 +101,27 @@ html {
 }
 
 .icon-btn-primary {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #d1fae5;
 }
 
 .icon-btn-primary:hover {
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    background: #d1fae5;
 }
 
 .notification-btn {
     position: relative;
     padding: 0.625rem;
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    border: none;
+    background: white;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+    color: #475569;
+}
+
+.notification-btn:hover {
+    background: #f8fafc;
 }
 
 .notification-badge {
@@ -327,14 +332,14 @@ html {
 .schedule-btn {
     width: 100%;
     margin-top: 1rem;
-    padding: 0.625rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
+    padding: 10px 20px;
+    background: white;
+    color: #3b82f6;
     font-weight: 600;
-    border: none;
+    border: 1px solid #dbeafe;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -342,8 +347,8 @@ html {
 }
 
 .schedule-btn:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    background: #eff6ff;
+    border-color: #3b82f6;
 }
 
 .scroll-to-top {
@@ -384,30 +389,18 @@ html {
     bottom: 2rem;
     right: 2rem;
     padding: 1.25rem;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    border: none;
+    background: white;
+    color: #10b981;
+    border: 1px solid #e2e8f0;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     z-index: 40;
-    animation: float 3s infinite ease-in-out;
-}
-
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
 }
 
 .chat-fab:hover {
-    transform: scale(1.1);
+    transform: translateY(-4px);
+    border-color: #10b981;
 }
 
 .chat-panel {
@@ -438,13 +431,14 @@ html {
 }
 
 .chat-header {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: white;
     padding: 1.25rem;
     border-radius: 1.5rem 1.5rem 0 0;
-    color: white;
+    color: #1e293b;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .chat-messages {
@@ -472,13 +466,12 @@ html {
 }
 
 .message-bubble-user {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
+    background: #dcfce7;
+    color: #065f46;
     padding: 1rem 1.25rem;
     border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
     margin-left: auto;
     max-width: 80%;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .message-bubble-bot {

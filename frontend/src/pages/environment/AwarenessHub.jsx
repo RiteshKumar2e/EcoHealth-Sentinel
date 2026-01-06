@@ -157,7 +157,7 @@ export default function AwarenessHub() {
         <div className="header-card">
           <div className="flex-between flex-wrap gap-16 mb-12">
             <div className="flex-center gap-16">
-              <div className="w-64 h-64 br-16 flex-center text-white header-icon-green-gradient">
+              <div className="header-icon-box-green">
                 <Leaf size={32} />
               </div>
               <div>

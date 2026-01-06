@@ -41,10 +41,10 @@
 
 .header-icon-wrapper {
     padding: 0.75rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    background: #eff6ff;
+    color: #3b82f6;
     border-radius: 0.75rem;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-    animation: pulse 2s infinite;
+    border: 1px solid #dbeafe;
 }
 
 @keyframes pulse {
@@ -62,10 +62,7 @@
 .gradient-title {
     font-size: 2.5rem;
     font-weight: 800;
-    background: linear-gradient(90deg, #2563eb 0%, #6366f1 50%, #7c3aed 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #1e293b;
     margin-bottom: 0.25rem;
 }
 
@@ -77,20 +74,20 @@
 .notification-btn {
     position: relative;
     padding: 0.75rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-    border: none;
+    background: white;
+    border: 1px solid #e2e8f0;
     border-radius: 0.75rem;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-    transition: all 0.3s ease;
+    color: #475569;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .notification-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+    background: #f8fafc;
+    border-color: #cbd5e1;
 }
 
 .notification-badge {
@@ -338,20 +335,21 @@
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
-    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-    color: white;
-    border: none;
+    background: white;
+    color: #3b82f6;
+    border: 1px solid #e2e8f0;
     cursor: pointer;
-    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .chat-trigger:hover {
-    transform: scale(1.1) rotate(15deg);
+    transform: scale(1.1) translateY(-4px);
+    border-color: #3b82f6;
 }
 
 .chat-window {
@@ -384,11 +382,12 @@
 
 .chat-header-bar {
     padding: 1.25rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-    color: white;
+    background: white;
+    color: #1e293b;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .chat-messages {

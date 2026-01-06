@@ -244,7 +244,7 @@ export default function Reports() {
           <div className="header-content">
             <div className="header-left">
               <div className="header-icon-wrapper">
-                <FileBarChart size={32} color="white" />
+                <FileBarChart size={32} />
               </div>
               <div>
                 <h1 className="gradient-title m-0">EcoReports & Analytics</h1>

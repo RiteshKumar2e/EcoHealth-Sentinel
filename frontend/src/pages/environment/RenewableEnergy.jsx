@@ -233,7 +233,7 @@ export default function RenewableEnergy() {
           <div className="flex-between flex-wrap gap-16">
             <div className="flex-center gap-16">
               <div className="header-icon-container">
-                <Zap size={32} className="white-text floating-icon" />
+                <Zap size={32} className="floating-icon" />
               </div>
               <div>
                 <h1 className="text-4xl font-extrabold text-gray-800 m-0">Renewable energy</h1>
@@ -244,27 +244,14 @@ export default function RenewableEnergy() {
               </div>
             </div>
             <div className="flex-center gap-12 flex-wrap">
-              <button onClick={() => setShowChatbot(!showChatbot)} className="btn btn-green-gradient">
-                <MessageSquare size={18} />
-                AI Chat
-              </button>
               <button onClick={() => setShowNotifications(!showNotifications)} className="btn btn-blue-gradient pos-relative">
                 <Bell size={18} />
                 {notifications.length > 0 && (
                   <span className="notification-badge">{notifications.length}</span>
                 )}
               </button>
-              <button onClick={() => setCompareMode(!compareMode)} className="btn btn-purple-gradient">
-                <BarChart2 size={18} />
-              </button>
               <button onClick={downloadReport} className="btn btn-amber-gradient">
                 <Download size={18} />
-              </button>
-              <button onClick={handleRefresh} disabled={refreshing} className="btn btn-gray-gradient">
-                <RefreshCw size={18} className={refreshing ? 'spin' : ''} />
-              </button>
-              <button onClick={() => setIsFullscreen(!isFullscreen)} className="btn btn-pink-gradient">
-                {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
               </button>
             </div>
           </div>

@@ -450,7 +450,7 @@ export default function ClimatePredictions() {
             <div className="flex-between flex-wrap gap-16">
               <div className="flex-center gap-16">
                 <div className="header-icon-container">
-                  <TrendingUp size={32} className="text-white" />
+                  <TrendingUp size={32} />
                 </div>
                 <div>
                   <h1 className="text-4xl font-extrabold text-gray-800 m-0">AI Climate Predictions</h1>

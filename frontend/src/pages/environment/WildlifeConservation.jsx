@@ -148,9 +148,6 @@ export default function WildlifeConservation() {
         </div>
 
         <div className="nav-actions">
-          <button className="icon-btn" onClick={() => setAutoRefresh(!autoRefresh)}>
-            <RefreshCw className="icon-sm" style={{ animation: autoRefresh ? 'spin 2s linear infinite' : 'none' }} />
-          </button>
           <button className="icon-btn" onClick={exportReport}>
             <Download className="icon-sm" />
           </button>

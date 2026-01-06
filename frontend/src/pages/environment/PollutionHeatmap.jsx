@@ -354,43 +354,25 @@ export default function PollutionHeatmap() {
         <div className="heatmap-card">
           <div className="flex-between flex-wrap gap-16 pos-relative z-1">
             <div className="flex-center gap-16">
-              <div className="icon-glow-container br-16 bg-gradient-blue-purple flex-center" style={{ width: '64px', height: '64px' }}>
-                <Wind size={32} className="white-text floating-icon" />
+              <div className="header-icon-box">
+                <Wind size={32} className="floating-icon" />
               </div>
               <div>
                 <h1 className="text-36 font-800 text-slate-700 m-0 mb-8">Air Quality Heatmap</h1>
                 <p className="text-slate-500 m-0 flex-center gap-8 justify-start">
                   <Satellite size={16} className="text-blue-500" />
-                  Real-time • AI chatbot • reports
+                  Real-time monitoring • Advanced reports
                 </p>
               </div>
             </div>
             <div className="flex-wrap gap-12" style={{ display: 'flex' }}>
-              <button className={`heatmap-btn ${showChatbot ? 'btn-green' : 'btn-purple'}`} onClick={() => setShowChatbot(!showChatbot)}>
-                <MessageSquare size={18} />
-                {showChatbot ? 'Hide' : 'AI Chat'}
-              </button>
               <button className={`heatmap-btn ${showHistory ? 'btn-green' : 'btn-gray'}`} onClick={() => setShowHistory(!showHistory)}>
                 <History size={18} />
                 History
               </button>
-              <button className={`heatmap-btn ${compareMode ? 'btn-green' : 'btn-amber'}`} onClick={() => setCompareMode(!compareMode)}>
-                <BarChart2 size={18} />
-                Compare
-              </button>
-              <select value={downloadFormat} onChange={(e) => setDownloadFormat(e.target.value)} className="heatmap-input-field w-auto text-14" style={{ padding: '8px 12px' }}>
-                <option value="pdf">PDF</option>
-                <option value="json">JSON</option>
-              </select>
               <button className="heatmap-btn" onClick={downloadReport}>
                 <Download size={18} />
-                {downloadFormat.toUpperCase()}
-              </button>
-              <button className="heatmap-btn" onClick={handleRefresh} disabled={refreshing}>
-                <RefreshCw size={18} className={refreshing ? 'spinner' : ''} />
-              </button>
-              <button className="heatmap-btn" onClick={() => setIsFullscreen(!isFullscreen)}>
-                {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+                Download
               </button>
             </div>
           </div>

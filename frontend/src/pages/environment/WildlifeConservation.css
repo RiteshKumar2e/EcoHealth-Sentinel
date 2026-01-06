@@ -73,11 +73,17 @@
 .notification-btn {
     position: relative;
     padding: 0.5rem;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border: none;
+    background: white;
+    border: 1px solid #e2e8f0;
     border-radius: 0.75rem;
     cursor: pointer;
+    color: #475569;
     transition: all 0.2s;
+}
+
+.notification-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
 }
 
 .notification-badge {
@@ -106,10 +112,7 @@
 }
 
 .header-title-gradient {
-    background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #1e293b;
 }
 
 /* KPI Grid */
@@ -263,20 +266,27 @@
 
 /* Success Stories */
 .success-stories-card {
-    background: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
-    color: white;
+    background: #f0fdf4;
+    color: #065f46;
     border-radius: 2rem;
     padding: 3rem;
     margin-bottom: 2rem;
-    box-shadow: 0 20px 25px -5px rgba(6, 78, 59, 0.3);
+    border: 1px solid #d1fae5;
+}
+
+.success-stories-card h3 {
+    color: #064e3b;
+}
+
+.success-stories-card .text-white {
+    color: #065f46 !important;
 }
 
 .success-story-item {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(8px);
+    background: white;
     border-radius: 1.25rem;
     padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #d1fae5;
 }
 
 /* Responsible AI */
@@ -321,12 +331,12 @@
     right: 2rem;
     width: 4rem;
     height: 4rem;
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
-    border: none;
+    background: white;
+    color: #10b981;
+    border: 1px solid #e2e8f0;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     z-index: 100;
     display: flex;
     align-items: center;
@@ -356,12 +366,13 @@
 }
 
 .chat-header {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
+    background: white;
+    color: #1e293b;
     padding: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .chat-messages {
@@ -376,12 +387,11 @@
 
 .message-bubble-user {
     align-self: flex-end;
-    background: #10b981;
-    color: white;
+    background: #dcfce7;
+    color: #065f46;
     padding: 1rem;
     border-radius: 1rem 1rem 0 1rem;
     max-width: 85%;
-    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
 }
 
 .message-bubble-bot {
@@ -669,15 +679,18 @@
 }
 
 .bg-trend-increasing {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: #dcfce7;
+    color: #10b981;
 }
 
 .bg-trend-stable {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: #dbeafe;
+    color: #3b82f6;
 }
 
 .bg-trend-critical {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+    background: #fee2e2;
+    color: #ef4444;
 }
 
 .icon-sm {
