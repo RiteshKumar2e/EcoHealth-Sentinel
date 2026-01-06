@@ -17,7 +17,7 @@ import {
     User
 } from 'lucide-react';
 import '../healthcare/HealthOverview.css'; // Reusing consistent styles
-import EnvChatbot from './Chatbot'; // Assuming this is a component or we use a floating one
+import EnvironmentFloatingChatbot from '../../components/environment/EnvironmentFloatingChatbot';
 
 const EnvironmentLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
@@ -163,7 +163,7 @@ const EnvironmentLayout = () => {
                         <Outlet />
                     </div>
                 </div>
-                {/* <EnvFloatingChatbot /> Assuming existence or future creation */}
+                <EnvironmentFloatingChatbot />
             </div>
         </div>
     );

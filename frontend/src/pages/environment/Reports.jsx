@@ -18,11 +18,26 @@ export default function Reports() {
   const [chatLoading, setChatLoading] = useState(false);
   const [notifications, setNotifications] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notificationList] = useState([
-    { id: 1, title: 'New Report Generated', message: 'The Monthly Air Quality summary is ready.', time: '10 mins ago' },
-    { id: 2, title: 'Data Sync Complete', message: 'Successfully synced with EPA sensors.', time: '1 hour ago' },
-    { id: 3, title: 'Export Ready', message: 'Your requested CSV export is now available.', time: '3 hours ago' }
-  ]);
+  /* Empty State Component */
+  const EmptyState = () => (
+    <div className="flex-center flex-col p-40 border-dashed br-12 bg-slate-50 w-full" style={{ gridColumn: '1 / -1', border: '2px dashed #e2e8f0', borderRadius: '1rem', padding: '3rem', textAlign: 'center', background: '#f8fafc' }}>
+      <div className="flex-center mb-4" style={{ background: '#f1f5f9', padding: '1rem', borderRadius: '50%', width: 'fit-content', margin: '0 auto 1rem' }}>
+        <FileText size={32} color="#94a3b8" />
+      </div>
+      <p style={{ fontWeight: 600, color: '#64748b', marginBottom: '0.5rem' }}>No Reports Available</p>
+      <p style={{ fontSize: '0.875rem', color: '#94a3b8', margin: 0 }}>There are currently no reports generated.</p>
+    </div>
+  );
+
+  const notificationList = []; // Empty by default
+
+  const quickStats = [
+    { label: 'Total Reports', value: reports.length.toString(), trend: '--', icon: FileText, color: 'blue' },
+    { label: 'This Month', value: '0', trend: '--', icon: Calendar, color: 'emerald' },
+    { label: 'Downloads', value: '0', trend: '--', icon: Download, color: 'violet' },
+    { label: 'Avg. Size', value: '0 MB', trend: '--', icon: BarChart3, color: 'amber' }
+  ];
+
 
   const ws = useRef(null);
   const chatEndRef = useRef(null);
@@ -40,12 +55,6 @@ export default function Reports() {
     { id: 'conservation', name: 'Conservation', count: mockReports.filter(r => r.category === 'conservation').length }
   ];
 
-  const quickStats = [
-    { label: 'Total Reports', value: mockReports.length.toString(), trend: '+3', icon: FileText, color: 'blue' },
-    { label: 'This Month', value: '8', trend: '+2', icon: Calendar, color: 'emerald' },
-    { label: 'Downloads', value: '156', trend: '+24', icon: Download, color: 'violet' },
-    { label: 'Avg. Size', value: '2.3 MB', trend: '-0.2', icon: BarChart3, color: 'amber' }
-  ];
 
   useEffect(() => {
     setReports(mockReports);
@@ -400,43 +409,47 @@ export default function Reports() {
 
         {/* Reports Grid */}
         <div className="report-grid">
-          {filteredReports.map((report) => {
-            const styles = getColorStyles(report.color);
-            const Icon = report.icon;
-            return (
-              <div key={report.id} className="report-card" style={{ color: styles.border }}>
-                <div className="report-header">
-                  <div className="report-icon-container" style={{ background: styles.iconBg }}>
-                    <Icon size={24} color={styles.text} />
+          {filteredReports.length > 0 ? (
+            filteredReports.map((report) => {
+              const styles = getColorStyles(report.color);
+              const Icon = report.icon;
+              return (
+                <div key={report.id} className="report-card" style={{ color: styles.border }}>
+                  <div className="report-header">
+                    <div className="report-icon-container" style={{ background: styles.iconBg }}>
+                      <Icon size={24} color={styles.text} />
+                    </div>
+                    <span style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem', borderRadius: '999px', background: styles.bg, color: styles.text, fontWeight: 700 }}>
+                      {report.status.toUpperCase()}
+                    </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem', borderRadius: '999px', background: styles.bg, color: styles.text, fontWeight: 700 }}>
-                    {report.status.toUpperCase()}
-                  </span>
+                  <h3 className="report-title">{report.title}</h3>
+                  <p className="report-desc">{report.description}</p>
+                  <div className="report-meta">
+                    <div className="meta-item"><Calendar size={14} /> {report.date}</div>
+                    <div className="meta-item"><FileText size={14} /> {report.type}</div>
+                    <div className="meta-item"><TrendingUp size={14} /> {report.size}</div>
+                  </div>
+                  <div className="report-actions">
+                    <button className="action-button" style={{ background: styles.bg, color: styles.text }} onClick={() => handleViewReport(report)}>
+                      <Eye size={16} /> View
+                    </button>
+                    <button className="action-button" style={{ background: '#3b82f6', color: 'white' }} onClick={() => handleDownloadPDF(report)}>
+                      <Download size={16} /> Download
+                    </button>
+                    <button className="action-button" style={{ background: '#f3f4f6', color: '#6b7280' }} onClick={() => handleShareReport(report.title)}>
+                      <Share2 size={16} />
+                    </button>
+                    <button className="action-button" style={{ background: '#fee2e2', color: '#ef4444' }} onClick={() => handleDeleteReport(report.id)}>
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
-                <h3 className="report-title">{report.title}</h3>
-                <p className="report-desc">{report.description}</p>
-                <div className="report-meta">
-                  <div className="meta-item"><Calendar size={14} /> {report.date}</div>
-                  <div className="meta-item"><FileText size={14} /> {report.type}</div>
-                  <div className="meta-item"><TrendingUp size={14} /> {report.size}</div>
-                </div>
-                <div className="report-actions">
-                  <button className="action-button" style={{ background: styles.bg, color: styles.text }} onClick={() => handleViewReport(report)}>
-                    <Eye size={16} /> View
-                  </button>
-                  <button className="action-button" style={{ background: '#3b82f6', color: 'white' }} onClick={() => handleDownloadPDF(report)}>
-                    <Download size={16} /> Download
-                  </button>
-                  <button className="action-button" style={{ background: '#f3f4f6', color: '#6b7280' }} onClick={() => handleShareReport(report.title)}>
-                    <Share2 size={16} />
-                  </button>
-                  <button className="action-button" style={{ background: '#fee2e2', color: '#ef4444' }} onClick={() => handleDeleteReport(report.id)}>
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <EmptyState />
+          )}
         </div>
       </div>
 
