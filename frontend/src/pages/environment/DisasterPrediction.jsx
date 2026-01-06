@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, CloudRain, Wind, Waves, Thermometer, MapPin, Shield, Clock, Download, RefreshCw, Share2, Bell, Activity, Users, Maximize2, Minimize2, Radio, Satellite, Zap, AlertCircle, CheckCircle, TrendingUp, BarChart3, Eye, EyeOff } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 import { envService } from '../../services/api';
 import './DisasterPrediction.css';
@@ -181,26 +183,66 @@ export default function DisasterPrediction() {
   };
 
   const downloadReport = () => {
-    const report = {
-      timestamp: new Date().toISOString(),
-      activeDisasters,
-      vulnerabilityAreas,
-      preparedness: { completionRate: Math.round((preparednessChecklist.filter(i => i.completed).length / preparednessChecklist.length) * 100), checklist: preparednessChecklist },
-      responseTeams,
-      earlyWarningSystem,
-      graphData: {
-        floodHistory: floodHistoryData,
-        temperatureTrend: temperatureTrendData,
-        rainfallPattern: rainfallPatternData
-      }
-    };
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `disaster_report_${Date.now()}.json`;
-    a.click();
-    showToast('✅ Downloaded!');
+    try {
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      // Urgent Header
+      doc.setFillColor(239, 68, 68); // Red-500
+      doc.rect(0, 0, pageWidth, 40, 'F');
+
+      doc.setFontSize(26);
+      doc.setTextColor(255, 255, 255);
+      doc.text('Disaster Risk Analysis Report', 20, 25);
+
+      doc.setFontSize(10);
+      doc.text(`Incident Response Time: ${new Date().toLocaleString()}`, 20, 35);
+
+      // Risk Assessment
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(18);
+      doc.text('AI Predictive Risk Assessment', 20, 55);
+
+      doc.setFontSize(11);
+      doc.text(`Active Alerts: ${activeDisasters.length}`, 20, 65);
+      doc.text(`System Status: ${earlyWarningSystem.status?.toUpperCase() || 'OPERATIONAL'}`, 20, 72);
+
+      // Critical Alerts Table
+      doc.setFontSize(16);
+      doc.text('Critical Vulnerabilities', 20, 90);
+
+      let yPos = 100;
+      activeDisasters.slice(0, 5).forEach((d, i) => {
+        doc.setFontSize(10);
+        doc.setTextColor(50);
+        doc.text(`${i + 1}. ${d.type.toUpperCase()} in ${d.location}`, 25, yPos);
+        doc.setTextColor(200, 0, 0);
+        doc.text(`Probability: ${d.probability}% - SEVERITY: ${d.severity.toUpperCase()}`, 110, yPos);
+        yPos += 8;
+      });
+
+      // Preparedness Summary
+      const completionRate = Math.round((preparednessChecklist.filter(i => i.completed).length / preparednessChecklist.length) * 100);
+      doc.setTextColor(30);
+      doc.setFontSize(16);
+      doc.text('Preparedness Checklist Status', 20, yPos + 15);
+      doc.setFontSize(11);
+      doc.text(`Completion Rate: ${completionRate}%`, 20, yPos + 25);
+
+      // Footer
+      const pageHeight = doc.internal.pageSize.getHeight();
+      doc.setFillColor(248, 250, 252);
+      doc.rect(0, pageHeight - 15, pageWidth, 15, 'F');
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text('Emergency Response Coordination - EcoHealth Sentinel AI', pageWidth / 2, pageHeight - 7, { align: 'center' });
+
+      doc.save(`disaster_risk_report_${Date.now()}.pdf`);
+      showToast('✅ Professional Risk Report Exported!');
+    } catch (e) {
+      console.error('PDF Export error:', e);
+      showToast('❌ Failed to export PDF');
+    }
   };
 
   const shareAlert = async (disaster) => {
@@ -243,11 +285,11 @@ export default function DisasterPrediction() {
             </div>
             <div className="header-actions">
               <button className={`disaster-btn ${showGraphs ? 'btn-purple' : 'btn-blue'}`} onClick={handleShowGraphs}>
-                {showGraphs ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showGraphs ? <EyeOff size={22} color="#8b5cf6" /> : <Eye size={22} color="#3b82f6" />}
                 {showGraphs ? 'Hide Graphs' : 'Show Graphs'}
               </button>
               <button className="disaster-btn" onClick={downloadReport}>
-                <Download size={18} />
+                <Download size={22} color="#4b5563" />
                 Download
               </button>
             </div>

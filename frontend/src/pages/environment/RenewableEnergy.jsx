@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Sun, Wind, Droplets, Zap, TrendingUp, Battery, DollarSign, Leaf, MessageSquare, Send, X, Mic, Download, RefreshCw, Bell, BarChart2, Maximize2, Minimize2, Users, Share2 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import './RenewableEnergy.css';
 
 export default function RenewableEnergy() {
@@ -17,6 +19,11 @@ export default function RenewableEnergy() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [liveData, setLiveData] = useState(true);
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: 'Solar Output Peak', message: 'Solar array 4 reaching peak efficiency.', time: '5 mins ago' },
+    { id: 2, title: 'Battery Alert', message: 'Storage unit B-3 at 95% capacity.', time: '20 mins ago' },
+    { id: 3, title: 'Maintenance Due', message: 'Wind turbine T-7 scheduled for inspection.', time: '2 hours ago' }
+  ]);
 
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -44,11 +51,6 @@ export default function RenewableEnergy() {
     householdsPowered: 0
   });
 
-  const [notifications, setNotifications] = useState([
-    { id: 1, message: 'Solar efficiency increased by 3%', time: '5 mins ago', type: 'success' },
-    { id: 2, message: 'Wind turbine maintenance scheduled', time: '1 hour ago', type: 'info' },
-    { id: 3, message: 'New biomass project approved', time: '3 hours ago', type: 'success' }
-  ]);
 
   const chatbotKnowledge = {
     greeting: ["👋 Hello! I'm your Renewable Energy AI Assistant. Ask me about energy production, efficiency, or sustainability!"],
@@ -185,20 +187,37 @@ export default function RenewableEnergy() {
   };
 
   const downloadReport = () => {
-    const report = {
-      timestamp: new Date().toISOString(),
-      stats,
-      energySources,
-      projects
-    };
+    try {
+      const doc = new jsPDF();
+      doc.setFontSize(22);
+      doc.setTextColor(59, 130, 246); // Blue
+      doc.text('Renewable Energy Analytics', 20, 20);
 
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `renewable_energy_report_${Date.now()}.json`;
-    a.click();
-    showToast('✅ Report downloaded!');
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 30);
+
+      doc.setFontSize(16);
+      doc.setTextColor(30);
+      doc.text('Performance Summary', 20, 50);
+
+      doc.setFontSize(11);
+      doc.text(`Total Capacity: ${stats.totalCapacity} kW`, 20, 60);
+      doc.text(`Current Output: ${stats.currentGeneration} kW`, 20, 65);
+      doc.text(`CO2 Saved: ${stats.co2Saved / 1000} tons`, 20, 70);
+
+      doc.save(`renewable_report_${Date.now()}.pdf`);
+      showToast('✅ Professional PDF Exported!');
+    } catch (e) {
+      const report = { timestamp: new Date().toISOString(), stats, energySources, projects };
+      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `renewable_report_${Date.now()}.json`;
+      a.click();
+      showToast('✅ JSON Downloaded!');
+    }
   };
 
   const shareData = async () => {
@@ -236,22 +255,44 @@ export default function RenewableEnergy() {
                 <Zap size={32} className="floating-icon" />
               </div>
               <div>
-                <h1 className="text-4xl font-extrabold text-gray-800 m-0">Renewable energy</h1>
-                <p className="text-gray-500 m-0 flex-center gap-8 text-sm justify-start">
+                <h1 className="text-5xl font-extrabold text-gray-800 m-0">Renewable energy</h1>
+                <p className="text-gray-500 m-0 flex-center gap-8 text-lg justify-start">
                   <Leaf size={16} className="text-green-500" />
                   AI-optimized clean energy • Real-time monitoring
                 </p>
               </div>
             </div>
-            <div className="flex-center gap-12 flex-wrap">
-              <button onClick={() => setShowNotifications(!showNotifications)} className="btn btn-blue-gradient pos-relative">
-                <Bell size={18} />
+            <div className="flex-center gap-12 flex-wrap" style={{ position: 'relative' }}>
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className={`btn btn-blue-gradient pos-relative ${showNotifications ? 'active' : ''}`}
+              >
+                <Bell size={22} color={showNotifications ? '#3b82f6' : '#4b5563'} />
                 {notifications.length > 0 && (
                   <span className="notification-badge">{notifications.length}</span>
                 )}
               </button>
+
+              {showNotifications && (
+                <div className="energy-notifications-dropdown">
+                  <div className="notif-header">
+                    <h3 className="m-0 text-sm font-bold">Alert Center</h3>
+                    <X size={16} className="cursor-pointer" onClick={() => setShowNotifications(false)} />
+                  </div>
+                  <div className="notif-body">
+                    {notifications.map(n => (
+                      <div key={n.id} className="notif-item">
+                        <p className="notif-title m-0 text-13 font-bold">{n.title}</p>
+                        <p className="notif-msg m-0 text-11 text-gray-500">{n.message}</p>
+                        <span className="notif-time text-10 text-gray-400">{n.time}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <button onClick={downloadReport} className="btn btn-amber-gradient">
-                <Download size={18} />
+                <Download size={22} color="#4b5563" />
               </button>
             </div>
           </div>

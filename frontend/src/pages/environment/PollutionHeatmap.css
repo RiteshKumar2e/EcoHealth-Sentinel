@@ -113,17 +113,6 @@
     overflow: hidden;
 }
 
-.heatmap-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
-    animation: rotate3d 20s linear infinite;
-    pointer-events: none;
-}
 
 .heatmap-card:hover {
     transform: translateY(-4px);

@@ -14,6 +14,8 @@ import {
   FileText, Upload, Database, Wifi, WifiOff, CheckCircle, XCircle,
   AlertTriangle, Info, ChevronUp, Menu, Maximize2, Minimize2
 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import './WasteManagement.css';
 
 export default function WasteManagement() {
@@ -144,7 +146,57 @@ export default function WasteManagement() {
   };
 
   const exportData = () => {
-    alert('📊 Exporting comprehensive report...\n\nFormat: PDF + Excel\nSize: 4.2 MB\nIncludes: All charts, KPIs, and analytics');
+    try {
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const timestamp = new Date().toLocaleString();
+
+      // Header Section
+      doc.setFillColor(16, 185, 129); // Emerald-500
+      doc.rect(0, 0, pageWidth, 45, 'F');
+
+      doc.setFontSize(24);
+      doc.setTextColor(255, 255, 255);
+      doc.text('Smart Waste Management Analysis', 20, 25);
+
+      doc.setFontSize(10);
+      doc.text(`Generated: ${timestamp}`, 20, 35);
+      doc.text(`Confidential - EcoHealth Sentinel Environmental Intelligence`, 20, 40);
+
+      // Key Performance Indicators Section
+      doc.setTextColor(30, 41, 59); // Slate-800
+      doc.setFontSize(18);
+      doc.text('Key Performance Indicators', 20, 60);
+
+      doc.setFontSize(11);
+      doc.text('• Total Recycling Rate: 68.2%', 20, 72);
+      doc.text('• Monthly Collection: 1,240 Tons', 20, 79);
+      doc.text('• Cost Optimization: +12.4%', 20, 86);
+      doc.text('• Fleet Efficiency: 94.2%', 20, 93);
+
+      // Detailed Summary
+      doc.setFontSize(18);
+      doc.text('Operational Summary', 20, 110);
+
+      doc.setFontSize(10);
+      const summaryText = "Smart Waste Management leverages AI specifically for logistics and route optimization. By analyzing historical bin fill-levels and traffic patterns, the system drastically reduces fuel consumption and operational costs while maintaining a 99% collection reliability rate.";
+      const splitText = doc.splitTextToSize(summaryText, pageWidth - 40);
+      doc.text(splitText, 20, 120);
+
+      // Footer
+      const pageHeight = doc.internal.pageSize.getHeight();
+      doc.setFillColor(248, 250, 252);
+      doc.rect(0, pageHeight - 15, pageWidth, 15, 'F');
+      doc.setFontSize(8);
+      doc.setTextColor(148, 163, 184);
+      doc.text('© EcoHealth Sentinel - Sustainable Future Powered by AI', pageWidth / 2, pageHeight - 7, { align: 'center' });
+
+      doc.save(`waste_management_report_${Date.now()}.pdf`);
+      alert('✅ Professional PDF Report Exported!');
+    } catch (e) {
+      console.error('PDF Export Error:', e);
+      alert('❌ Error exporting PDF. Please check connection.');
+    }
   };
 
   const scheduleCollection = (pointId) => {

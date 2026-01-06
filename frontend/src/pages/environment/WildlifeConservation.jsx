@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, PieChart, Pie, Cell } from 'recharts';
-import { Bird, Trees, Camera, TrendingUp, MapPin, AlertTriangle, Heart, Shield, MessageCircle, Send, X, Loader, RefreshCw, Download, Share2, Bell, Settings, ArrowUp, Zap, Eye, Calendar, Filter, Search, Upload, Database, Wifi, WifiOff, CheckCircle, XCircle, Plus, Edit, Trash2, Award, Users, DollarSign, Leaf, Target, Activity } from 'lucide-react';
+import { Bird, Trees, Camera, TrendingUp, MapPin, AlertTriangle, Heart, Shield, MessageCircle, Send, X, Loader, RefreshCw, Download, Share2, Bell, Settings, ArrowUp, Zap, Eye, Calendar, Filter, Search, Upload, Database, Wifi, WifiOff, CheckCircle, XCircle, Plus, Edit, Trash2, Award, Users, DollarSign, Leaf, Target, Activity, FileText, Info } from 'lucide-react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import './WildlifeConservation.css';
 
 export default function WildlifeConservation() {
@@ -18,6 +20,12 @@ export default function WildlifeConservation() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [viewMode, setViewMode] = useState('grid');
   const [selectedThreat, setSelectedThreat] = useState(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notificationList, setNotificationList] = useState([
+    { id: 1, title: 'Tiger Spotted', message: 'Bengal Tiger spotted in Sector-4 near water hole.', time: '2 mins ago', type: 'info', icon: Bird },
+    { id: 2, title: 'Intrusion Alert', message: 'Unidentified movement detected in high-risk zone.', time: '15 mins ago', type: 'danger', icon: AlertTriangle },
+    { id: 3, title: 'System Healthy', message: 'All AI sensors and cameras are fully operational.', time: '1 hour ago', type: 'success', icon: CheckCircle }
+  ]);
 
   const ws = useRef(null);
   const chatEndRef = useRef(null);
@@ -106,7 +114,42 @@ export default function WildlifeConservation() {
   };
 
   const exportReport = () => {
-    alert('📊 Exporting Wildlife Conservation Report...\n\nFormat: PDF + Excel\nSize: 5.8 MB\nIncludes: Species data, projects, AI analytics');
+    try {
+      const doc = new jsPDF();
+      const timestamp = new Date().toLocaleString();
+
+      // Title
+      doc.setFontSize(22);
+      doc.setTextColor(16, 185, 129); // Green
+      doc.text('Wildlife Conservation Report', 20, 20);
+
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Generated on: ${timestamp}`, 20, 30);
+      doc.text('Confidential - EcoHealth Sentinel AI System', 20, 35);
+
+      // Summary
+      doc.setFontSize(16);
+      doc.setTextColor(30);
+      doc.text('System Overview', 20, 50);
+
+      doc.setFontSize(11);
+      doc.text('Status: Active', 20, 60);
+      doc.text('Connection: Secure', 20, 65);
+      doc.text('AI Accuracy: 94.2%', 20, 70);
+
+      // Footer
+      const pageHeight = doc.internal.pageSize.getHeight();
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text('Page 1 of 1 - EcoHealth Sentinel Environmental Suite', 105, pageHeight - 10, { align: 'center' });
+
+      doc.save(`wildlife_report_${Date.now()}.pdf`);
+      alert('✅ Professional PDF Exported successfully!');
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('❌ Error exporting report. Please check if jspdf is available.');
+    }
   };
 
   const schedulePatrol = (species) => {
@@ -143,18 +186,55 @@ export default function WildlifeConservation() {
         <h2 className="nav-title">🦁 Wildlife Conservation System</h2>
 
         <div className={`connection-status ${connectionStatus === 'connected' ? 'status-connected' : 'status-disconnected'}`}>
-          {connectionStatus === 'connected' ? <Wifi className="icon-sm" /> : <WifiOff className="icon-sm" />}
+          {connectionStatus === 'connected' ? <Wifi size={18} /> : <WifiOff size={18} />}
           {connectionStatus === 'connected' ? 'Connected' : 'Disconnected'}
         </div>
 
-        <div className="nav-actions">
-          <button className="icon-btn" onClick={exportReport}>
-            <Download className="icon-sm" />
+        <div className="nav-actions" style={{ position: 'relative' }}>
+          <button className="icon-btn" onClick={exportReport} title="Export PDF Report">
+            <Download size={22} color="#4b5563" />
           </button>
-          <button className="notification-btn" onClick={() => setNotifications(0)}>
-            <Bell className="icon-sm text-white" />
-            {notifications > 0 && <span className="notification-badge">{notifications}</span>}
+          <button
+            className={`notification-btn ${showNotifications ? 'active' : ''}`}
+            onClick={() => {
+              setShowNotifications(!showNotifications);
+              if (!showNotifications) setNotifications(0);
+            }}
+          >
+            <Bell size={22} color={showNotifications ? '#3b82f6' : '#4b5563'} />
+            {notificationList.length > 0 && <span className="notification-badge">{notificationList.length}</span>}
           </button>
+
+          {showNotifications && (
+            <div className="notifications-dropdown">
+              <div className="notifications-header">
+                <h3>System Notifications</h3>
+                <button className="close-btn" onClick={() => setShowNotifications(false)}>
+                  <X size={16} />
+                </button>
+              </div>
+              <div className="notifications-list">
+                {notificationList.map(notif => {
+                  const NotifIcon = notif.icon;
+                  return (
+                    <div key={notif.id} className="notification-item">
+                      <div className={`notification-icon-box ${notif.type}`}>
+                        <NotifIcon size={18} />
+                      </div>
+                      <div className="notification-content">
+                        <p className="notification-item-title">{notif.title}</p>
+                        <p className="notification-item-msg">{notif.message}</p>
+                        <span className="notification-item-time">{notif.time}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="notifications-footer">
+                <button onClick={() => setNotificationList([])}>Clear All</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -468,10 +548,10 @@ export default function WildlifeConservation() {
         {/* Responsible AI */}
         <div className="responsible-ai-card">
           <div className="flex-start gap-16">
-            <Shield className="icon-40 flex-shrink-0" />
+            <Shield className="icon-40 flex-shrink-0" color="#3b82f6" />
             <div>
-              <h3 className="text-xl font-bold mb-16">Responsible AI for Wildlife Conservation</h3>
-              <p className="text-gray-400 text-sm line-height-1-6 mb-16">
+              <h3 className="text-xl font-bold mb-16 text-slate-800">Responsible AI for Wildlife Conservation</h3>
+              <p className="text-slate-500 text-sm line-height-1-6 mb-16">
                 Our AI systems are designed with ethical considerations and environmental impact at the forefront.
                 All wildlife monitoring data is secured with end-to-end encryption, and AI models are regularly audited.
               </p>
@@ -483,8 +563,8 @@ export default function WildlifeConservation() {
                 ].map((item, i) => (
                   <div key={i} className="responsible-ai-item">
                     <p className="text-2xl mb-8">{item.icon}</p>
-                    <p className="font-semibold mb-4">{item.title}</p>
-                    <p className="text-gray-400 text-xs">{item.text}</p>
+                    <p className="font-bold mb-4 text-slate-800">{item.title}</p>
+                    <p className="text-slate-600 text-xs font-semibold">{item.text}</p>
                   </div>
                 ))}
               </div>

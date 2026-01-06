@@ -287,13 +287,61 @@ export default function PollutionHeatmap() {
   };
 
   const downloadReportPDF = async () => {
-    showToast('Generating PDF...');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    pdf.setFontSize(24);
-    pdf.setTextColor(59, 130, 246);
-    pdf.text('Air Quality Report', 105, 20, { align: 'center' });
-    pdf.save(`air_quality_report_${Date.now()}.pdf`);
-    showToast('PDF Downloaded!');
+    try {
+      showToast('Generating Professional PDF...');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+
+      // Header with Accent
+      pdf.setFillColor(59, 130, 246); // Blue
+      pdf.rect(0, 0, pageWidth, 40, 'F');
+
+      pdf.setFontSize(26);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text('Air Quality Analysis Report', 20, 25);
+
+      pdf.setFontSize(10);
+      pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, 34);
+
+      // Body Content
+      pdf.setTextColor(30, 41, 59); // Slate-800
+      pdf.setFontSize(16);
+      pdf.text('Executive Summary', 20, 55);
+
+      pdf.setFontSize(11);
+      pdf.text(`Overall Air Quality Index (AQI): ${averageAQI}`, 20, 65);
+      pdf.text(`Monitoring Period: ${timeframe.toUpperCase()}`, 20, 72);
+      pdf.text(`Primary Pollutant: ${pollutants.find(p => p.id === selectedPollutant)?.name}`, 20, 79);
+
+      // Station Details
+      pdf.setFontSize(16);
+      pdf.text('Monitoring Stations Data', 20, 95);
+
+      let yPos = 105;
+      monitoringStations.slice(0, 8).forEach((station, index) => {
+        const category = getAQICategory(station.aqi);
+        pdf.setFontSize(10);
+        pdf.setTextColor(50);
+        pdf.text(`${index + 1}. ${station.name}`, 25, yPos);
+        pdf.setTextColor(category.color);
+        pdf.text(`AQI: ${station.aqi} (${category.category})`, 120, yPos);
+        yPos += 8;
+      });
+
+      // Footer
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      pdf.setFillColor(248, 250, 252);
+      pdf.rect(0, pageHeight - 20, pageWidth, 20, 'F');
+      pdf.setFontSize(9);
+      pdf.setTextColor(100);
+      pdf.text('© EcoHealth Sentinel - Advanced Environmental Intelligence Platform', pageWidth / 2, pageHeight - 10, { align: 'center' });
+
+      pdf.save(`air_quality_report_${Date.now()}.pdf`);
+      showToast('✅ Professional PDF Exported!');
+    } catch (error) {
+      console.error('PDF Generation Error:', error);
+      showToast('❌ Error generating professional PDF');
+    }
   };
 
   const downloadReport = () => {
@@ -367,11 +415,11 @@ export default function PollutionHeatmap() {
             </div>
             <div className="flex-wrap gap-12" style={{ display: 'flex' }}>
               <button className={`heatmap-btn ${showHistory ? 'btn-green' : 'btn-gray'}`} onClick={() => setShowHistory(!showHistory)}>
-                <History size={18} />
+                <History size={22} color={showHistory ? '#10b981' : '#4b5563'} />
                 History
               </button>
               <button className="heatmap-btn" onClick={downloadReport}>
-                <Download size={18} />
+                <Download size={22} color="#4b5563" />
                 Download
               </button>
             </div>
