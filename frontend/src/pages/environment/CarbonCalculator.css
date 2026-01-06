@@ -1,12 +1,9 @@
 .calculator-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-    padding: 3rem 1.5rem;
-    font-family: 'Inter', sans-serif;
+    width: 100%;
 }
 
 .calculator-wrapper {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 

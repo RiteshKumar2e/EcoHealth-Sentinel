@@ -12,9 +12,7 @@ html {
 }
 
 .waste-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 50%, #e0f2fe 100%);
-    padding: 1rem;
+    width: 100%;
 }
 
 .top-navbar {
@@ -151,7 +149,7 @@ html {
 }
 
 .container-wrapper {
-    max-width: 1800px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 

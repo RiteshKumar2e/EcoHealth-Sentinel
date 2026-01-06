@@ -2,16 +2,15 @@
     min-height: 100vh;
     background: #f8fafc;
     padding: 24px;
-    padding-left: 280px !important;
 }
 
 .fullscreen-mode {
     padding: 0 !important;
 }
 
-.climate-wrapper {
-    max-width: 1400px;
-    margin: 0 auto;
+.heatmap-wrapper {
+    max-width: 1560px;
+    margin: 0;
 }
 
 .fullscreen-mode .climate-wrapper {

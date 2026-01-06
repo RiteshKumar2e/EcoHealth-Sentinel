@@ -23,7 +23,7 @@
 
 /* Sidebar Styles */
 .sidebar {
-  width: 300px;
+  width: 600px;
   background: white;
   color: #1e293b;
   padding: 24px 0;
@@ -50,8 +50,10 @@
 .main-content {
   flex: 1;
   margin-left: 300px;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content.sidebar-closed {
@@ -79,7 +81,7 @@
 }
 
 .menu-toggle.sidebar-open {
-  left: 300px;
+  left: 280px;
   /* Position when sidebar is open */
 }
 
@@ -90,13 +92,15 @@
 
 .content-wrapper,
 .healthcare-content-wrapper {
-  padding: 24px;
+  padding: 40px;
+  width: 100%;
 }
 
 .content-inner,
 .healthcare-content-inner {
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: 1560px;
+  margin: 0;
+  width: 100%;
 }
 
 /* Header */

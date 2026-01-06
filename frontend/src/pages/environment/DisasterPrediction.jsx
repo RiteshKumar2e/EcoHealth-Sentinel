@@ -401,22 +401,22 @@ export default function DisasterPrediction() {
             </div>
             <div className="stats-grid">
               <div className="stat-item">
-                <Activity size={24} className="m-auto mb-8" />
+                <Activity size={18} className="m-auto mb-4" />
                 <p className="stat-value">{earlyWarningSystem.sensors || 127}</p>
                 <p className="stat-label">Sensors</p>
               </div>
               <div className="stat-item">
-                <Radio size={24} className="m-auto mb-8" />
+                <Radio size={18} className="m-auto mb-4" />
                 <p className="stat-value">{earlyWarningSystem.coverage || 92}%</p>
                 <p className="stat-label">Coverage</p>
               </div>
               <div className="stat-item">
-                <Zap size={24} className="m-auto mb-8" />
+                <Zap size={18} className="m-auto mb-4" />
                 <p className="stat-value">{earlyWarningSystem.alertsSent || 45}</p>
                 <p className="stat-label">Alerts</p>
               </div>
               <div className="stat-item">
-                <Clock size={24} className="m-auto mb-8" />
+                <Clock size={18} className="m-auto mb-4" />
                 <p className="stat-value small">{earlyWarningSystem.responseTime || '12 min'}</p>
                 <p className="stat-label">Response</p>
               </div>

@@ -1,14 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 .reports-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #dbeafe 100%);
-    padding: 2rem 1rem;
-    font-family: 'Inter', sans-serif;
+    width: 100%;
 }
 
 .container-wrapper {
-    max-width: 1280px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 

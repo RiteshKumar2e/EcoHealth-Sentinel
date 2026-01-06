@@ -23,7 +23,6 @@ export default function Dashboard() {
   const location = useLocation();
 
   const [timeRange, setTimeRange] = useState('Day');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   // State and District Selection
@@ -227,33 +226,8 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      {/* Sidebar */}
-      <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
-        <div className="sidebar-logo">
-          <Activity size={32} className="sidebar-logo-icon" />
-          <h2>EcoMonitor</h2>
-        </div>
-        <nav className="sidebar-nav">
-          {navigationItems.map((item) => (
-            <SidebarItem
-              key={item.path}
-              path={item.path}
-              icon={item.icon}
-              label={item.label}
-              isActive={location.pathname === item.path}
-              onClick={handleNavigation}
-              collapsed={sidebarCollapsed}
-            />
-          ))}
-        </nav>
-        <button className="toggle-btn" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
-          {sidebarCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          <span className="toggle-btn-text">{sidebarCollapsed ? 'Expand Menu' : 'Collapse Menu'}</span>
-        </button>
-      </aside>
-
-      {/* Main Content */}
-      <main className={`main-content ${sidebarCollapsed ? 'expanded' : ''}`}>
+      {/* Dashboard Content */}
+      <div className="dashboard-content-main">
         <div className="max-w-1400">
           {/* Header Section */}
           <div className="glass-card header-container">
@@ -576,7 +550,7 @@ export default function Dashboard() {
             </div>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
