@@ -264,20 +264,6 @@
     box-shadow: 0 25px 30px -10px rgba(0, 0, 0, 0.1);
 }
 
-.report-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: transparent;
-    transition: all 0.3s ease;
-}
-
-.report-card:hover::before {
-    background: currentColor;
-}
 
 .report-header {
     display: flex;

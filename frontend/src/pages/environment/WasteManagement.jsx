@@ -26,7 +26,7 @@ export default function WasteManagement() {
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [notifications, setNotifications] = useState(12);
+  const [notifications, setNotifications] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -38,94 +38,16 @@ export default function WasteManagement() {
   const chatEndRef = useRef(null);
 
   // Comprehensive Data
-  const wasteStats = [
-    { type: 'Recyclable', collected: 450, recycled: 380, percentage: 84, icon: Recycle, color: '#10b981', trend: '+12%', cost: '$2,340', revenue: '$3,200' },
-    { type: 'Organic', collected: 680, recycled: 610, percentage: 90, icon: Leaf, color: '#059669', trend: '+8%', cost: '$1,890', revenue: '$2,800' },
-    { type: 'Hazardous', collected: 85, recycled: 75, percentage: 88, icon: AlertCircle, color: '#ef4444', trend: '+5%', cost: '$4,500', revenue: '$0' },
-    { type: 'General', collected: 920, recycled: 280, percentage: 30, icon: Trash2, color: '#6b7280', trend: '-3%', cost: '$5,600', revenue: '$800' },
-    { type: 'E-Waste', collected: 125, recycled: 115, percentage: 92, icon: Package, color: '#8b5cf6', trend: '+15%', cost: '$3,200', revenue: '$4,500' },
-    { type: 'Metal', collected: 340, recycled: 330, percentage: 97, icon: Shield, color: '#f59e0b', trend: '+10%', cost: '$2,100', revenue: '$5,200' }
-  ];
+  const wasteStats = [];
+  const monthlyTrends = [];
+  const hourlyData = [];
+  const wasteComposition = [];
+  const performanceMetrics = [];
+  const collectionPoints = [];
+  const kpiMetrics = [];
 
-  const monthlyTrends = [
-    { month: 'Jan', recyclable: 420, organic: 650, general: 880, hazardous: 78, cost: 12400, revenue: 6200, efficiency: 82 },
-    { month: 'Feb', recyclable: 435, organic: 670, general: 900, hazardous: 82, cost: 12800, revenue: 6500, efficiency: 84 },
-    { month: 'Mar', recyclable: 440, organic: 680, general: 910, hazardous: 80, cost: 13100, revenue: 6800, efficiency: 85 },
-    { month: 'Apr', recyclable: 445, organic: 675, general: 920, hazardous: 83, cost: 13400, revenue: 7100, efficiency: 86 },
-    { month: 'May', recyclable: 450, organic: 680, general: 920, hazardous: 85, cost: 13700, revenue: 7400, efficiency: 88 },
-    { month: 'Jun', recyclable: 455, organic: 690, general: 915, hazardous: 84, cost: 14000, revenue: 7800, efficiency: 90 }
-  ];
-
-  const hourlyData = [
-    { hour: '00:00', amount: 45 }, { hour: '02:00', amount: 32 }, { hour: '04:00', amount: 28 },
-    { hour: '06:00', amount: 52 }, { hour: '08:00', amount: 89 }, { hour: '10:00', amount: 112 },
-    { hour: '12:00', amount: 145 }, { hour: '14:00', amount: 138 }, { hour: '16:00', amount: 156 },
-    { hour: '18:00', amount: 132 }, { hour: '20:00', amount: 98 }, { hour: '22:00', amount: 67 }
-  ];
-
-  const wasteComposition = [
-    { name: 'Plastic', value: 28, color: '#3b82f6' },
-    { name: 'Paper', value: 22, color: '#10b981' },
-    { name: 'Food Waste', value: 35, color: '#059669' },
-    { name: 'Metal', value: 8, color: '#6b7280' },
-    { name: 'Glass', value: 7, color: '#06b6d4' }
-  ];
-
-  const performanceMetrics = [
-    { metric: 'Collection Efficiency', value: 92, fullMark: 100 },
-    { metric: 'Recycling Rate', value: 84, fullMark: 100 },
-    { metric: 'Route Optimization', value: 88, fullMark: 100 },
-    { metric: 'Cost Efficiency', value: 76, fullMark: 100 },
-    { metric: 'Customer Satisfaction', value: 94, fullMark: 100 },
-    { metric: 'Environmental Impact', value: 89, fullMark: 100 }
-  ];
-
-  const collectionPoints = [
-    { id: 1, name: 'Central Hub', location: 'Main Market', status: 'operational', capacity: 85, lastCollection: '2 hours ago', types: ['All'], priority: 'high' },
-    { id: 2, name: 'Residential A', location: 'North Zone', status: 'operational', capacity: 62, lastCollection: '4 hours ago', types: ['Recyclable', 'Organic'], priority: 'medium' },
-    { id: 3, name: 'Industrial Area', location: 'MIDC', status: 'full', capacity: 95, lastCollection: '30 mins ago', types: ['General', 'Hazardous'], priority: 'urgent' },
-    { id: 4, name: 'Educational Campus', location: 'University', status: 'operational', capacity: 45, lastCollection: '6 hours ago', types: ['Recyclable'], priority: 'low' },
-    { id: 5, name: 'Commercial District', location: 'Business Center', status: 'maintenance', capacity: 0, lastCollection: '12 hours ago', types: ['All'], priority: 'high' },
-    { id: 6, name: 'Hospital Complex', location: 'Medical District', status: 'operational', capacity: 78, lastCollection: '1 hour ago', types: ['Hazardous'], priority: 'urgent' },
-    { id: 7, name: 'Tech Park', location: 'IT Hub', status: 'operational', capacity: 55, lastCollection: '3 hours ago', types: ['E-Waste', 'Recyclable'], priority: 'medium' },
-    { id: 8, name: 'Food Market', location: 'Central Market', status: 'operational', capacity: 82, lastCollection: '1.5 hours ago', types: ['Organic'], priority: 'high' }
-  ];
-
-  const kpiMetrics = [
-    { label: 'Collection Rate', value: '95.2%', change: '+2.3%', icon: Truck, color: '#10b981' },
-    { label: 'Avg Response Time', value: '42 min', change: '-8 min', icon: Clock, color: '#3b82f6' },
-    { label: 'Cost per Ton', value: '$124', change: '-$12', icon: DollarSign, color: '#f59e0b' },
-    { label: 'Recycling Rate', value: '84%', change: '+6%', icon: Recycle, color: '#059669' },
-    { label: 'Customer Satisfaction', value: '4.7/5', change: '+0.3', icon: Award, color: '#8b5cf6' },
-    { label: 'Fleet Efficiency', value: '89%', change: '+4%', icon: Activity, color: '#ec4899' },
-    { label: 'CO₂ Reduction', value: '1.2T', change: '+0.3T', icon: Leaf, color: '#14b8a6' },
-    { label: 'Active Users', value: '12.4K', change: '+840', icon: Users, color: '#6366f1' },
-    { label: 'Waste Diverted', value: '2,450T', change: '+180T', icon: TrendingUp, color: '#10b981' },
-    { label: 'Revenue Generated', value: '$45K', change: '+$8K', icon: DollarSign, color: '#059669' },
-    { label: 'Processing Speed', value: '98%', change: '+3%', icon: Zap, color: '#f59e0b' },
-    { label: 'Compliance Score', value: '96%', change: '+2%', icon: CheckCircle, color: '#10b981' }
-  ];
-
-  const recyclingPrograms = [
-    { name: 'Plastic to Fuel', status: 'Active', processed: 2400, unit: 'kg/month', impact: '1.2 tons CO₂ saved', participants: 340 },
-    { name: 'E-Waste Recovery', status: 'Active', processed: 850, unit: 'kg/month', impact: '450 kg metals recovered', participants: 120 },
-    { name: 'Organic Composting', status: 'Active', processed: 5200, unit: 'kg/month', impact: '3.5 tons fertilizer produced', participants: 580 },
-    { name: 'Paper Recycling', status: 'Active', processed: 1800, unit: 'kg/month', impact: '42 trees saved', participants: 290 },
-    { name: 'Glass Recycling', status: 'Active', processed: 1200, unit: 'kg/month', impact: '30% energy saved', participants: 180 },
-    { name: 'Metal Recovery', status: 'Active', processed: 3400, unit: 'kg/month', impact: '$12K revenue', participants: 410 }
-  ];
-
-  const tips = [
-    'Separate waste at source into recyclable, organic, and general categories',
-    'Rinse containers before recycling to prevent contamination',
-    'Compost organic waste to create nutrient-rich soil',
-    'Avoid single-use plastics and opt for reusable alternatives',
-    'Donate or sell items instead of throwing them away',
-    'Properly dispose of hazardous waste at designated collection points',
-    'Use reusable bags when shopping to reduce plastic waste',
-    'Buy products with minimal packaging',
-    'Participate in local recycling programs and initiatives'
-  ];
+  const recyclingPrograms = [];
+  const tips = [];
 
   // Initialize
   useEffect(() => {

@@ -21,6 +21,14 @@ export default function RenewableEnergy() {
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
 
+  const energyStats = [];
+  const monthlyGeneration = [];
+  const energyMix = [];
+  const activeProjects = [];
+  const aiPredictions = [];
+  const renewableBenefits = [];
+  const kpiMetrics = [];
+
   const energySources = [
     { type: 'Solar', icon: Sun, capacity: 2500, generation: 2180, efficiency: 87.2, color: '#f59e0b', bgColor: '#fef3c7', gradient: 'linear-gradient(135deg, #fbbf24, #f59e0b)' },
     { type: 'Wind', icon: Wind, capacity: 1800, generation: 1440, efficiency: 80.0, color: '#3b82f6', bgColor: '#dbeafe', gradient: 'linear-gradient(135deg, #60a5fa, #3b82f6)' },
@@ -28,58 +36,13 @@ export default function RenewableEnergy() {
     { type: 'Biomass', icon: Leaf, capacity: 800, generation: 640, efficiency: 80.0, color: '#10b981', bgColor: '#d1fae5', gradient: 'linear-gradient(135deg, #34d399, #10b981)' }
   ];
 
-  const monthlyGeneration = [
-    { month: 'Jan', solar: 180, wind: 120, hydro: 240, biomass: 52 },
-    { month: 'Feb', solar: 195, wind: 135, hydro: 245, biomass: 54 },
-    { month: 'Mar', solar: 210, wind: 110, hydro: 250, biomass: 55 },
-    { month: 'Apr', solar: 225, wind: 95, hydro: 240, biomass: 53 },
-    { month: 'May', solar: 240, wind: 85, hydro: 235, biomass: 52 },
-    { month: 'Jun', solar: 220, wind: 140, hydro: 250, biomass: 54 },
-    { month: 'Jul', solar: 200, wind: 160, hydro: 280, biomass: 56 },
-    { month: 'Aug', solar: 205, wind: 155, hydro: 275, biomass: 55 },
-    { month: 'Sep', solar: 215, wind: 145, hydro: 260, biomass: 54 },
-    { month: 'Oct', solar: 210, wind: 130, hydro: 250, biomass: 53 },
-    { month: 'Nov', solar: 195, wind: 115, hydro: 245, biomass: 52 },
-    { month: 'Dec', solar: 185, wind: 125, hydro: 240, biomass: 51 }
-  ];
-
-  const energyMix = [
-    { name: 'Solar', value: 32, color: '#f59e0b' },
-    { name: 'Wind', value: 21, color: '#3b82f6' },
-    { name: 'Hydro', value: 38, color: '#06b6d4' },
-    { name: 'Biomass', value: 9, color: '#10b981' }
-  ];
-
   const [stats, setStats] = useState({
-    totalCapacity: 8300,
-    currentGeneration: 7140,
-    co2Saved: 125400,
-    costSavings: 4250000,
-    householdsPowered: 28500
+    totalCapacity: 0,
+    currentGeneration: 0,
+    co2Saved: 0,
+    costSavings: 0,
+    householdsPowered: 0
   });
-
-  const projects = [
-    { name: 'Solar Farm Expansion', type: 'Solar', capacity: 500, status: 'In Progress', completion: 68, investment: 2500000, expectedCompletion: 'Q2 2026' },
-    { name: 'Wind Turbine Installation', type: 'Wind', capacity: 300, status: 'Planning', completion: 25, investment: 1800000, expectedCompletion: 'Q4 2026' },
-    { name: 'Micro-hydro Plant', type: 'Hydro', capacity: 200, status: 'In Progress', completion: 82, investment: 1200000, expectedCompletion: 'Q1 2026' },
-    { name: 'Biomass Energy Center', type: 'Biomass', capacity: 150, status: 'Operational', completion: 100, investment: 800000, expectedCompletion: 'Completed' }
-  ];
-
-  const predictions = [
-    { year: '2025', capacity: 8300, generation: 7140 },
-    { year: '2026', capacity: 9450, generation: 8350 },
-    { year: '2027', capacity: 10800, generation: 9720 },
-    { year: '2028', capacity: 12500, generation: 11500 },
-    { year: '2029', capacity: 14200, generation: 13200 },
-    { year: '2030', capacity: 16000, generation: 15000 }
-  ];
-
-  const benefits = [
-    { icon: Leaf, title: 'Carbon Reduction', value: '125,400', unit: 'tons CO₂/year', description: 'Equivalent to planting 5.6 million trees', color: '#10b981', bgColor: '#d1fae5' },
-    { icon: DollarSign, title: 'Cost Savings', value: '₹42.5', unit: 'Lakh/year', description: 'Reduced electricity costs', color: '#3b82f6', bgColor: '#dbeafe' },
-    { icon: Zap, title: 'Energy Independence', value: '86%', unit: 'Self-sufficient', description: 'Reduced grid dependence', color: '#8b5cf6', bgColor: '#ede9fe' },
-    { icon: Battery, title: 'Grid Stability', value: '99.7%', unit: 'Uptime', description: 'Reliable power supply', color: '#f59e0b', bgColor: '#fef3c7' }
-  ];
 
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'Solar efficiency increased by 3%', time: '5 mins ago', type: 'success' },

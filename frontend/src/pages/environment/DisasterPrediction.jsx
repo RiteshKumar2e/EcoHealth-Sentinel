@@ -80,108 +80,15 @@ export default function DisasterPrediction() {
   };
 
   const loadGraphFallbackData = () => {
-    setFloodHistoryData([
-      { year: '2020', actual: 5, predicted: null, severity: 3.2 },
-      { year: '2021', actual: 7, predicted: null, severity: 4.1 },
-      { year: '2022', actual: 6, predicted: null, severity: 3.8 },
-      { year: '2023', actual: 9, predicted: null, severity: 5.2 },
-      { year: '2024', actual: 8, predicted: null, severity: 4.7 },
-      { year: '2025', actual: null, predicted: 10, severity: 5.8 },
-      { year: '2026', actual: null, predicted: 12, severity: 6.5 },
-      { year: '2027', actual: null, predicted: 11, severity: 6.2 },
-      { year: '2028', actual: null, predicted: 14, severity: 7.1 }
-    ]);
-
-    setTemperatureTrendData([
-      { month: 'Jan', historical: 16.2, current: 16.8, predicted: 17.2 },
-      { month: 'Feb', historical: 18.5, current: 19.1, predicted: 19.8 },
-      { month: 'Mar', historical: 23.2, current: 24.1, predicted: 25.0 },
-      { month: 'Apr', historical: 28.5, current: 29.5, predicted: 30.8 },
-      { month: 'May', historical: 31.2, current: 32.5, predicted: 34.0 },
-      { month: 'Jun', historical: 30.8, current: 32.0, predicted: 33.5 },
-      { month: 'Jul', historical: 29.5, current: null, predicted: 31.2 },
-      { month: 'Aug', historical: 29.8, current: null, predicted: 31.5 },
-      { month: 'Sep', historical: 28.5, current: null, predicted: 30.2 },
-      { month: 'Oct', historical: 25.2, current: 26.0, predicted: 26.8 },
-      { month: 'Nov', historical: 20.8, current: null, predicted: 22.0 },
-      { month: 'Dec', historical: 17.5, current: null, predicted: 18.5 }
-    ]);
-
-    setRainfallPatternData([
-      { month: 'Jan', historical: 15, predicted: 12 },
-      { month: 'Feb', historical: 18, predicted: 15 },
-      { month: 'Mar', historical: 22, predicted: 20 },
-      { month: 'Apr', historical: 28, predicted: 32 },
-      { month: 'May', historical: 65, predicted: 58 },
-      { month: 'Jun', historical: 220, predicted: 245 },
-      { month: 'Jul', historical: 310, predicted: 335 },
-      { month: 'Aug', historical: 285, predicted: 295 },
-      { month: 'Sep', historical: 240, predicted: 225 },
-      { month: 'Oct', historical: 92, predicted: 85 },
-      { month: 'Nov', historical: 25, predicted: 22 },
-      { month: 'Dec', historical: 12, predicted: 10 }
-    ]);
-
-    setDisasterFrequencyData([
-      { year: '2020', floods: 5, heatwaves: 2, storms: 3, droughts: 1 },
-      { year: '2021', floods: 7, heatwaves: 3, storms: 4, droughts: 1 },
-      { year: '2022', floods: 6, heatwaves: 4, storms: 3, droughts: 2 },
-      { year: '2023', floods: 9, heatwaves: 5, storms: 5, droughts: 2 },
-      { year: '2024', floods: 8, heatwaves: 4, storms: 4, droughts: 3 },
-      { year: '2025', floods: 10, heatwaves: 6, storms: 6, droughts: 3 },
-      { year: '2026', floods: 12, heatwaves: 7, storms: 7, droughts: 4 },
-      { year: '2027', floods: 11, heatwaves: 8, storms: 6, droughts: 4 },
-      { year: '2028', floods: 14, heatwaves: 9, storms: 8, droughts: 5 }
-    ]);
-
-    setRiskAssessmentData([
-      { area: 'Riverside', flood: 85, heat: 45, storm: 60, drought: 30 },
-      { area: 'Urban', flood: 65, heat: 75, storm: 55, drought: 40 },
-      { area: 'Agricultural', flood: 70, heat: 80, storm: 50, drought: 85 },
-      { area: 'Highland', flood: 25, heat: 60, storm: 40, drought: 35 },
-      { area: 'Coastal', flood: 55, heat: 55, storm: 85, drought: 25 }
-    ]);
-
-    setEvacuationReadinessData([
-      { district: 'Darbhanga', readiness: 85, capacity: 12000, drills: 8 },
-      { district: 'Muzaffarpur', readiness: 78, capacity: 15000, drills: 6 },
-      { district: 'Patna', readiness: 92, capacity: 25000, drills: 12 },
-      { district: 'Gaya', readiness: 72, capacity: 10000, drills: 5 },
-      { district: 'Bhagalpur', readiness: 68, capacity: 8000, drills: 4 },
-      { district: 'Purnia', readiness: 75, capacity: 9500, drills: 7 }
-    ]);
-
-    setSeasonalTrendsData([
-      { season: 'Winter', floods: 10, heatwaves: 5, storms: 15, droughts: 20 },
-      { season: 'Spring', floods: 25, heatwaves: 20, storms: 30, droughts: 15 },
-      { season: 'Summer', floods: 15, heatwaves: 85, storms: 40, droughts: 70 },
-      { season: 'Monsoon', floods: 90, heatwaves: 10, storms: 75, droughts: 5 },
-      { season: 'Autumn', floods: 35, heatwaves: 30, storms: 25, droughts: 25 }
-    ]);
-
-    setImpactAnalysisData([
-      { year: '2020', economic: 2.5, infrastructure: 1.8, agriculture: 3.2, lives: 125 },
-      { year: '2021', economic: 3.1, infrastructure: 2.3, agriculture: 4.1, lives: 178 },
-      { year: '2022', economic: 2.8, infrastructure: 2.0, agriculture: 3.5, lives: 142 },
-      { year: '2023', economic: 4.2, infrastructure: 3.5, agriculture: 5.8, lives: 245 },
-      { year: '2024', economic: 3.8, infrastructure: 3.0, agriculture: 4.9, lives: 198 },
-      { year: '2025', economic: 4.5, infrastructure: 3.8, agriculture: 6.2, lives: 280 },
-      { year: '2026', economic: 5.2, infrastructure: 4.2, agriculture: 7.1, lives: 315 },
-      { year: '2027', economic: 4.9, infrastructure: 4.0, agriculture: 6.8, lives: 295 },
-      { year: '2028', economic: 5.8, infrastructure: 4.8, agriculture: 8.2, lives: 350 }
-    ]);
-
-    setResponseTimeData([
-      { year: '2020', avgTime: 45, successRate: 65 },
-      { year: '2021', avgTime: 38, successRate: 72 },
-      { year: '2022', avgTime: 32, successRate: 78 },
-      { year: '2023', avgTime: 28, successRate: 82 },
-      { year: '2024', avgTime: 22, successRate: 88 },
-      { year: '2025', avgTime: 18, successRate: 92 },
-      { year: '2026', avgTime: 15, successRate: 94 },
-      { year: '2027', avgTime: 12, successRate: 96 },
-      { year: '2028', avgTime: 10, successRate: 97 }
-    ]);
+    setFloodHistoryData([]);
+    setTemperatureTrendData([]);
+    setRainfallPatternData([]);
+    setDisasterFrequencyData([]);
+    setRiskAssessmentData([]);
+    setEvacuationReadinessData([]);
+    setSeasonalTrendsData([]);
+    setImpactAnalysisData([]);
+    setResponseTimeData([]);
   };
 
   const fetchDisasterPredictions = async () => {
@@ -244,43 +151,12 @@ export default function DisasterPrediction() {
   };
 
   const loadFallbackData = () => {
-    setActiveDisasters([
-      { id: 1, type: 'flood', severity: 'high', location: 'Darbhanga District', probability: 78, timeframe: '24-48 hours', affectedPopulation: 125000, icon: Waves, color: '#3b82f6', trend: '+15%' },
-      { id: 2, type: 'heatwave', severity: 'medium', location: 'Bihar Region', probability: 65, timeframe: '3-5 days', affectedPopulation: 450000, icon: Thermometer, color: '#ef4444', trend: '+8%' },
-      { id: 3, type: 'storm', severity: 'low', location: 'Northern Bihar', probability: 42, timeframe: '5-7 days', affectedPopulation: 85000, icon: Wind, color: '#8b5cf6', trend: '+3%' }
-    ]);
-
-    setPreparednessChecklist([
-      { id: 1, task: 'Emergency evacuation routes identified', completed: true, priority: 'Critical' },
-      { id: 2, task: 'Emergency supplies stockpiled', completed: true, priority: 'High' },
-      { id: 3, task: 'Communication systems tested', completed: false, priority: 'Critical' },
-      { id: 4, task: 'Medical facilities on standby', completed: true, priority: 'High' },
-      { id: 5, task: 'Community awareness campaigns conducted', completed: false, priority: 'Medium' },
-      { id: 6, task: 'Shelter locations designated', completed: true, priority: 'Critical' }
-    ]);
-
-    setEarlyWarningSystem({ status: 'active', lastUpdate: '15 minutes ago', sensors: 127, coverage: 92, alertsSent: 45, responseTime: '12 min' });
-
-    setVulnerabilityAreas([
-      { area: 'Low-lying riverside zones', risk: 'Very High', population: 45000, preparedness: 'Medium', color: '#ef4444' },
-      { area: 'Urban flood-prone areas', risk: 'High', population: 68000, preparedness: 'High', color: '#f97316' },
-      { area: 'Agricultural lowlands', risk: 'Medium', population: 92000, preparedness: 'Medium', color: '#f59e0b' },
-      { area: 'Highland settlements', risk: 'Low', population: 35000, preparedness: 'High', color: '#10b981' }
-    ]);
-
-    setResponseTeams([
-      { name: 'Rapid Response Unit A', status: 'Ready', personnel: 45, equipment: 'Full', location: 'Patna Base' },
-      { name: 'Medical Emergency Team', status: 'Deployed', personnel: 32, equipment: 'Full', location: 'Field Hospital 1' },
-      { name: 'Rescue & Relief Corps', status: 'Ready', personnel: 58, equipment: 'Full', location: 'Central Hub' },
-      { name: 'Community Support Team', status: 'Standby', personnel: 28, equipment: 'Partial', location: 'District Office' }
-    ]);
-
-    setAiPredictions([
-      { title: 'Monsoon Flood Risk', description: 'Heavy rainfall predicted. River levels expected to rise by 3-4 meters.', confidence: 85, recommendation: 'Activate evacuation protocols for riverside communities.', timeframe: '24-48 hours', severity: 'high' },
-      { title: 'Heat Stress Alert', description: 'Extended high temperatures forecasted. Vulnerable populations at risk.', confidence: 72, recommendation: 'Set up cooling centers. Issue public health advisories.', timeframe: '3-5 days', severity: 'medium' },
-      { title: 'Agricultural Drought', description: 'Below-normal rainfall projected affecting crop cycles.', confidence: 68, recommendation: 'Promote water-efficient irrigation.', timeframe: '2-3 months', severity: 'low' }
-    ]);
-
+    setActiveDisasters([]);
+    setPreparednessChecklist([]);
+    setEarlyWarningSystem({ status: 'active', sensors: 0, coverage: 0, alertsSent: 0 });
+    setVulnerabilityAreas([]);
+    setResponseTeams([]);
+    setAiPredictions([]);
     loadGraphFallbackData();
   };
 
@@ -354,14 +230,14 @@ export default function DisasterPrediction() {
         <div className="disaster-card">
           <div className="disaster-header">
             <div className="flex-center gap-12">
-              <div className="icon-box">
-                <AlertTriangle size={32} className="white-text float-icon" />
+              <div className="icon-box" style={{ background: '#fef2f2', border: '1px solid #fee2e2', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.1)' }}>
+                <AlertTriangle size={32} style={{ color: '#ef4444' }} className="float-icon" />
               </div>
               <div className="header-text-container">
                 <h1 className="disaster-title">AI Disaster Prediction</h1>
                 <p className="disaster-subtitle flex-center gap-8">
                   <Satellite size={16} className="red-text" />
-                  Real-time monitoring • AI predictions
+                  Real-time monitoring AI predictions
                 </p>
               </div>
             </div>
@@ -370,20 +246,9 @@ export default function DisasterPrediction() {
                 {showGraphs ? <EyeOff size={18} /> : <Eye size={18} />}
                 {showGraphs ? 'Hide Graphs' : 'Show Graphs'}
               </button>
-              <button className={`disaster-btn ${notificationsEnabled ? 'btn-green' : 'btn-gray'}`} onClick={() => { setNotificationsEnabled(!notificationsEnabled); if (!notificationsEnabled && 'Notification' in window) Notification.requestPermission(); }}>
-                <Bell size={18} />
-                {notificationsEnabled ? 'ON' : 'OFF'}
-              </button>
-              <button className="disaster-btn" onClick={handleRefresh} disabled={refreshing}>
-                <RefreshCw size={18} className={refreshing ? 'spin-animation' : ''} />
-                {refreshing ? 'Refreshing...' : 'Refresh'}
-              </button>
               <button className="disaster-btn" onClick={downloadReport}>
                 <Download size={18} />
                 Download
-              </button>
-              <button className="disaster-btn btn-blue" onClick={() => setIsFullscreen(!isFullscreen)}>
-                {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
               </button>
             </div>
           </div>
@@ -391,7 +256,7 @@ export default function DisasterPrediction() {
 
         {/* Early Warning System */}
         <div className="disaster-card early-warning-banner p-24">
-          <div className="flex-between flex-wrap gap-24">
+          <div className="flex-col gap-24">
             <div className="flex-center gap-16">
               <Shield size={48} className="float-icon" />
               <div>
@@ -402,22 +267,22 @@ export default function DisasterPrediction() {
             <div className="stats-grid">
               <div className="stat-item">
                 <Activity size={18} className="m-auto mb-4" />
-                <p className="stat-value">{earlyWarningSystem.sensors || 127}</p>
+                <p className="stat-value">{earlyWarningSystem.sensors ?? 0}</p>
                 <p className="stat-label">Sensors</p>
               </div>
               <div className="stat-item">
                 <Radio size={18} className="m-auto mb-4" />
-                <p className="stat-value">{earlyWarningSystem.coverage || 92}%</p>
+                <p className="stat-value">{earlyWarningSystem.coverage ?? 0}%</p>
                 <p className="stat-label">Coverage</p>
               </div>
               <div className="stat-item">
                 <Zap size={18} className="m-auto mb-4" />
-                <p className="stat-value">{earlyWarningSystem.alertsSent || 45}</p>
+                <p className="stat-value">{earlyWarningSystem.alertsSent ?? 0}</p>
                 <p className="stat-label">Alerts</p>
               </div>
               <div className="stat-item">
                 <Clock size={18} className="m-auto mb-4" />
-                <p className="stat-value small">{earlyWarningSystem.responseTime || '12 min'}</p>
+                <p className="stat-value small">{earlyWarningSystem.responseTime ?? '--'}</p>
                 <p className="stat-label">Response</p>
               </div>
             </div>
@@ -604,7 +469,7 @@ export default function DisasterPrediction() {
         {/* Response Teams */}
         <div className="disaster-card">
           <h2 className="text-24 font-800 mb-20">Emergency Response Teams</h2>
-          <div className="grid-3">
+          <div className="response-teams-grid">
             {responseTeams.map((t, i) => (
               <div key={i} className="response-team-card">
                 <div className="flex-between mb-16">

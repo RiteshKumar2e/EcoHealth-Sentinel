@@ -72,84 +72,9 @@ export default function AwarenessHub() {
   };
 
   const loadDummyData = () => {
-    setCampaigns([
-      {
-        id: 1,
-        title: "Plant a Tree Challenge",
-        category: "Reforestation",
-        participants: 1247,
-        impact: "2,340 trees planted",
-        progress: 78,
-        status: "active",
-        startDate: "2025-09-15",
-        endDate: "2025-12-31",
-        description: "Join our community-driven tree planting initiative"
-      },
-      {
-        id: 2,
-        title: "Plastic-Free Week",
-        category: "Waste Reduction",
-        participants: 892,
-        impact: "15.4 tons plastic saved",
-        progress: 92,
-        status: "active",
-        startDate: "2025-10-01",
-        endDate: "2025-10-07",
-        description: "Reduce single-use plastics in your daily life"
-      },
-      {
-        id: 3,
-        title: "Energy Conservation Drive",
-        category: "Climate Action",
-        participants: 2103,
-        impact: "45,000 kWh saved",
-        progress: 65,
-        status: "active",
-        startDate: "2025-09-01",
-        endDate: "2025-11-30",
-        description: "Save energy and reduce carbon footprint"
-      }
-    ]);
-
-    setEducationModules([
-      {
-        id: 1,
-        title: "Climate Change Basics",
-        completed: 450,
-        rating: 4.8,
-        duration: "2 hours",
-        level: "Beginner",
-        description: "Understanding climate change and its impacts",
-        topics: ["Global Warming", "Carbon Cycle", "Greenhouse Effect"]
-      },
-      {
-        id: 2,
-        title: "Sustainable Agriculture",
-        completed: 320,
-        rating: 4.6,
-        duration: "3 hours",
-        level: "Intermediate",
-        description: "Learn sustainable farming practices",
-        topics: ["Organic Farming", "Water Management", "Soil Health"]
-      },
-      {
-        id: 3,
-        title: "Water Conservation",
-        completed: 580,
-        rating: 4.9,
-        duration: "1.5 hours",
-        level: "Beginner",
-        description: "Techniques to conserve water resources",
-        topics: ["Rainwater Harvesting", "Drip Irrigation", "Water Recycling"]
-      }
-    ]);
-
-    setCommunityStats({
-      totalMembers: 12450,
-      activeCampaigns: 8,
-      totalImpact: "158 tons CO2 reduced",
-      engagementRate: 73
-    });
+    setCampaigns([]);
+    setEducationModules([]);
+    setCommunityStats(null);
   };
 
   const handleJoinCampaign = async (campaignId) => {

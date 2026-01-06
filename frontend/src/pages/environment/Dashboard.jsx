@@ -176,13 +176,7 @@ export default function Dashboard() {
   };
 
   const loadDummyData = () => {
-    setEnvironmentalMetrics([
-      { icon: 'Leaf', title: 'Air Quality Index', value: '--', unit: 'AQI', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' },
-      { icon: 'Droplets', title: 'Water Quality', value: '--', unit: '/100', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' },
-      { icon: 'Wind', title: 'CO2 Levels', value: '--', unit: 'ppm', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' },
-      { icon: 'Sun', title: 'Solar Radiation', value: '--', unit: 'kWh/m²', change: 0, status: 'nodata', color: '#94a3b8', bgColor: '#f8fafc', trend: 'flat' }
-    ]);
-
+    setEnvironmentalMetrics(initialMetrics);
     setWeeklyData([]);
     setEmissionsBySource([]);
     setConservationProgress([]);

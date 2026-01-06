@@ -67,7 +67,6 @@
 }
 
 /* Disaster container styles removed as they are handled by EnvironmentLayout */
-.disaster-container {}
 
 .disaster-container.fullscreen {
     padding: 0;
@@ -202,7 +201,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: glow 3s infinite;
 }
 
 .vulnerability-item {
@@ -229,15 +227,28 @@
 }
 
 .response-team-card {
-    background: linear-gradient(135deg, #f0f9ff, #f0fdf4);
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid #e2e8f0;
-    transition: all 0.3s;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px;
+    border: 1px solid #cbd5e1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .response-team-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+    border-color: #e2e8f0;
+}
+
+.response-teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    width: 100%;
 }
 
 .ai-recommendation-card {
@@ -301,6 +312,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
 }
 
 .gap-8 {
@@ -432,24 +448,27 @@
 .stats-grid {
     display: flex;
     flex-direction: row;
-    gap: 10px;
-    margin-left: auto;
+    gap: 16px;
     align-items: center;
-    justify-content: flex-end;
+    flex-wrap: wrap;
 }
 
 .stat-item {
     background: #ffffff;
-    padding: 10px 16px;
-    border-radius: 10px;
-    min-width: 105px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 16px 20px;
+    border-radius: 16px;
+    flex: 1;
+    min-width: 160px;
+    max-width: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease;
-    border: none;
+    border: 1px solid #f1f5f9;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     color: #1e293b;
+    height: 100px;
 }
 
 .stat-item:hover {
@@ -458,15 +477,15 @@
 }
 
 .stat-value {
-    font-size: 16px;
-    font-weight: 800;
+    font-size: 24px;
+    font-weight: 900;
     margin: 0;
-    line-height: 1;
-    color: #1e293b;
+    line-height: 1.2;
+    color: #0f172a;
 }
 
 .stat-value.small {
-    font-size: 11px;
+    font-size: 18px;
 }
 
 .stat-label {

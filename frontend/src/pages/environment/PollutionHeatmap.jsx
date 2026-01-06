@@ -192,29 +192,10 @@ export default function PollutionHeatmap() {
   };
 
   const loadFallbackData = () => {
-    setMonitoringStations([
-      { id: 1, name: 'City Center', location: 'Darbhanga Municipal Area', coordinates: { lat: 26.1542, lng: 85.8974 }, aqi: 168, pm25: 78, pm10: 145, no2: 45, so2: 12, co: 1.2, o3: 58, status: 'unhealthy', color: '#ef4444' },
-      { id: 2, name: 'Industrial Zone', location: 'MIDC Area', coordinates: { lat: 26.1687, lng: 85.9123 }, aqi: 195, pm25: 92, pm10: 178, no2: 58, so2: 18, co: 1.8, o3: 42, status: 'very-unhealthy', color: '#8b5cf6' },
-      { id: 3, name: 'Residential North', location: 'North Darbhanga', coordinates: { lat: 26.1789, lng: 85.8856 }, aqi: 142, pm25: 65, pm10: 128, no2: 38, so2: 10, co: 0.9, o3: 52, status: 'unhealthy-sensitive', color: '#f97316' },
-      { id: 4, name: 'Green Belt', location: 'Park Area', coordinates: { lat: 26.1423, lng: 85.8745 }, aqi: 95, pm25: 42, pm10: 87, no2: 25, so2: 6, co: 0.5, o3: 62, status: 'moderate', color: '#f59e0b' },
-      { id: 5, name: 'Rural Station', location: 'Outskirts', coordinates: { lat: 26.1234, lng: 85.8567 }, aqi: 68, pm25: 28, pm10: 54, no2: 18, so2: 4, co: 0.3, o3: 48, status: 'good', color: '#10b981' }
-    ]);
-
-    setPollutionSources([
-      { type: 'Vehicular Emissions', contribution: 35, trend: 'increasing', color: '#ef4444', icon: '🚗' },
-      { type: 'Industrial Activities', contribution: 28, trend: 'stable', color: '#f97316', icon: '🏭' },
-      { type: 'Construction Dust', contribution: 18, trend: 'increasing', color: '#f59e0b', icon: '🏗️' },
-      { type: 'Biomass Burning', contribution: 12, trend: 'seasonal', color: '#8b5cf6', icon: '🔥' },
-      { type: 'Other Sources', contribution: 7, trend: 'stable', color: '#64748b', icon: '📊' }
-    ]);
-
-    setHealthRecommendations([
-      { category: 'General Population', advice: 'Limit outdoor activities. Wear N95 masks outdoors. Keep windows closed.', icon: AlertCircle, severity: 'high' },
-      { category: 'Sensitive Groups', advice: 'Avoid outdoor activities. Stay indoors with air purifiers. Consult physician if symptoms worsen.', icon: AlertCircle, severity: 'critical' },
-      { category: 'Children & Elderly', advice: 'Remain indoors. Use prescribed medications. Monitor health closely.', icon: AlertCircle, severity: 'critical' }
-    ]);
-
-    setRealTimeData({ aqi: 168, pm25: 78, pm10: 145, location: 'Darbhanga', timestamp: new Date() });
+    setMonitoringStations([]);
+    setPollutionSources([]);
+    setHealthRecommendations([]);
+    setRealTimeData(null);
   };
 
   const handleChatSend = () => {
@@ -435,7 +416,7 @@ export default function PollutionHeatmap() {
             </div>
             <div className="text-center">
               <Sun size={32} className="m-0-auto-mb8 floating-icon" />
-              <p className="stats-value">{realTimeData?.pm25 || 78}</p>
+              <p className="stats-value">{realTimeData?.pm25 ?? 0}</p>
               <p className="stats-label">PM2.5 µg/m³</p>
             </div>
           </div>
