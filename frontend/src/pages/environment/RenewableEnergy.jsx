@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Sun, Wind, Droplets, Zap, TrendingUp, Battery, DollarSign, Leaf, MessageSquare, Send, X, Mic, Download, RefreshCw, Bell, BarChart2, Maximize2, Minimize2, Users, Share2, PieChart as PieChartIcon } from 'lucide-react';
+import { Sun, Wind, Droplets, Zap, TrendingUp, Battery, DollarSign, Leaf, X, Download, RefreshCw, Bell, BarChart2, Users, Share2, PieChart as PieChartIcon } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './RenewableEnergy.css';
@@ -8,21 +8,12 @@ import './RenewableEnergy.css';
 export default function RenewableEnergy() {
   const [selectedEnergy, setSelectedEnergy] = useState('all');
   const [timeRange, setTimeRange] = useState('month');
-  const [showChatbot, setShowChatbot] = useState(false);
-  const [chatMessages, setChatMessages] = useState([]);
-  const [chatInput, setChatInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [compareMode, setCompareMode] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [liveData, setLiveData] = useState(true);
   const [notifications, setNotifications] = useState([]);
-
-  const chatEndRef = useRef(null);
-  const inputRef = useRef(null);
 
   const energyStats = [];
   const monthlyGeneration = [];
@@ -30,8 +21,6 @@ export default function RenewableEnergy() {
   const projects = [];
   const predictions = [];
   const benefits = [];
-  const kpiMetrics = [];
-
   const energySources = [];
 
   const [stats, setStats] = useState({
@@ -42,123 +31,13 @@ export default function RenewableEnergy() {
     householdsPowered: 0
   });
 
-
-  const chatbotKnowledge = {
-    greeting: ["👋 Hello! I'm your Renewable Energy AI Assistant. Ask me about energy production, efficiency, or sustainability!"],
-    solar: [`Solar capacity: ${Math.round(stats.totalCapacity * 0.32)} kW generating ${Math.round(stats.currentGeneration * 0.32)} kW. Efficiency: 87.2%. Peak hours: 10 AM - 4 PM.`],
-    wind: [`Wind capacity: ${Math.round(stats.totalCapacity * 0.21)} kW generating ${Math.round(stats.currentGeneration * 0.21)} kW. Efficiency: 80%. Optimal wind speed: 12-25 mph.`],
-    hydro: [`Hydro capacity: ${Math.round(stats.totalCapacity * 0.38)} kW generating ${Math.round(stats.currentGeneration * 0.38)} kW. Efficiency: 90%. Most reliable 24/7 source.`],
-    savings: [`Total savings: ₹${(stats.costSavings / 100000).toFixed(1)} Lakh/year. CO₂ reduction: ${(stats.co2Saved / 1000).toFixed(1)} tons. Powering ${stats.householdsPowered.toLocaleString()} homes!`],
-    efficiency: [`Overall system efficiency: 85.8%. Solar: 87.2%, Wind: 80%, Hydro: 90%, Biomass: 80%. AI optimization increased efficiency by 12%.`]
-  };
-
   useEffect(() => {
     // Live data update logic would go here
   }, [autoRefresh, liveData]);
 
-  useEffect(() => {
-    if (showChatbot && chatMessages.length === 0) {
-      setChatMessages([{
-        id: 1,
-        type: 'bot',
-        text: chatbotKnowledge.greeting[0],
-        timestamp: new Date(),
-        suggestions: ['Solar Info', 'Cost Savings', 'Efficiency', 'Projects']
-      }]);
-    }
-  }, [showChatbot]);
-
-  useEffect(() => {
-    scrollChatToBottom();
-  }, [chatMessages]);
-
-  const scrollChatToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleChatSend = () => {
-    if (!chatInput.trim()) return;
-
-    const userMessage = {
-      id: Date.now(),
-      type: 'user',
-      text: chatInput,
-      timestamp: new Date()
-    };
-
-    setChatMessages(prev => [...prev, userMessage]);
-    const currentInput = chatInput.toLowerCase();
-    setChatInput('');
-    setIsTyping(true);
-
-    setTimeout(() => {
-      let botResponse = '';
-      let suggestions = [];
-
-      if (currentInput.includes('solar') || currentInput.includes('sun')) {
-        botResponse = chatbotKnowledge.solar[0];
-        suggestions = ['Wind Info', 'Hydro Info', 'Compare'];
-      } else if (currentInput.includes('wind')) {
-        botResponse = chatbotKnowledge.wind[0];
-        suggestions = ['Solar Info', 'Efficiency'];
-      } else if (currentInput.includes('hydro') || currentInput.includes('water')) {
-        botResponse = chatbotKnowledge.hydro[0];
-        suggestions = ['Biomass', 'Projects'];
-      } else if (currentInput.includes('cost') || currentInput.includes('saving')) {
-        botResponse = chatbotKnowledge.savings[0];
-        suggestions = ['CO₂ Reduction', 'ROI'];
-      } else if (currentInput.includes('efficiency')) {
-        botResponse = chatbotKnowledge.efficiency[0];
-        suggestions = ['Optimization', 'AI Features'];
-      } else if (currentInput.includes('project')) {
-        botResponse = `Active Projects:\n${projects.map(p => `• ${p.name} (${p.status}): ${p.completion}%`).join('\n')}`;
-        suggestions = ['Timeline', 'Investment'];
-      } else {
-        botResponse = `I can help with:\n\n🌞 Solar, Wind, Hydro & Biomass\n💰 Cost savings & ROI\n📊 Efficiency data\n🏗️ Active projects\n🔮 Future predictions`;
-        suggestions = ['Solar Info', 'Savings', 'Efficiency'];
-      }
-
-      const botMessage = {
-        id: Date.now() + 1,
-        type: 'bot',
-        text: botResponse,
-        timestamp: new Date(),
-        suggestions
-      };
-
-      setChatMessages(prev => [...prev, botMessage]);
-      setIsTyping(false);
-
-      if (voiceEnabled && 'speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(botResponse.replace(/[🌞💰📊🏗️🔮•]/g, ''));
-        window.speechSynthesis.speak(utterance);
-      }
-    }, 1000);
-  };
-
-  const handleSuggestionClick = (suggestion) => {
-    setChatInput(suggestion);
-    inputRef.current?.focus();
-  };
-
-  const handleVoiceInput = () => {
-    if ('webkitSpeechRecognition' in window) {
-      const recognition = new window.webkitSpeechRecognition();
-      recognition.continuous = false;
-      recognition.onresult = (event) => {
-        setChatInput(event.results[0][0].transcript);
-      };
-      recognition.start();
-      showToast('🎤 Listening...');
-    } else {
-      showToast('❌ Voice not supported');
-    }
-  };
-
   const handleRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
-      updateLiveData();
       setRefreshing(false);
       showToast('✅ Data refreshed!');
     }, 1000);
@@ -168,7 +47,7 @@ export default function RenewableEnergy() {
     try {
       const doc = new jsPDF();
       doc.setFontSize(22);
-      doc.setTextColor(59, 130, 246); // Blue
+      doc.setTextColor(59, 130, 246);
       doc.text('Renewable Energy Analytics', 20, 20);
 
       doc.setFontSize(10);
@@ -187,20 +66,13 @@ export default function RenewableEnergy() {
       doc.save(`renewable_report_${Date.now()}.pdf`);
       showToast('✅ Professional PDF Exported!');
     } catch (e) {
-      const report = { timestamp: new Date().toISOString(), stats, energySources, projects };
-      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `renewable_report_${Date.now()}.json`;
-      a.click();
-      showToast('✅ JSON Downloaded!');
+      console.error('Export error:', e);
+      showToast('❌ Error exporting report.');
     }
   };
 
   const shareData = async () => {
-    const text = `🌱 Renewable Energy Update\n\nCapacity: ${stats.totalCapacity} kW\nGeneration: ${stats.currentGeneration} kW\nCO₂ Saved: ${(stats.co2Saved / 1000).toFixed(1)} tons\nHomes Powered: ${stats.householdsPowered.toLocaleString()}`;
-
+    const text = `🌱 Renewable Energy Update\n\nCapacity: ${stats.totalCapacity} kW\nGeneration: ${stats.currentGeneration} kW`;
     if (navigator.share) {
       try {
         await navigator.share({ text });
@@ -359,7 +231,7 @@ export default function RenewableEnergy() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis dataKey="month" stroke="#6b7280" style={{ fontSize: '12px' }} />
                   <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
-                  <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                  <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }} />
                   <Legend />
                   <Bar dataKey="solar" stackId="a" fill="#f59e0b" name="Solar" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="wind" stackId="a" fill="#3b82f6" name="Wind" />
@@ -371,7 +243,6 @@ export default function RenewableEnergy() {
               <div className="flex-center flex-col h-300 w-full bg-gray-50 br-12 border-dashed">
                 <BarChart2 size={48} className="text-gray-300 mb-16" />
                 <p className="text-gray-400 font-bold m-0">No Generation Data Available</p>
-                <p className="text-xs text-gray-400 mt-4 m-0">Connect sensors to visualize monthly trends</p>
               </div>
             )}
           </div>
@@ -402,85 +273,9 @@ export default function RenewableEnergy() {
               <div className="flex-center flex-col h-300 w-full bg-gray-50 br-12 border-dashed">
                 <PieChartIcon size={48} className="text-gray-300 mb-16" />
                 <p className="text-gray-400 font-bold m-0">No Distribution Data</p>
-                <p className="text-xs text-gray-400 mt-4 m-0">Energy mix visualization will appear here</p>
               </div>
             )}
           </div>
-        </div>
-
-        {/* Projects */}
-        <div className="energy-card mb-24">
-          <h2 className="text-2xl font-bold text-gray-800 mb-16">Active & Planned Projects</h2>
-          <div className="projects-grid">
-            {projects.map((project, index) => (
-              <div key={index} className="project-item">
-                <div className="flex-between flex-start mb-12">
-                  <div>
-                    <h3 className="font-bold text-gray-800 mb-4 m-0 text-lg">{project.name}</h3>
-                    <p className="text-sm text-gray-500 m-0">{project.type} • {project.capacity} kW</p>
-                  </div>
-                  <span className="status-badge" style={{
-                    background: project.status === 'Operational' ? '#10b981' : project.status === 'In Progress' ? '#3b82f6' : '#f59e0b'
-                  }}>
-                    {project.status}
-                  </span>
-                </div>
-                <div className="mb-12">
-                  <div className="flex-between text-sm mb-6">
-                    <span className="text-gray-500">Progress</span>
-                    <span className="font-bold text-gray-800">{project.completion}%</span>
-                  </div>
-                  <div className="progress-container">
-                    <div className="progress-bar project-progress-bar" style={{ width: `${project.completion}%` }}></div>
-                  </div>
-                </div>
-                <div className="grid grid-2-col gap-12">
-                  <div className="text-sm">
-                    <p className="text-gray-500 mb-4 m-0">Investment</p>
-                    <p className="font-bold text-gray-800 m-0">₹{(project.investment / 100000).toFixed(1)}L</p>
-                  </div>
-                  <div className="text-sm">
-                    <p className="text-gray-500 mb-4 m-0">Completion</p>
-                    <p className="font-bold text-gray-800 m-0">{project.expectedCompletion}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Predictions Chart */}
-        <div className="energy-card mb-24">
-          <h2 className="text-2xl font-bold text-gray-800 mb-16">AI-Powered Growth Predictions</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={predictions}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="year" stroke="#6b7280" style={{ fontSize: '12px' }} />
-              <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
-              <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }} />
-              <Legend />
-              <Line type="monotone" dataKey="capacity" stroke="#3b82f6" strokeWidth={3} name="Capacity (kW)" dot={{ r: 6 }} />
-              <Line type="monotone" dataKey="generation" stroke="#10b981" strokeWidth={3} name="Generation (kW)" dot={{ r: 6 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Benefits */}
-        <div className="benefits-grid">
-          {benefits.map((benefit, index) => {
-            const Icon = benefit.icon;
-            return (
-              <div key={index} className="energy-card" style={{ background: benefit.bgColor }}>
-                <Icon size={32} style={{ color: benefit.color }} className="mb-12" />
-                <h3 className="font-bold text-gray-800 mb-8 m-0 text-lg">{benefit.title}</h3>
-                <div className="flex-center justify-start mb-8 items-baseline">
-                  <span className="text-4xl font-extrabold" style={{ color: benefit.color }}>{benefit.value}</span>
-                  <span className="text-sm text-gray-500 ml-8">{benefit.unit}</span>
-                </div>
-                <p className="text-xs text-gray-500 m-0">{benefit.description}</p>
-              </div>
-            );
-          })}
         </div>
 
         {/* AI Optimization Info */}
@@ -498,77 +293,11 @@ export default function RenewableEnergy() {
                   <h3 className="font-bold mb-8 m-0 text-lg">📊 Predictive Maintenance</h3>
                   <p className="text-sm opacity-0-9 m-0 lh-1-6">ML models predict failures, reducing downtime by 40%.</p>
                 </div>
-                <div className="ai-knowledge-item">
-                  <h3 className="font-bold mb-8 m-0 text-lg">☀️ Weather Forecasting</h3>
-                  <p className="text-sm opacity-0-9 m-0 lh-1-6">AI predicts patterns for optimal energy planning.</p>
-                </div>
-                <div className="ai-knowledge-item">
-                  <h3 className="font-bold mb-8 m-0 text-lg">⚡ Grid Optimization</h3>
-                  <p className="text-sm opacity-0-9 m-0 lh-1-6">Real-time AI balances generation with demand.</p>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* AI Chatbot */}
-      {showChatbot && (
-        <div className="chat-panel">
-          <div className="chat-header">
-            <div className="flex-center gap-12">
-              <Zap size={24} />
-              <div>
-                <p className="font-bold text-lg m-0">Energy AI Assistant</p>
-                <p className="text-sm opacity-0-9 m-0">Online</p>
-              </div>
-            </div>
-            <div className="flex-center gap-8">
-              <button onClick={() => setVoiceEnabled(!voiceEnabled)} className="p-8 border-none br-8 cursor-pointer voice-btn" style={{ background: voiceEnabled ? '#10b981' : 'rgba(255,255,255,0.2)' }}>
-                <Mic size={18} className="white-text" />
-              </button>
-              <button onClick={() => setShowChatbot(false)} className="p-8 border-none br-8 cursor-pointer bg-trans-white-2 color-white">
-                <X size={18} />
-              </button>
-            </div>
-          </div>
-
-          <div className="chat-messages">
-            {chatMessages.map((msg) => (
-              <div key={msg.id}>
-                <div className={`message-bubble ${msg.type === 'user' ? 'message-user' : 'message-bot'}`}>
-                  {msg.text}
-                </div>
-                {msg.suggestions && (
-                  <div className="flex-wrap gap-8 d-flex mt-8">
-                    {msg.suggestions.map((sug, i) => (
-                      <button key={i} onClick={() => handleSuggestionClick(sug)} className="suggestion-btn">{sug}</button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-            {isTyping && (
-              <div className="typing-indicator">
-                <div className="typing-dot"></div>
-                <div className="typing-dot" style={{ animationDelay: '0.2s' }}></div>
-                <div className="typing-dot" style={{ animationDelay: '0.4s' }}></div>
-              </div>
-            )}
-            <div ref={chatEndRef}></div>
-          </div>
-
-          <div className="chat-input-wrapper">
-            <input ref={inputRef} type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleChatSend()} placeholder="Ask about renewable energy..." className="chat-input" />
-            <button onClick={handleVoiceInput} className="p-12 border-none br-12 cursor-pointer bg-gray-100">
-              <Mic size={20} className="text-gray-500" />
-            </button>
-            <button onClick={handleChatSend} className="p-12 border-none br-12 cursor-pointer text-white btn-green-gradient">
-              <Send size={20} />
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Notifications */}
       {showNotifications && (

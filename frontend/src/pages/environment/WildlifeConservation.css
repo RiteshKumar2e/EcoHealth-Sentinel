@@ -919,3 +919,47 @@
 .justify-start {
     justify-content: flex-start;
 }
+@media (max-width: 1024px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .col-span-8, .col-span-4 {
+        grid-column: span 12;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-navbar {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .header-card {
+        padding: 24px;
+        border-radius: 20px;
+    }
+
+    .text-4xl {
+        font-size: 26px;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .species-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .chat-panel {
+        width: calc(100% - 40px);
+        height: 60vh;
+        bottom: 80px;
+    }
+}

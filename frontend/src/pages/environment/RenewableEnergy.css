@@ -873,3 +873,54 @@
 .grid-2-col {
     grid-template-columns: 1fr 1fr;
 }
+@media (max-width: 1024px) {
+    .stat-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .energy-card, .source-card {
+        padding: 20px;
+    }
+
+    .text-4xl {
+        font-size: 26px;
+    }
+
+    .energy-main-wrapper {
+        padding: 0 16px;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .source-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-grid > * {
+        min-width: 100%;
+    }
+
+    .ai-optimization-banner {
+        padding: 24px;
+        border-radius: 20px;
+    }
+
+    .chat-panel {
+        width: calc(100% - 40px);
+        height: 60vh;
+        bottom: 80px;
+    }
+}

@@ -465,6 +465,36 @@
     }
 }
 
+@media (max-width: 768px) {
+    .climate-container {
+        padding: 16px;
+    }
+
+    .card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .header-icon-container {
+        width: 50px;
+        height: 50px;
+    }
+
+    .text-5xl {
+        font-size: 28px;
+    }
+
+    .text-4xl {
+        font-size: 24px;
+    }
+
+    .grid-fit-300,
+    .grid-fit-280,
+    .grid-fit-250 {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (min-width: 1025px) {
     .charts-grid-cols {
         grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));

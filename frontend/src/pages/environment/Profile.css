@@ -370,3 +370,23 @@
         grid-template-columns: 1fr;
     }
 }
+@media (max-width: 768px) {
+    .back-portal-btn-profile {
+        left: 20px;
+        top: 20px;
+    }
+
+    .logout-btn-profile {
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .section-card {
+        padding: 1.5rem;
+    }
+}

@@ -1001,3 +1001,53 @@
     width: 4px;
     height: 100%;
 }
+@media (max-width: 1024px) {
+    .chatbot-panel {
+        width: calc(100% - 40px);
+        height: 60vh;
+        bottom: 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .heatmap-card {
+        padding: 20px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stats-value {
+        font-size: 24px;
+    }
+
+    .map-container {
+        height: 350px;
+    }
+
+    .grid-2-col {
+        grid-template-columns: 1fr;
+    }
+
+    .text-36 {
+        font-size: 26px;
+    }
+
+    .header-icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+    }
+
+    .flex-between {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .heatmap-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

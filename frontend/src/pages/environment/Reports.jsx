@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FileText, Download, Calendar, TrendingUp, BarChart3, FileBarChart, Search, RefreshCw, Eye, Share2, Sparkles, MessageCircle, Send, X, Loader, Trash2, Bell, Upload } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, Download, Calendar, TrendingUp, BarChart3, FileBarChart, Search, Eye, Share2, Sparkles, X, Trash2, Bell } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './Reports.css';
@@ -10,14 +10,9 @@ export default function Reports() {
   const [searchQuery, setSearchQuery] = useState('');
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState([
-    { text: 'Hello! I can help you with reports, analytics, and data insights. What would you like to know?', sender: 'bot', timestamp: new Date().toISOString() }
-  ]);
-  const [chatInput, setChatInput] = useState('');
-  const [chatLoading, setChatLoading] = useState(false);
   const [notifications, setNotifications] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
+
   /* Empty State Component */
   const EmptyState = () => (
     <div className="flex-center flex-col p-40 border-dashed br-12 bg-slate-50 w-full" style={{ gridColumn: '1 / -1', border: '2px dashed #e2e8f0', borderRadius: '1rem', padding: '3rem', textAlign: 'center', background: '#f8fafc' }}>
@@ -38,13 +33,7 @@ export default function Reports() {
     { label: 'Avg. Size', value: '0 MB', trend: '--', icon: BarChart3, color: 'amber' }
   ];
 
-
-  const ws = useRef(null);
-  const chatEndRef = useRef(null);
-
   const API_BASE_URL = 'http://localhost:5000/api';
-  const WS_URL = 'ws://localhost:5000';
-
   const mockReports = [];
 
   const reportCategories = [
@@ -55,16 +44,10 @@ export default function Reports() {
     { id: 'conservation', name: 'Conservation', count: mockReports.filter(r => r.category === 'conservation').length }
   ];
 
-
   useEffect(() => {
     setReports(mockReports);
     fetchReports();
-    initializeWebSocket();
-
-    return () => {
-      if (ws.current) ws.current.close();
-    };
-  }, []);
+  }, [selectedCategory, dateRange]);
 
   const fetchReports = async () => {
     setLoading(true);
@@ -84,85 +67,9 @@ export default function Reports() {
     }
   };
 
-  const initializeWebSocket = () => {
-    try {
-      ws.current = new WebSocket(WS_URL);
-
-      ws.current.onopen = () => {
-        console.log('✅ WebSocket connected');
-      };
-
-      ws.current.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        setChatMessages(prev => [...prev, {
-          text: message.text || message.reply || message.message,
-          sender: 'bot',
-          timestamp: new Date().toISOString()
-        }]);
-        setChatLoading(false);
-      };
-
-      ws.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-
-      ws.current.onclose = () => {
-        console.log('WebSocket disconnected');
-      };
-    } catch (error) {
-      console.error('WebSocket initialization error:', error);
-    }
-  };
-
-  const sendChatMessage = async () => {
-    if (!chatInput.trim()) return;
-
-    const userMessage = {
-      text: chatInput,
-      sender: 'user',
-      timestamp: new Date().toISOString()
-    };
-
-    setChatMessages(prev => [...prev, userMessage]);
-    const query = chatInput;
-    setChatInput('');
-    setChatLoading(true);
-
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(JSON.stringify({
-        message: query,
-        type: 'report_query',
-        user: 'user'
-      }));
-    } else {
-      setTimeout(() => {
-        let botResponse = '';
-        const lowerQuery = query.toLowerCase();
-
-        if (lowerQuery.includes('download') || lowerQuery.includes('report')) {
-          botResponse = `I found ${reports.length} reports. You can download any report by clicking the "Download PDF" button. Would you like me to help you find a specific report?`;
-        } else if (lowerQuery.includes('category') || lowerQuery.includes('filter')) {
-          botResponse = `You can filter reports by: Environmental, Energy, Waste Management, and Conservation. Currently showing: ${selectedCategory}. Would you like to change the filter?`;
-        } else if (lowerQuery.includes('stats') || lowerQuery.includes('statistics')) {
-          botResponse = `Here are the quick stats: ${quickStats.map(s => `${s.label}: ${s.value}`).join(', ')}. What would you like to know more about?`;
-        } else {
-          botResponse = `I can help you with downloading reports, filtering by category, or viewing statistics. What would you like to do?`;
-        }
-
-        setChatMessages(prev => [...prev, {
-          text: botResponse,
-          sender: 'bot',
-          timestamp: new Date().toISOString()
-        }]);
-        setChatLoading(false);
-      }, 1000);
-    }
-  };
-
   const handleDownloadPDF = (report) => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
 
     doc.setFillColor(37, 99, 235);
     doc.rect(0, 0, pageWidth, 40, 'F');
@@ -210,8 +117,7 @@ export default function Reports() {
       const doc = new jsPDF('p', 'mm', 'a4');
       const pageWidth = doc.internal.pageSize.getWidth();
 
-      // Professional Gradient-like Header
-      doc.setFillColor(30, 41, 59); // Slate-900
+      doc.setFillColor(30, 41, 59);
       doc.rect(0, 0, pageWidth, 50, 'F');
 
       doc.setFontSize(28);
@@ -223,17 +129,15 @@ export default function Reports() {
       doc.text(`Filter Applied: ${selectedCategory.toUpperCase()}`, 20, 35);
       doc.text(`Period: ${dateRange.toUpperCase()}`, 20, 42);
 
-      // Content
       doc.setTextColor(30);
       doc.setFontSize(18);
       doc.text('Environmental Impact Summary', 20, 65);
 
       doc.setFontSize(10);
-      const summaryText = "This automated report provides a high-level overview of environmental metrics collected via EcoHealth Sentinel integration points. Data includes air quality records, renewable energy production spikes, and regional waste management efficiency levels.";
+      const summaryText = "This automated report provides a high-level overview of environmental metrics collected via EcoHealth Sentinel integration points.";
       const splitSummary = doc.splitTextToSize(summaryText, pageWidth - 40);
       doc.text(splitSummary, 20, 75);
 
-      // Stats Table
       doc.autoTable({
         startY: 90,
         head: [['Metric', 'Current Value', 'Target', 'Trend']],
@@ -265,15 +169,6 @@ export default function Reports() {
     alert('Share link copied to clipboard!');
   };
 
-  const handleViewReport = (report) => {
-    setChatMessages(prev => [...prev, {
-      text: `📊 Viewing "${report.title}":\n\n${report.description}`,
-      sender: 'bot',
-      timestamp: new Date().toISOString()
-    }]);
-    setChatOpen(true);
-  };
-
   const filteredReports = reports.filter(report => {
     const matchesCategory = selectedCategory === 'all' || report.category === selectedCategory;
     const matchesSearch = report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -291,10 +186,6 @@ export default function Reports() {
     };
     return colors[color] || colors.emerald;
   };
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
 
   return (
     <div className="reports-container">
@@ -431,7 +322,7 @@ export default function Reports() {
                     <div className="meta-item"><TrendingUp size={14} /> {report.size}</div>
                   </div>
                   <div className="report-actions">
-                    <button className="action-button" style={{ background: styles.bg, color: styles.text }} onClick={() => handleViewReport(report)}>
+                    <button className="action-button" style={{ background: styles.bg, color: styles.text }} onClick={() => handleDownloadPDF(report)}>
                       <Eye size={16} /> View
                     </button>
                     <button className="action-button" style={{ background: '#3b82f6', color: 'white' }} onClick={() => handleDownloadPDF(report)}>
@@ -453,55 +344,16 @@ export default function Reports() {
         </div>
       </div>
 
-      {/* AI Chat Bot */}
-      <button className="chat-trigger" onClick={() => setChatOpen(!chatOpen)}>
-        {chatOpen ? <X size={24} /> : <MessageCircle size={24} />}
-      </button>
-
-      {chatOpen && (
-        <div className="chat-window">
-          <div className="chat-header-bar">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div className="rounded-full flex-center" style={{ width: '2.5rem', height: '2.5rem', background: 'rgba(255,255,255,0.2)' }}>
-                <Sparkles size={20} />
-              </div>
-              <div>
-                <p className="m-0" style={{ fontWeight: 700, fontSize: '0.875rem' }}>EcoBot Assistant</p>
-                <p className="m-0" style={{ fontSize: '0.75rem', opacity: 0.8 }}>Online • Ready to help</p>
-              </div>
-            </div>
-            <button style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }} onClick={() => setChatOpen(false)}>
-              <X size={20} />
+      {/* Notifications */}
+      {showNotifications && (
+        <div className="notification-panel">
+          <div className="flex-between mb-16">
+            <h3 className="font-bold text-lg text-gray-800 m-0">Notifications</h3>
+            <button onClick={() => setShowNotifications(false)} className="p-4 border-none cursor-pointer bg-transparent">
+              <X size={18} className="text-gray-500" />
             </button>
           </div>
-
-          <div className="chat-messages">
-            {chatMessages.map((msg, i) => (
-              <div key={i} className={`message ${msg.sender === 'bot' ? 'bot-message' : 'user-message'}`}>
-                {msg.text}
-              </div>
-            ))}
-            {chatLoading && (
-              <div className="message bot-message flex-center" style={{ width: '3rem' }}>
-                <Loader className="animate-spin" size={16} />
-              </div>
-            )}
-            <div ref={chatEndRef} />
-          </div>
-
-          <div className="chat-input-area">
-            <input
-              type="text"
-              className="chat-input"
-              placeholder="Ask about your reports..."
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && sendChatMessage()}
-            />
-            <button className="chat-send-btn" onClick={sendChatMessage}>
-              <Send size={18} />
-            </button>
-          </div>
+          {/* Notifications would go here if any */}
         </div>
       )}
     </div>

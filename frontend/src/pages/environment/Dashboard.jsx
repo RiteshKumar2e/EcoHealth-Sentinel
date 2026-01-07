@@ -212,8 +212,7 @@ export default function Dashboard() {
     { path: '/environment/renewable', icon: Zap, label: 'Renewable Energy' },
     { path: '/environment/reports', icon: FileText, label: 'Reports' },
     { path: '/environment/waste', icon: Recycle, label: 'Waste Management' },
-    { path: '/environment/wildlife', icon: TreePine, label: 'Wildlife Conservation' },
-    { path: '/environment/settings', icon: Cog, label: 'Settings' }
+    { path: '/environment/wildlife', icon: TreePine, label: 'Wildlife Conservation' }
   ];
 
 
