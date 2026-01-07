@@ -32,45 +32,40 @@ const AgriFloatingChatbot = () => {
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
         setMessages(prev => [...prev, userMsg]);
+        const userInput = input;
         setInput("");
         setLoading(true);
 
         try {
-            const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-            if (!API_KEY || API_KEY === "your_gemini_api_key_here") {
-                throw new Error("Missing API Key");
-            }
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            const sessionId = localStorage.getItem('agriChatSessionId') || `agri-${Date.now()}`;
+            localStorage.setItem('agriChatSessionId', sessionId);
 
-            const response = await fetch(API_URL, {
+            const response = await fetch('http://localhost:5000/api/chatbot', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `You are an Agricultural AI Expert.
-                            Your goal is to help farmers with crop health, irrigation, soil, pests, and market trends.
-                            DO NOT answer non-agricultural questions.
-                            If a user asks something else, politely guide them back to farming topics.
-                            User message: ${input}`
-                        }]
-                    }]
+                    message: userInput,
+                    sessionId: sessionId,
+                    domain: 'agriculture'
                 })
             });
 
             const data = await response.json();
-            const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text ||
-                "I specialize in farming nodes. Could you please rephrase your agricultural query?";
 
-            setMessages(prev => [...prev, {
-                role: "bot",
-                text: botReply,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }]);
+            if (data.success) {
+                setMessages(prev => [...prev, {
+                    role: "bot",
+                    text: data.response,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }]);
+            } else {
+                throw new Error(data.error || 'Failed to get response');
+            }
         } catch (err) {
+            console.error('Chat error:', err);
             setMessages(prev => [...prev, {
                 role: "bot",
-                text: "⚠️ Issue connecting to the AI node. Please ensure your Gemini API key is valid.",
+                text: "⚠️ AI se connection nahi ho pa raha. Kripya apna internet check karein ya baad mein try karein.",
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }]);
         } finally {

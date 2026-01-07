@@ -32,44 +32,37 @@ const EnvironmentFloatingChatbot = () => {
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
         setMessages(prev => [...prev, userMsg]);
+        const userInput = input;
         setInput("");
         setLoading(true);
 
         try {
-            const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-            if (!API_KEY || API_KEY === "your_gemini_api_key_here") {
-                throw new Error("Missing API Key");
-            }
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            const sessionId = localStorage.getItem('chatSessionId') || `env-${Date.now()}`;
+            localStorage.setItem('chatSessionId', sessionId);
 
-            const response = await fetch(API_URL, {
+            const response = await fetch('http://localhost:5000/api/chatbot', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `You are a helpful and knowledgeable Environmental AI Assistant named EcoSentinel. 
-                            Your goal is to assist users with questions related to environment, climate change, pollution, waste management, renewable energy, and wildlife conservation.
-                            IMPORTANT: You are an AI, not a scientist on site. Provide accurate, general environmental info.
-                            If asked about local emergencies (like fires or floods), advise checking local authorities.
-                            DO NOT answer questions unrelated to environment or sustainability.
-                            Keep your tone eco-friendly, professional, and encouraging.
-                            User message: ${input}`
-                        }]
-                    }]
+                    message: userInput,
+                    sessionId: sessionId,
+                    domain: 'environment'
                 })
             });
 
             const data = await response.json();
-            const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text ||
-                "I specialize in environmental topics. Could you rephrase your question regarding nature or sustainability?";
 
-            setMessages(prev => [...prev, {
-                role: "bot",
-                text: botReply,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }]);
+            if (data.success) {
+                setMessages(prev => [...prev, {
+                    role: "bot",
+                    text: data.response,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }]);
+            } else {
+                throw new Error(data.error || 'Failed to get response');
+            }
         } catch (err) {
+            console.error('Chat error:', err);
             setMessages(prev => [...prev, {
                 role: "bot",
                 text: "⚠️ Unable to connect to the eco-knowledge base. Please check your connection or try again later.",

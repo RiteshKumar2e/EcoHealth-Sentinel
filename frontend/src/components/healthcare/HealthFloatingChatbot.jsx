@@ -32,43 +32,37 @@ const HealthFloatingChatbot = () => {
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
         setMessages(prev => [...prev, userMsg]);
+        const userInput = input;
         setInput("");
         setLoading(true);
 
         try {
-            const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-            if (!API_KEY || API_KEY === "your_gemini_api_key_here") {
-                throw new Error("Missing API Key");
-            }
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            const sessionId = localStorage.getItem('healthChatSessionId') || `health-${Date.now()}`;
+            localStorage.setItem('healthChatSessionId', sessionId);
 
-            const response = await fetch(API_URL, {
+            const response = await fetch('http://localhost:5000/api/chatbot', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `You are a helpful and knowledgeable Personal Health AI Assistant named PatientAid. 
-                            Your goal is to assist users with health-related questions, symptom checking (with disclaimers), lifestyle tips, and understanding medical terms.
-                            IMPORTANT: You must always remind the user that you are an AI and not a doctor. If they mention emergency symptoms (like chest pain), tell them to call 911 immediately.
-                            DO NOT answer questions unrelated to health, medicine, or wellness.
-                            Keep your tone professional, empathetic, and premium.
-                            User message: ${input}`
-                        }]
-                    }]
+                    message: userInput,
+                    sessionId: sessionId,
+                    domain: 'healthcare'
                 })
             });
 
             const data = await response.json();
-            const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text ||
-                "I'm here to assist with health-related queries. Could you please rephrase your question?";
 
-            setMessages(prev => [...prev, {
-                role: "bot",
-                text: botReply,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }]);
+            if (data.success) {
+                setMessages(prev => [...prev, {
+                    role: "bot",
+                    text: data.response,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }]);
+            } else {
+                throw new Error(data.error || 'Failed to get response');
+            }
         } catch (err) {
+            console.error('Chat error:', err);
             setMessages(prev => [...prev, {
                 role: "bot",
                 text: "⚠️ Unable to connect to my medical knowledge base. Please check your connection or try again later.",
