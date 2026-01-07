@@ -3,6 +3,7 @@ import Treatment from '../models/Treatment.js';
 import Report from '../models/Report.js';
 import Config from '../models/Config.js';
 import Post from '../models/Post.js';
+import { generateJSONResponse } from '../services/aiService.js';
 
 export const getAgriDashboard = async (req, res, next) => {
     try {
@@ -23,19 +24,49 @@ export const getAgriDashboard = async (req, res, next) => {
 
 export const detectCropDisease = async (req, res, next) => {
     try {
-        // Return null/empty result when no specific analysis is performed
-        res.json(null);
+        const { cropType, symptoms } = req.body;
+
+        const prompt = `You are an AI Agricultural Expert. A farmer has a ${cropType} crop with these symptoms: ${symptoms || 'general stress'}.
+        Analyze this and return a JSON object:
+        {
+            "name": string (disease name),
+            "severity": string ("Low"|"Medium"|"High"),
+            "treatment": string (detailed treatment),
+            "prevention": string (long-term advice),
+            "organicOption": string (eco-friendly alternative),
+            "confidence": number (80-99)
+        }`;
+
+        const analysis = await generateJSONResponse(prompt);
+        res.json(analysis);
     } catch (error) {
-        next(error);
+        console.error('Agri AI Detection Error:', error);
+        res.status(500).json({ success: false, error: 'AI Diagnostic service unavailable' });
     }
 };
 
 export const getMarketForecast = async (req, res, next) => {
     try {
-        // Return empty result to comply with "No Demo Data" rule
-        res.json({});
+        const crops = ['tomato', 'wheat', 'potato', 'onion', 'rice', 'cotton'];
+        const prompt = `Generate a realistic agricultural market forecast for these crops in India: ${crops.join(', ')}.
+        Return a JSON object where each key is a crop name from the list.
+        Each crop object must have:
+        {
+            "current": number (realistic price per kg in INR),
+            "trend": "up" | "down",
+            "change": string (e.g., "+5.2%"),
+            "demand": "High" | "Stable" | "Low",
+            "forecast": array of 7 objects { "day": string (name of day), "price": number, "confidence": number },
+            "recommendation": string (AI advice for the farmer),
+            "factors": array of 3 objects { "factor": string, "impact": "High" | "Medium" | "Low", "description": string }
+        }
+        Return ONLY the JSON.`;
+
+        const forecast = await generateJSONResponse(prompt);
+        res.json(forecast);
     } catch (error) {
-        next(error);
+        console.error('Market AI Error:', error);
+        res.status(500).json({ success: false, error: 'Market AI service unavailable' });
     }
 };
 

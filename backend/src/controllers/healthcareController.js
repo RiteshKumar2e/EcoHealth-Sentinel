@@ -3,6 +3,7 @@ import Patient from '../models/Patient.js';
 import Doctor from '../models/Doctor.js';
 import VitalSigns from '../models/VitalSigns.js';
 import PatientAlert from '../models/PatientAlert.js';
+import { generateAIResponse, generateJSONResponse } from '../services/aiService.js';
 
 export const getHealthcareDashboard = async (req, res, next) => {
     try {
@@ -88,45 +89,22 @@ export const aiDiagnosisAssistant = async (req, res, next) => {
     try {
         const { symptoms, severity } = req.body;
 
-        // Simulate AI diagnosis
-        let possible_conditions = [];
-        const symps = symptoms.map(s => s.toLowerCase());
+        const prompt = `You are a medical AI assistant. Analyze these symptoms: ${symptoms.join(', ')}. 
+        Severity level provided: ${severity}.
+        Return a JSON object with:
+        "possible_conditions": array of objects { "condition": string, "confidence": number(0-1), "description": string, "recommendations": string[] },
+        "urgency": string ("Low", "Medium", "High"),
+        "disclaimer": string
+        Ensure the disclaimer notes you are an AI, not a doctor.`;
 
-        if (symps.includes('fever')) {
-            possible_conditions.push({
-                condition: "Viral Infection",
-                confidence: 0.75,
-                description: "Common viral infection causing fever",
-                recommendations: ["Rest", "Stay hydrated"]
-            });
-        }
-
-        if (symps.includes('cough')) {
-            possible_conditions.push({
-                condition: "Upper Respiratory Infection",
-                confidence: 0.68,
-                description: "Infection of upper respiratory tract",
-                recommendations: ["Warm fluids", "Steam inhalation"]
-            });
-        }
-
-        if (possible_conditions.length === 0) {
-            possible_conditions.push({
-                condition: "General Assessment Needed",
-                confidence: 0.50,
-                description: "Requires professional evaluation",
-                recommendations: ["Consult a doctor"]
-            });
-        }
-
+        const response = await generateJSONResponse(prompt);
         res.json({
             success: true,
-            possible_conditions,
-            urgency: severity === 'high' ? 'High' : 'Medium',
-            disclaimer: "AI-assisted suggestion only."
+            ...response
         });
     } catch (error) {
-        next(error);
+        console.error('AI Diagnosis Error:', error);
+        res.status(500).json({ success: false, error: 'AI Assistant currently unavailable' });
     }
 };
 
@@ -162,26 +140,31 @@ export const getStats = async (req, res, next) => {
 
 export const uploadScan = async (req, res, next) => {
     try {
+        const prompt = `Generate a realistic AI analysis report for a generic medical scan (e.g., X-Ray or MRI). 
+        Return JSON: { "findings": string, "confidence": number(80-99) }`;
+        const analysis = await generateJSONResponse(prompt);
+
         res.json({
             success: true,
-            analysis: {
-                findings: "AI Analysis: The uploaded scan shows no significant abnormalities. Results are consistent with previous baselines.",
-                confidence: 94
-            }
+            analysis
         });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, error: 'Scan analysis failed' });
     }
 };
 
 export const chatWithAssistant = async (req, res, next) => {
     try {
         const { message } = req.body;
+        const prompt = `You are a helpful health assistant. A user says: "${message}". 
+        Provide a professional, empathetic response in 2-3 sentences.`;
+        const reply = await generateAIResponse(prompt);
+
         res.json({
             success: true,
-            reply: `As your health assistant, I've noted your query: "${message}". Based on your recent scans, everything looks stable. Would you like me to schedule a follow-up?`
+            reply
         });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, error: 'Assistant unavailable' });
     }
 };

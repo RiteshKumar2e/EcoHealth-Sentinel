@@ -4,7 +4,11 @@ import {
     scheduleAppointment,
     getAppointments,
     submitVitalSigns,
-    aiDiagnosisAssistant
+    aiDiagnosisAssistant,
+    getAnalyses,
+    getStats,
+    uploadScan,
+    chatWithAssistant
 } from '../controllers/healthcareController.js';
 import { validateAppointment } from '../middlewares/validation.js';
 
@@ -15,5 +19,9 @@ router.post('/appointments', validateAppointment, scheduleAppointment);
 router.get('/appointments', getAppointments);
 router.post('/remote-monitoring', submitVitalSigns);
 router.post('/diagnosis-assistant', aiDiagnosisAssistant);
+router.get('/analyses', getAnalyses);
+router.get('/stats', getStats);
+router.post('/upload-scan', uploadScan);
+router.post('/chat', chatWithAssistant);
 
 export default router;

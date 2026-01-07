@@ -46,17 +46,26 @@ export default function MyScans() {
   ];
 
   useEffect(() => {
-    // In a real app, you would fetch this from your API
-    // const fetchData = async () => {
-    //   const response = await fetch(`${API_BASE_URL}/scans`);
-    //   ...
-    // };
-    setStats([
-      { label: "Scans Analyzed", value: "0", icon: FileText },
-      { label: "AI Precision", value: "0%", icon: Brain },
-      { label: "Avg Analysis Time", value: "0s", icon: Clock },
-      { label: "Pending Reviews", value: "0", icon: AlertCircle },
-    ]);
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/healthcare/stats`);
+        const data = await res.json();
+        if (data.success) {
+          // Map backend colors and icons if needed, or just set stats
+          setStats(data.stats.map(s => ({
+            ...s,
+            icon: s.icon === 'ImageIcon' ? ImageIcon : s.icon === 'Brain' ? Brain : s.icon === 'Clock' ? Clock : AlertCircle
+          })));
+        }
+
+        const resAnalyses = await fetch(`${API_BASE_URL}/healthcare/analyses`);
+        const dataAnalyses = await resAnalyses.json();
+        if (dataAnalyses.success) setRecentAnalyses(dataAnalyses.recentAnalyses);
+      } catch (err) {
+        console.error("Fetch stats error:", err);
+      }
+    };
+    fetchStats();
   }, []);
 
   const handleUploadFile = async (file) => {
@@ -69,15 +78,27 @@ export default function MyScans() {
     setAnalysisResult(null);
     setIsAnalyzing(true);
 
-    // Simulate API Call
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setAnalysisResult({
-        findings: "No acute fracture identified in the visible cortical bone structures. Soft tissues appear normal.",
-        confidence: 96
+    try {
+      const response = await fetch(`${API_BASE_URL}/healthcare/upload-scan`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: selectedScan })
       });
-      setChatMessages(prev => [...prev, { id: Date.now(), from: 'bot', text: `Analysis complete for your ${scanTypes.find(s => s.id === selectedScan).name}. Results appear normal with 96% confidence.` }]);
-    }, 2000);
+      const data = await response.json();
+
+      if (data.success) {
+        setAnalysisResult(data.analysis);
+        setChatMessages(prev => [...prev, {
+          id: Date.now(),
+          from: 'bot',
+          text: `Analysis complete for your ${scanTypes.find(s => s.id === selectedScan).name}. ${data.analysis.findings}`
+        }]);
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const onFileChange = (e) => {
@@ -92,10 +113,20 @@ export default function MyScans() {
     setChatMessages((m) => [...m, userMsg]);
     setChatInput("");
 
-    // Simulate response
-    setTimeout(() => {
-      setChatMessages((m) => [...m, { id: Date.now() + "-b", from: "bot", text: "I can help explain your scan results. Please consult a doctor for a definitive diagnosis." }]);
-    }, 1000);
+    try {
+      const response = await fetch(`${API_BASE_URL}/healthcare/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setChatMessages((m) => [...m, { id: Date.now() + "-b", from: "bot", text: data.reply }]);
+      }
+    } catch (error) {
+      console.error("Chat error:", error);
+      setChatMessages((m) => [...m, { id: Date.now() + "-b", from: "bot", text: "I'm having trouble connecting right now." }]);
+    }
   };
 
   return (
@@ -119,8 +150,8 @@ export default function MyScans() {
             const Icon = s.icon;
             return (
               <div key={i} className="stat-card">
-                <div className="stat-icon">
-                  <Icon size={20} />
+                <div className="stat-icon" style={{ background: s.color || 'var(--primary)' }}>
+                  <Icon size={20} color="white" />
                 </div>
                 <div className="stat-info">
                   <div className="stat-value">{s.value}</div>
@@ -265,4 +296,3 @@ export default function MyScans() {
     </div>
   );
 }
-

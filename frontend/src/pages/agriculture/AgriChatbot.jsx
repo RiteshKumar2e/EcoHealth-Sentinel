@@ -31,17 +31,21 @@ const AgriChatbot = () => {
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
         setMessages(prev => [...prev, userMsg]);
+        const userInput = input;
         setInput("");
         setLoading(true);
 
         try {
-            // Simulated AI response tailored for Agriculture
-            const response = await fetch("/api/chatbot", {
+            const sessionId = localStorage.getItem('agriChatSessionId') || `agri-${Date.now()}`;
+            localStorage.setItem('agriChatSessionId', sessionId);
+
+            const response = await fetch("http://localhost:5000/api/chatbot", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    message: input,
-                    context: "agriculture"
+                    message: userInput,
+                    sessionId: sessionId,
+                    domain: "agriculture"
                 })
             });
 
@@ -49,10 +53,11 @@ const AgriChatbot = () => {
 
             setMessages(prev => [...prev, {
                 role: "bot",
-                text: data.reply || "I specialize in farming, crop health, and market trends. Could you please rephrase your agricultural query?",
+                text: data.response || "I specialize in farming, crop health, and market trends. Could you please rephrase your agricultural query?",
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }]);
         } catch (err) {
+            console.error('Chat error:', err);
             setMessages(prev => [...prev, {
                 role: "bot",
                 text: "⚠️ I'm currently having trouble connecting to the agrarian node. Please try again later.",

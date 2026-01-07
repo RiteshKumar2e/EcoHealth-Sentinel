@@ -1,22 +1,5 @@
 import ChatMessage from '../models/ChatMessageMongo.js';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-// Initialize Gemini AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-
-// Top 10 Best Gemini Models (in priority order)
-const BEST_MODELS = [
-    'gemini-2.5-flash',
-    'gemini-2.5-pro',
-    'gemini-2.0-flash-exp',
-    'gemini-flash-latest',
-    'gemini-pro-latest',
-    'gemini-2.0-flash',
-    'gemini-exp-1206',
-    'gemini-3-flash-preview',
-    'gemini-2.5-flash-lite',
-    'gemini-2.0-flash-lite'
-];
+import { generateAIResponse } from '../services/aiService.js';
 
 // Domain-specific system prompts
 const DOMAIN_PROMPTS = {
@@ -87,39 +70,10 @@ IMPORTANT RULES:
 // Helper function to get Gemini response with intelligent fallback
 async function getGeminiResponse(message, domain) {
     try {
-        if (!process.env.GEMINI_API_KEY) {
-            throw new Error('Gemini API key not configured');
-        }
-
         const systemPrompt = DOMAIN_PROMPTS[domain] || DOMAIN_PROMPTS.environment;
         const fullPrompt = `${systemPrompt}\n\nUser Question: ${message}\n\nProvide a helpful, accurate response:`;
 
-        // Try models in order until one works
-        for (let i = 0; i < BEST_MODELS.length; i++) {
-            try {
-                const modelName = BEST_MODELS[i];
-                console.log(`🤖 Trying model ${i + 1}/${BEST_MODELS.length}: ${modelName}`);
-
-                const model = genAI.getGenerativeModel({ model: modelName });
-                const result = await model.generateContent(fullPrompt);
-                const response = result.response;
-                const text = response.text();
-
-                console.log(`✅ Success with model: ${modelName}`);
-                return text;
-            } catch (modelError) {
-                console.log(`❌ Model ${BEST_MODELS[i]} failed: ${modelError.message}`);
-
-                // If this is the last model, throw error
-                if (i === BEST_MODELS.length - 1) {
-                    throw modelError;
-                }
-                // Otherwise, try next model
-                continue;
-            }
-        }
-
-        throw new Error('All models failed');
+        return await generateAIResponse(fullPrompt);
     } catch (error) {
         console.error('Gemini API Error:', error.message);
 

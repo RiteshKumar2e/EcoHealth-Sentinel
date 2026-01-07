@@ -38,7 +38,7 @@ const MarketForecast = () => {
   const fetchMarketData = async () => {
     setIsRefreshing(true);
     try {
-      const response = await fetch('/api/agriculture/market/forecast');
+      const response = await fetch('http://localhost:5000/api/agriculture/market/forecast');
       if (response.ok) {
         const data = await response.json();
         setMarketData(data);
