@@ -1,17 +1,74 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
+import User from './User.js';
 
-const appointmentSchema = new mongoose.Schema({
-    patient_id: { type: String, required: true },
-    patient_name: String,
-    doctor_id: { type: String, required: true },
-    doctor_name: String,
-    appointment_date: { type: Date, required: true },
-    time: String,
-    reason: String,
-    type: { type: String, default: 'general' },
-    status: { type: String, enum: ['scheduled', 'completed', 'cancelled'], default: 'scheduled' },
-    created_at: { type: Date, default: Date.now }
+const Appointment = sequelize.define('appointment', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+    },
+    patient_name: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        validate: {
+            len: [2, 100]
+        }
+    },
+    patient_email: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        validate: {
+            isEmail: true
+        }
+    },
+    patient_phone: {
+        type: DataTypes.STRING(20),
+        allowNull: true
+    },
+    doctor_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: 'user',
+            key: 'id'
+        }
+    },
+    appointment_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    appointment_time: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
+    reason: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        validate: {
+            len: [0, 500]
+        }
+    },
+    status: {
+        type: DataTypes.ENUM('scheduled', 'confirmed', 'completed', 'cancelled'),
+        defaultValue: 'scheduled'
+    },
+    notes: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    }
+}, {
+    indexes: [
+        {
+            fields: ['doctor_id', 'appointment_date']
+        },
+        {
+            fields: ['status']
+        }
+    ]
 });
 
-const Appointment = mongoose.model('Appointment', appointmentSchema);
+// Define association
+Appointment.belongsTo(User, { as: 'doctor', foreignKey: 'doctor_id' });
+
 export default Appointment;

@@ -6,11 +6,12 @@ import {
     submitVitalSigns,
     aiDiagnosisAssistant
 } from '../controllers/healthcareController.js';
+import { validateAppointment } from '../middlewares/validation.js';
 
 const router = express.Router();
 
 router.get('/dashboard', getHealthcareDashboard);
-router.post('/appointments', scheduleAppointment);
+router.post('/appointments', validateAppointment, scheduleAppointment);
 router.get('/appointments', getAppointments);
 router.post('/remote-monitoring', submitVitalSigns);
 router.post('/diagnosis-assistant', aiDiagnosisAssistant);

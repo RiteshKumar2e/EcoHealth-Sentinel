@@ -14,6 +14,9 @@ import agriRoutes from './routes/agriRoutes.js';
 import envRoutes from './routes/envRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 
+import { getApiDocs } from './controllers/docsController.js';
+import { apiLimiter } from './middlewares/rateLimiter.js';
+
 const app = express();
 
 // Middlewares
@@ -27,14 +30,33 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
+// Apply general rate limiting to all API routes
+app.use('/api', apiLimiter);
+
 // Routes
 app.get('/', (req, res) => {
     res.json({
         message: 'EcoHealth Sentinel API - Professional Node.js Backend',
         status: 'running',
-        version: '2.0.0'
+        version: '2.0.0',
+        documentation: '/api/docs',
+        endpoints: {
+            chatbot: '/api/chatbot',
+            healthcare: '/api/healthcare',
+            agriculture: '/api/agriculture',
+            environment: '/api/environment',
+            emergency: '/api/emergency',
+            admin: '/api/admin'
+        }
     });
 });
+
+// API Documentation
+app.get('/api/docs', getApiDocs);
+
+// Health Check
+import { healthCheck } from './controllers/healthController.js';
+app.get('/api/health', healthCheck);
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/emergency', emergencyRoutes);

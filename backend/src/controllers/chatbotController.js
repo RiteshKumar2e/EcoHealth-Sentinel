@@ -1,4 +1,5 @@
 import ChatMessage from '../models/ChatMessage.js';
+import { Op } from 'sequelize';
 
 // Domain-specific knowledge bases
 const AGRICULTURE_KNOWLEDGE = {
@@ -98,13 +99,12 @@ export const handleChat = async (req, res, next) => {
         }
 
         // Save user message
-        const userMsg = new ChatMessage({
+        await ChatMessage.create({
             text: message,
             sender: 'user',
-            sessionId,
+            session_id: sessionId,
             domain
         });
-        await userMsg.save();
 
         // Get domain-specific knowledge
         let knowledge, response;
@@ -122,13 +122,13 @@ export const handleChat = async (req, res, next) => {
         response = knowledge.responses[intent] || knowledge.responses.default;
 
         // Save bot response
-        const botMsg = new ChatMessage({
+        await ChatMessage.create({
             text: response,
             sender: 'bot',
-            sessionId,
-            domain
+            session_id: sessionId,
+            domain,
+            intent
         });
-        await botMsg.save();
 
         res.json({
             success: true,
@@ -146,13 +146,15 @@ export const getChatHistory = async (req, res, next) => {
     try {
         const { sessionId, domain } = req.query;
 
-        const query = {};
-        if (sessionId) query.sessionId = sessionId;
-        if (domain) query.domain = domain;
+        const where = {};
+        if (sessionId) where.session_id = sessionId;
+        if (domain) where.domain = domain;
 
-        const messages = await ChatMessage.find(query)
-            .sort({ timestamp: 1 })
-            .limit(100);
+        const messages = await ChatMessage.findAll({
+            where,
+            order: [['created_at', 'ASC']],
+            limit: 100
+        });
 
         res.json({ success: true, messages });
     } catch (error) {

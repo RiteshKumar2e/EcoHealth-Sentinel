@@ -1,21 +1,57 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
-const userSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    role: { type: String, required: true },
-    domain: { type: String },
-    status: { type: String, default: 'active' },
-    permissions: [String],
-    lastAccess: String,
-    lastLogin: Date,
-    ipAddress: String,
-    loginCount: { type: Number, default: 0 },
-    failedAttempts: { type: Number, default: 0 },
-    location: String,
-    phone: String,
-    createdAt: { type: Date, default: Date.now },
+const User = sequelize.define('user', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+    },
+    name: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        validate: {
+            notEmpty: true,
+            len: [2, 100]
+        }
+    },
+    email: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: true
+        },
+        index: true
+    },
+    password: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+    role: {
+        type: DataTypes.ENUM('user', 'admin', 'doctor', 'farmer'),
+        defaultValue: 'user'
+    },
+    phone: {
+        type: DataTypes.STRING(20),
+        allowNull: true
+    },
+    avatar: {
+        type: DataTypes.STRING(500),
+        allowNull: true
+    },
+    is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    last_login: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    preferences: {
+        type: DataTypes.JSONB,
+        defaultValue: {}
+    }
 });
 
-const User = mongoose.model('User', userSchema);
 export default User;

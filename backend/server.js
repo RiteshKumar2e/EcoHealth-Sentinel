@@ -2,8 +2,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import dotenv from 'dotenv';
 import app from './src/app.js';
-import connectDB from './src/config/db.js';
-import EmergencyMetrics from './src/models/EmergencyMetrics.js';
+import { connectDB } from './src/config/database.js';
 
 dotenv.config();
 
@@ -36,29 +35,6 @@ const startServer = async () => {
     console.log(`🔌 WebSocket: ws://localhost:${PORT}`);
     console.log('='.repeat(60) + '\n');
   });
-
-  // Start auto-updates (from previous logic)
-  startAutoUpdates();
 };
-
-function startAutoUpdates() {
-  setInterval(async () => {
-    try {
-      const lastMetrics = await EmergencyMetrics.findOne().sort({ timestamp: -1 });
-      if (lastMetrics) {
-        const updatedMetrics = new EmergencyMetrics({
-          currentLoad: Math.max(10, Math.min(50, lastMetrics.currentLoad + Math.floor(Math.random() * 7) - 3)),
-          predictedPeak: Math.max(30, Math.min(60, lastMetrics.predictedPeak + Math.floor(Math.random() * 5) - 2)),
-          avgResponseTime: Math.max(5, Math.min(15, parseFloat((lastMetrics.avgResponseTime + (Math.random() * 2 - 1)).toFixed(1)))),
-          bedAvailability: Math.max(50, Math.min(95, lastMetrics.bedAvailability + Math.floor(Math.random() * 5) - 2)),
-        });
-        await updatedMetrics.save();
-        broadcast({ type: 'metrics_update', data: updatedMetrics });
-      }
-    } catch (error) {
-      // Ignore background errors
-    }
-  }, 10000);
-}
 
 startServer();
