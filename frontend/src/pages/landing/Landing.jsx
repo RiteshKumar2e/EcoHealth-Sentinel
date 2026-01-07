@@ -20,104 +20,64 @@ import {
   CheckCircle,
   BarChart3,
   Activity,
-  Lock
+  Lock,
+  Menu
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './landing-page.css';
 
-// EcoHealth Sentinel Logo Component - Updated for Light Theme
+// EcoHealth Sentinel Logo Component - Updated for consistency
 function EcoHealthLogo() {
+  const navigate = useNavigate();
   return (
     <div
       className="ecohealth-logo"
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '12px',
+        gap: '10px',
         cursor: 'pointer',
       }}
     >
-      <div
-        style={{
-          width: '46px',
-          height: '46px',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #10b981, #3b82f6)', /* More vibrant green to blue */
-          position: 'relative',
-          boxShadow:
-            '0 4px 6px rgba(37, 99, 235, 0.2), inset 0 0 10px rgba(255,255,255,0.2)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-        }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 64 64"
-          width="32"
-          height="32"
-          style={{
-            fill: 'none',
-            stroke: 'white',
-            strokeWidth: 2.5, /* Slightly thicker stroke */
-            filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.7))',
-          }}
-        >
-          <path
-            d="M32 6C42 10 54 14 54 26C54 40 32 58 32 58S10 40 10 26C10 14 22 10 32 6Z"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M24 30C28 24 36 22 40 28C42 32 38 38 32 40C28 41 26 38 26 34"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+      {/* Logo Icon - Teal Circle with Location Pin */}
+      <div style={{
+        width: '42px',
+        height: '42px',
+        background: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        boxShadow: '0 4px 8px rgba(20, 184, 166, 0.2)'
+      }}>
+        {/* Location Pin Icon */}
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ position: 'relative', zIndex: 1 }}>
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="white" />
         </svg>
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            borderRadius: '50%',
-            border: '2px solid rgba(255,255,255,0.2)',
-          }}
-        ></div>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          lineHeight: '1.2',
-          alignItems: 'flex-start',
-        }}
-      >
-        <span
-          style={{
-            fontSize: '1.35rem',
-            fontWeight: 800,
-            /* Changed to Dark Slate for Light Theme Visibility */
-            color: '#2563eb', /* Primary Blue for better visibility */
-            letterSpacing: '-0.5px'
-          }}
-        >
+      {/* Logo Text */}
+      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.1', alignItems: 'flex-start' }}>
+        <div style={{
+          fontSize: '1.2rem',
+          fontWeight: '700',
+          color: '#2563eb',
+          letterSpacing: '-0.02em'
+        }}>
           EcoHealth
-        </span>
-        <span
-          style={{
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            /* Changed to Medium Slate */
-            color: '#1e293b', /* Darker Slate for better visibility */
-            letterSpacing: '1px',
-            textTransform: 'uppercase'
-          }}
-        >
-          Sentinel
-        </span>
+        </div>
+        <div style={{
+          fontSize: '0.85rem',
+          fontWeight: '600',
+          color: '#1e293b',
+          letterSpacing: '0.05em'
+        }}>
+          SENTINEL
+        </div>
       </div>
-    </div >
+    </div>
   );
 }
 
@@ -183,6 +143,7 @@ export default function Landing() {
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfService, setShowTermsOfService] = useState(false);
   const [showCookiePolicy, setShowCookiePolicy] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -240,6 +201,7 @@ export default function Landing() {
   // Smooth scroll functions
   const scrollToSection = (ref) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
+    setIsMobileMenuOpen(false); // Close menu after clicking
   };
 
   const scrollToTop = () => {
@@ -415,7 +377,7 @@ export default function Landing() {
       image: '👨‍💻',
       linkedin: 'https://www.linkedin.com/in/ritesh-kumar-b3a654253',
       github: 'https://github.com/RiteshKumar2e',
-      bio: 'B.Tech CSE (AI & ML) student | Experienced in React, SQL | Passionate about AI, ML, and full-stack development.'
+      bio: 'AI & ML | Experienced in React, SQL | Passionate about AI, ML, and full-stack development.'
     }
   ];
 
@@ -453,13 +415,38 @@ export default function Landing() {
           <button onClick={() => scrollToSection(footerRef)}>Contact</button>
         </nav>
 
-        <div className="auth-buttons">
-          <button className="btn-user" onClick={() => navigate('/auth/login')}>
-            Sign In
+        <div className="header-right">
+          <div className="auth-buttons desktop-only">
+            <button className="btn-user" onClick={() => navigate('/auth/login')}>
+              Sign In
+            </button>
+            <button className="btn-admin" onClick={() => navigate('/admin/login')}>
+              Admin Login
+            </button>
+          </div>
+
+          <button
+            className="mobile-menu-toggle"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <X /> : <Menu />}
           </button>
-          <button className="btn-admin" onClick={() => navigate('/admin/login')}>
-            Admin Login
-          </button>
+        </div>
+
+        {/* Mobile Menu Drawer */}
+        <div className={`mobile-menu-drawer ${isMobileMenuOpen ? 'open' : ''}`}>
+          <nav className="mobile-nav-links">
+            <button onClick={() => scrollToSection(heroRef)}>Home</button>
+            <button onClick={() => scrollToSection(aboutRef)}>About</button>
+            <button onClick={() => scrollToSection(solutionsRef)}>Solutions</button>
+            <button onClick={() => scrollToSection(goalsRef)}>Goals</button>
+            <button onClick={() => scrollToSection(teamRef)}>Team</button>
+            <button onClick={() => scrollToSection(footerRef)}>Contact</button>
+            <hr className="mobile-divider" />
+            <button className="mobile-auth-btn" onClick={() => navigate('/auth/login')}>Sign In</button>
+            <button className="mobile-auth-btn admin-btn" onClick={() => navigate('/admin/login')}>Admin Login</button>
+          </nav>
         </div>
       </header>
 

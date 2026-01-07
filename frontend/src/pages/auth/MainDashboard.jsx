@@ -54,28 +54,103 @@ export default function Dashboard() {
     <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-      padding: '2rem 1rem'
+      padding: '1rem',
+      position: 'relative'
     }}>
+      {/* Logo - Click to go home */}
+      <div style={{
+        position: 'absolute',
+        top: '1rem',
+        left: '1rem',
+        zIndex: 10
+      }}>
+        <div
+          onClick={() => navigate('/')}
+          style={{
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.5rem 1rem',
+            backgroundColor: '#ffffff',
+            borderRadius: '12px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.05)';
+          }}
+        >
+          {/* Logo Icon - Teal Circle with Location Pin */}
+          <div style={{
+            width: '48px',
+            height: '48px',
+            background: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            boxShadow: '0 4px 8px rgba(20, 184, 166, 0.3)'
+          }}>
+            {/* Location Pin Icon */}
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style={{ position: 'relative', zIndex: 1 }}>
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="white" />
+            </svg>
+          </div>
+
+          {/* Logo Text */}
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
+            <div style={{
+              fontSize: '1.25rem',
+              fontWeight: '700',
+              color: '#2563eb',
+              letterSpacing: '-0.02em'
+            }}>
+              EcoHealth
+            </div>
+            <div style={{
+              fontSize: '1rem',
+              fontWeight: '600',
+              color: '#1e293b',
+              letterSpacing: '0.05em',
+              marginTop: '-2px'
+            }}>
+              SENTINEL
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        marginBottom: '3rem'
+        marginBottom: '2rem',
+        paddingTop: '5rem' /* Space for absolute logo */
       }}>
         <div style={{
           textAlign: 'center',
-          marginBottom: '1rem'
+          marginBottom: '1rem',
+          padding: '0 1rem'
         }}>
           <h1 style={{
-            fontSize: '3rem',
+            fontSize: 'clamp(2rem, 8vw, 3.5rem)', /* Responsive font size */
             fontWeight: 'bold',
             color: '#0f172a',
-            marginBottom: '0.75rem'
+            marginBottom: '0.75rem',
+            lineHeight: '1.2'
           }}>
             Choose Your Domain
           </h1>
           <p style={{
-            fontSize: '1.125rem',
+            fontSize: 'clamp(1rem, 4vw, 1.125rem)', /* Responsive font size */
             color: '#64748b',
             maxWidth: '600px',
             margin: '0 auto'
@@ -131,8 +206,9 @@ export default function Dashboard() {
         maxWidth: '1400px',
         margin: '0 auto',
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-        gap: '2rem'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', /* Reduced min-width for mobile */
+        gap: '1.5rem', /* Slightly reduced gap */
+        padding: '0 1rem'
       }}>
         {domains.map((domain) => {
           const Icon = domain.icon;
@@ -149,7 +225,7 @@ export default function Dashboard() {
                 position: 'relative',
                 backgroundColor: '#ffffff',
                 borderRadius: '24px',
-                padding: '2.5rem',
+                padding: 'min(2.5rem, 6vw)', /* Dynamic padding */
                 border: '1px solid #e2e8f0',
                 cursor: 'pointer',
                 transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',

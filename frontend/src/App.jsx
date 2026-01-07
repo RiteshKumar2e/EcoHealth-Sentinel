@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import "./styles/mobile-responsive.css"; // Global mobile styles
 import LandingPage from "./pages/landing/Landing.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
