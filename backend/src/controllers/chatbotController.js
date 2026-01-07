@@ -1,73 +1,122 @@
 import ChatMessage from '../models/ChatMessage.js';
 import { Op } from 'sequelize';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Domain-specific knowledge bases
-const AGRICULTURE_KNOWLEDGE = {
-    keywords: ['crop', 'farm', 'soil', 'irrigation', 'pest', 'fertilizer', 'harvest', 'seed', 'agriculture', 'farming', 'wheat', 'rice', 'corn', 'vegetable', 'fruit', 'disease', 'yield', 'tractor', 'plow', 'cultivate'],
-    responses: {
-        greeting: "Namaste! Main AgriAI hoon. Main aapki farming aur crop management mein madad kar sakta hoon. Aap mujhse crop diseases, irrigation, soil health, ya farming techniques ke baare mein pooch sakte hain.",
-        crop_disease: "Crop diseases ki pehchaan ke liye, mujhe batayein:\n• Kaun si fasal hai?\n• Patte/paudhe ka color kaisa hai?\n• Koi spots ya patches hain?\n\nMain AI-powered disease detection se aapki madad karunga.",
-        irrigation: "Irrigation schedule ke liye:\n• Soil moisture level check karein\n• Weather forecast dekhein\n• Crop type ke hisaab se pani dein\n\nSmart irrigation se 30-40% pani bachta hai!",
-        soil: "Soil health improve karne ke liye:\n• Regular soil testing karwayein\n• Organic matter add karein\n• Crop rotation practice karein\n• pH level maintain karein (6.0-7.5)",
-        fertilizer: "Fertilizer application:\n• NPK ratio crop ke hisaab se choose karein\n• Organic fertilizers prefer karein\n• Over-fertilization se bachein\n• Soil test ke baad hi apply karein",
-        weather: "Weather updates aur farming tips:\n• Monsoon prediction\n• Temperature alerts\n• Frost warnings\n• Best sowing time recommendations",
-        market: "Market prices aur selling tips:\n• Current mandi rates\n• Best selling time\n• Storage techniques\n• Government schemes",
-        default: "Main agriculture aur farming se related sawaalon ka jawab de sakta hoon. Aap mujhse crop diseases, irrigation, soil health, fertilizers, weather updates, ya market prices ke baare mein pooch sakte hain."
-    }
+// Initialize Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+
+// Domain-specific system prompts
+const DOMAIN_PROMPTS = {
+    agriculture: `You are AgriAI, an expert agricultural assistant who responds in Hindi and English mix (Hinglish).
+Your expertise includes:
+- Crop diseases and pest management (फसल रोग और कीट प्रबंधन)
+- Irrigation and water management (सिंचाई)
+- Soil health and fertilizers (मिट्टी स्वास्थ्य और उर्वरक)
+- Weather and climate advice (मौसम सलाह)
+- Market prices and selling tips (बाजार भाव)
+- Farming techniques and best practices
+
+IMPORTANT RULES:
+- Respond primarily in Hindi with some English technical terms
+- Be practical and farmer-friendly
+- Provide actionable advice
+- If asked about non-agricultural topics, politely redirect to farming
+- Keep responses concise and helpful
+- Use emojis like 🌾 🚜 💧 to make it engaging`,
+
+    healthcare: `You are HealthAI, a professional medical assistant providing health guidance.
+Your expertise includes:
+- Symptom analysis and health assessment
+- Appointment scheduling assistance
+- Medication information and reminders
+- Preventive healthcare tips
+- Emergency guidance
+- Vital signs interpretation
+- General wellness advice
+
+IMPORTANT RULES:
+- Always remind users you're an AI, not a doctor
+- For emergencies (chest pain, severe bleeding, etc.), immediately advise calling emergency services
+- Provide evidence-based health information
+- Be empathetic and professional
+- Do NOT diagnose or prescribe medications
+- Suggest consulting healthcare professionals for serious concerns
+- Keep responses clear and medically accurate
+- Use emojis like 🏥 💊 ❤️ appropriately`,
+
+    environment: `You are EcoAI, an environmental conservation and sustainability expert.
+Your expertise includes:
+- Air quality monitoring and pollution control
+- Climate change and weather patterns
+- Waste management and recycling
+- Renewable energy solutions
+- Wildlife conservation
+- Carbon footprint reduction
+- Sustainable living practices
+- Water conservation
+
+IMPORTANT RULES:
+- Provide scientifically accurate environmental information
+- Encourage eco-friendly practices
+- Be optimistic yet realistic about environmental challenges
+- Offer practical, actionable sustainability tips
+- If asked about non-environmental topics, redirect to eco-topics
+- Keep responses informative and inspiring
+- Use emojis like 🌍 ♻️ 🌱 to engage users`
 };
 
-const HEALTHCARE_KNOWLEDGE = {
-    keywords: ['health', 'doctor', 'medicine', 'symptom', 'disease', 'hospital', 'appointment', 'patient', 'treatment', 'diagnosis', 'fever', 'pain', 'cough', 'cold', 'headache', 'blood', 'pressure', 'diabetes', 'heart'],
-    responses: {
-        greeting: "Hello! I'm HealthAI, your medical assistant. I can help with symptom checking, appointment booking, health monitoring, and medical information. How can I assist you today?",
-        symptoms: "For symptom checking, please tell me:\n• What symptoms are you experiencing?\n• How long have you had them?\n• Any other relevant health conditions?\n\nNote: This is not a substitute for professional medical advice.",
-        appointment: "To book an appointment:\n• Select your preferred doctor/specialist\n• Choose date and time\n• Provide your contact details\n\nI can also check doctor availability and suggest the best time slots.",
-        emergency: "🚨 EMERGENCY SERVICES:\n• Ambulance: 102\n• Emergency Helpline: 108\n• Nearest Hospital Locator available\n\nFor life-threatening conditions, please call emergency services immediately!",
-        medication: "Medication information:\n• Dosage guidelines\n• Side effects\n• Drug interactions\n• Prescription reminders\n\n⚠️ Always consult your doctor before taking any medication.",
-        monitoring: "Health monitoring features:\n• Blood pressure tracking\n• Blood sugar levels\n• Heart rate monitoring\n• Medication reminders\n• Health reports",
-        prevention: "Preventive healthcare tips:\n• Regular health checkups\n• Balanced diet\n• Regular exercise\n• Adequate sleep (7-8 hours)\n• Stress management",
-        default: "I can help with health-related queries including symptoms, appointments, medications, health monitoring, and preventive care. What would you like to know?"
-    }
-};
+// Helper function to get Gemini response
+async function getGeminiResponse(message, domain) {
+    try {
+        if (!process.env.GEMINI_API_KEY) {
+            throw new Error('Gemini API key not configured');
+        }
 
-const ENVIRONMENT_KNOWLEDGE = {
-    keywords: ['environment', 'pollution', 'air', 'water', 'climate', 'weather', 'temperature', 'carbon', 'waste', 'recycle', 'energy', 'renewable', 'solar', 'wind', 'tree', 'forest', 'wildlife', 'conservation', 'eco', 'green'],
-    responses: {
-        greeting: "Hello! I'm EcoAI, your environmental assistant. I can help with air quality monitoring, climate predictions, waste management, renewable energy, and wildlife conservation. How can I help you today?",
-        air_quality: "Air Quality Information:\n• Real-time AQI monitoring\n• Pollution levels in your area\n• Health recommendations\n• Pollution sources identification\n\nCurrent AQI categories:\n• 0-50: Good\n• 51-100: Moderate\n• 101-200: Unhealthy\n• 201+: Very Unhealthy",
-        climate: "Climate & Weather Services:\n• 7-day weather forecast\n• Temperature trends\n• Rainfall predictions\n• Climate change impact analysis\n• Disaster warnings",
-        waste: "Waste Management Tips:\n• Segregate waste (wet/dry/hazardous)\n• Composting organic waste\n• Recycling guidelines\n• E-waste disposal\n• Reduce, Reuse, Recycle",
-        energy: "Renewable Energy Information:\n• Solar panel installation\n• Wind energy potential\n• Energy consumption tracking\n• Carbon footprint calculation\n• Cost savings estimation",
-        conservation: "Wildlife & Conservation:\n• Species tracking\n• Habitat protection\n• Endangered species info\n• Conservation projects\n• How to contribute",
-        carbon: "Carbon Footprint:\n• Calculate your emissions\n• Reduction strategies\n• Offset programs\n• Sustainable lifestyle tips\n• Green transportation",
-        default: "I can help with environmental queries including air quality, climate predictions, waste management, renewable energy, and wildlife conservation. What would you like to know?"
-    }
-};
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-// Helper function to detect intent
+        const systemPrompt = DOMAIN_PROMPTS[domain] || DOMAIN_PROMPTS.environment;
+        const fullPrompt = `${systemPrompt}\n\nUser Question: ${message}\n\nProvide a helpful, accurate response:`;
+
+        const result = await model.generateContent(fullPrompt);
+        const response = result.response;
+        const text = response.text();
+
+        return text;
+    } catch (error) {
+        console.error('Gemini API Error:', error.message);
+
+        // Fallback responses if Gemini fails
+        const fallbackResponses = {
+            agriculture: "🌾 Kshama karein, main abhi AI service se connect nahi ho pa raha. Kripya thodi der baad try karein. Aap mujhse crop diseases, irrigation, soil health, ya market prices ke baare mein pooch sakte hain.",
+            healthcare: "🏥 I apologize, but I'm having trouble connecting to my knowledge base right now. Please try again in a moment. I can help with symptoms, appointments, health monitoring, and wellness advice.",
+            environment: "🌍 Sorry, I'm experiencing connectivity issues with my environmental database. Please try again shortly. I can assist with air quality, climate, waste management, and sustainability topics."
+        };
+
+        return fallbackResponses[domain] || fallbackResponses.environment;
+    }
+}
+
+// Detect intent from message (for analytics)
 function detectIntent(message, domain) {
     const msg = message.toLowerCase();
 
     if (domain === 'agriculture') {
-        if (msg.includes('disease') || msg.includes('pest') || msg.includes('infection')) return 'crop_disease';
-        if (msg.includes('water') || msg.includes('irrigation') || msg.includes('drip')) return 'irrigation';
-        if (msg.includes('soil') || msg.includes('mitti') || msg.includes('khad')) return 'soil';
-        if (msg.includes('fertilizer') || msg.includes('manure') || msg.includes('npk')) return 'fertilizer';
-        if (msg.includes('weather') || msg.includes('mausam') || msg.includes('rain')) return 'weather';
-        if (msg.includes('price') || msg.includes('market') || msg.includes('mandi')) return 'market';
-        if (msg.includes('hello') || msg.includes('hi') || msg.includes('namaste')) return 'greeting';
-        return 'default';
+        if (msg.includes('disease') || msg.includes('pest') || msg.includes('रोग') || msg.includes('बीमारी')) return 'crop_disease';
+        if (msg.includes('water') || msg.includes('irrigation') || msg.includes('सिंचाई')) return 'irrigation';
+        if (msg.includes('soil') || msg.includes('mitti') || msg.includes('मिट्टी')) return 'soil';
+        if (msg.includes('fertilizer') || msg.includes('खाद') || msg.includes('उर्वरक')) return 'fertilizer';
+        if (msg.includes('weather') || msg.includes('mausam') || msg.includes('मौसम')) return 'weather';
+        if (msg.includes('price') || msg.includes('market') || msg.includes('बाजार')) return 'market';
+        return 'general_agriculture';
     }
 
     if (domain === 'healthcare') {
-        if (msg.includes('symptom') || msg.includes('feel') || msg.includes('pain') || msg.includes('fever')) return 'symptoms';
+        if (msg.includes('symptom') || msg.includes('feel') || msg.includes('pain')) return 'symptoms';
         if (msg.includes('appointment') || msg.includes('book') || msg.includes('doctor')) return 'appointment';
-        if (msg.includes('emergency') || msg.includes('urgent') || msg.includes('ambulance')) return 'emergency';
+        if (msg.includes('emergency') || msg.includes('urgent')) return 'emergency';
         if (msg.includes('medicine') || msg.includes('drug') || msg.includes('medication')) return 'medication';
         if (msg.includes('monitor') || msg.includes('track') || msg.includes('blood')) return 'monitoring';
-        if (msg.includes('prevent') || msg.includes('healthy') || msg.includes('wellness')) return 'prevention';
-        if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) return 'greeting';
-        return 'default';
+        return 'general_health';
     }
 
     if (domain === 'environment') {
@@ -76,12 +125,10 @@ function detectIntent(message, domain) {
         if (msg.includes('waste') || msg.includes('garbage') || msg.includes('recycle')) return 'waste';
         if (msg.includes('energy') || msg.includes('solar') || msg.includes('renewable')) return 'energy';
         if (msg.includes('wildlife') || msg.includes('animal') || msg.includes('conservation')) return 'conservation';
-        if (msg.includes('carbon') || msg.includes('emission') || msg.includes('footprint')) return 'carbon';
-        if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) return 'greeting';
-        return 'default';
+        return 'general_environment';
     }
 
-    return 'default';
+    return 'general';
 }
 
 // Main chat handler
@@ -106,20 +153,11 @@ export const handleChat = async (req, res, next) => {
             domain
         });
 
-        // Get domain-specific knowledge
-        let knowledge, response;
+        // Get AI response from Gemini
+        const response = await getGeminiResponse(message, domain);
 
-        if (domain === 'agriculture') {
-            knowledge = AGRICULTURE_KNOWLEDGE;
-        } else if (domain === 'healthcare') {
-            knowledge = HEALTHCARE_KNOWLEDGE;
-        } else if (domain === 'environment') {
-            knowledge = ENVIRONMENT_KNOWLEDGE;
-        }
-
-        // Detect intent and get response
+        // Detect intent for analytics
         const intent = detectIntent(message, domain);
-        response = knowledge.responses[intent] || knowledge.responses.default;
 
         // Save bot response
         await ChatMessage.create({
@@ -137,6 +175,7 @@ export const handleChat = async (req, res, next) => {
             intent
         });
     } catch (error) {
+        console.error('Chat error:', error);
         next(error);
     }
 };
