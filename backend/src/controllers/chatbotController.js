@@ -1,5 +1,4 @@
-import ChatMessage from '../models/ChatMessage.js';
-import { Op } from 'sequelize';
+import ChatMessage from '../models/ChatMessageMongo.js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize Gemini AI
@@ -185,15 +184,13 @@ export const getChatHistory = async (req, res, next) => {
     try {
         const { sessionId, domain } = req.query;
 
-        const where = {};
-        if (sessionId) where.session_id = sessionId;
-        if (domain) where.domain = domain;
+        const query = {};
+        if (sessionId) query.session_id = sessionId;
+        if (domain) query.domain = domain;
 
-        const messages = await ChatMessage.findAll({
-            where,
-            order: [['created_at', 'ASC']],
-            limit: 100
-        });
+        const messages = await ChatMessage.find(query)
+            .sort({ createdAt: 1 })
+            .limit(100);
 
         res.json({ success: true, messages });
     } catch (error) {

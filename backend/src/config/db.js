@@ -2,7 +2,13 @@ import mongoose from 'mongoose';
 
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://aiadmin:mypassword123@cluster0.n9mmmbt.mongodb.net/ecohealth_sentinel');
+        const conn = await mongoose.connect(
+            process.env.MONGO_URI || 'mongodb+srv://aiadmin:mypassword123@cluster0.n9mmmbt.mongodb.net/ecohealth_sentinel',
+            {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            }
+        );
         console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
         return conn;
     } catch (error) {
