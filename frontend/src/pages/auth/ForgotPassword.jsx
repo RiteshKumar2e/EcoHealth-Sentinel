@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Mail, ArrowRight, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import emailjs from 'emailjs-com';
 import Logo from '../../components/Logo';
 
@@ -9,6 +9,8 @@ export default function ForgotPassword() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+
+  const navigate = useNavigate();
 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
@@ -21,18 +23,42 @@ export default function ForgotPassword() {
     setError('');
 
     try {
+      // Log for debugging
+      console.log('Attempting to send reset email to:', email);
+
+      const templateParams = {
+        to_email: email,
+        user_email: email,
+        email: email,
+        recipient: email,
+        from_name: 'EcoHealth Sentinel Administrator',
+        reply_to: 'support@ecohealth.com',
+      };
+
       await emailjs.send(
-        'service_7cdfbpu',      // Your EmailJS Service ID
-        'template_xxti9xw',     // Your EmailJS Template ID
-        { user_email: email },  // Must match template variable
-        'opQ62Bt4yyh7VyL4I'     // Your EmailJS Public Key
+        'service_7cdfbpu',
+        'template_xxti9xw',
+        templateParams,
+        'opQ62Bt4yyh7VyL4I'
       );
+
       setIsLoading(false);
       setEmailSent(true);
+
+      // For demo purposes, we provide a direct path to reset
+      setTimeout(() => {
+        navigate(`/auth/reset-password?email=${encodeURIComponent(email)}`);
+      }, 2000);
+
     } catch (err) {
       console.error(err);
-      setError('Failed to send reset email. Please try again.');
+      setError('EmailJS Error: Redirecting to reset page for demo...');
       setIsLoading(false);
+
+      // Still navigate in demo mode so user isn't stuck
+      setTimeout(() => {
+        navigate(`/auth/reset-password?email=${encodeURIComponent(email)}`);
+      }, 3000);
     }
   };
 

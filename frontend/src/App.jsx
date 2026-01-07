@@ -16,10 +16,10 @@ import AdSettings from "./pages/admin/AdSettings.jsx";
 
 
 
-// Import Auth Pages
 import Login from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
+import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import MainDashboard from "./pages/auth/MainDashboard.jsx";
 
 
@@ -87,6 +87,7 @@ const App = () => {
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
         <Route path="/auth/dashboard" element={<MainDashboard />} />
 
         {/* Admin Routes */}

@@ -63,8 +63,18 @@ export default function Login() {
 
     setIsLoading(true);
 
-    // Simulate API Call
+    // Simulate API Call with local vault check
     setTimeout(() => {
+      const storedVault = JSON.parse(localStorage.getItem('user_vault') || '{}');
+      const savedPassword = storedVault[formData.email];
+
+      // If password was reset, check against it. If not, allow any for demo.
+      if (savedPassword && formData.password !== savedPassword) {
+        setErrors({ password: 'Incorrect password for this account' });
+        setIsLoading(false);
+        return;
+      }
+
       handleLoginSuccess({
         name: formData.email.split('@')[0],
         email: formData.email,
