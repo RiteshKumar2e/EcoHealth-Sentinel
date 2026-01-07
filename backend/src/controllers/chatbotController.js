@@ -4,6 +4,20 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
+// Top 10 Best Gemini Models (in priority order)
+const BEST_MODELS = [
+    'gemini-2.5-flash',
+    'gemini-2.5-pro',
+    'gemini-2.0-flash-exp',
+    'gemini-flash-latest',
+    'gemini-pro-latest',
+    'gemini-2.0-flash',
+    'gemini-exp-1206',
+    'gemini-3-flash-preview',
+    'gemini-2.5-flash-lite',
+    'gemini-2.0-flash-lite'
+];
+
 // Domain-specific system prompts
 const DOMAIN_PROMPTS = {
     agriculture: `You are AgriAI, an expert agricultural assistant who responds in Hindi and English mix (Hinglish).
@@ -64,27 +78,46 @@ IMPORTANT RULES:
 - Use emojis like 🌍 ♻️ 🌱 to engage users`
 };
 
-// Helper function to get Gemini response
+// Helper function to get Gemini response with intelligent fallback
 async function getGeminiResponse(message, domain) {
     try {
         if (!process.env.GEMINI_API_KEY) {
             throw new Error('Gemini API key not configured');
         }
 
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-exp' });
-
         const systemPrompt = DOMAIN_PROMPTS[domain] || DOMAIN_PROMPTS.environment;
         const fullPrompt = `${systemPrompt}\n\nUser Question: ${message}\n\nProvide a helpful, accurate response:`;
 
-        const result = await model.generateContent(fullPrompt);
-        const response = result.response;
-        const text = response.text();
+        // Try models in order until one works
+        for (let i = 0; i < BEST_MODELS.length; i++) {
+            try {
+                const modelName = BEST_MODELS[i];
+                console.log(`🤖 Trying model ${i + 1}/${BEST_MODELS.length}: ${modelName}`);
 
-        return text;
+                const model = genAI.getGenerativeModel({ model: modelName });
+                const result = await model.generateContent(fullPrompt);
+                const response = result.response;
+                const text = response.text();
+
+                console.log(`✅ Success with model: ${modelName}`);
+                return text;
+            } catch (modelError) {
+                console.log(`❌ Model ${BEST_MODELS[i]} failed: ${modelError.message}`);
+
+                // If this is the last model, throw error
+                if (i === BEST_MODELS.length - 1) {
+                    throw modelError;
+                }
+                // Otherwise, try next model
+                continue;
+            }
+        }
+
+        throw new Error('All models failed');
     } catch (error) {
         console.error('Gemini API Error:', error.message);
 
-        // Fallback responses if Gemini fails
+        // Fallback responses if all models fail
         const fallbackResponses = {
             agriculture: "🌾 Kshama karein, main abhi AI service se connect nahi ho pa raha. Kripya thodi der baad try karein. Aap mujhse crop diseases, irrigation, soil health, ya market prices ke baare mein pooch sakte hain.",
             healthcare: "🏥 I apologize, but I'm having trouble connecting to my knowledge base right now. Please try again in a moment. I can help with symptoms, appointments, health monitoring, and wellness advice.",
@@ -152,7 +185,7 @@ export const handleChat = async (req, res, next) => {
             domain
         });
 
-        // Get AI response from Gemini
+        // Get AI response from Gemini (with intelligent fallback)
         const response = await getGeminiResponse(message, domain);
 
         // Detect intent for analytics
