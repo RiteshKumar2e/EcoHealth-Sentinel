@@ -71,7 +71,7 @@ async function getGeminiResponse(message, domain) {
             throw new Error('Gemini API key not configured');
         }
 
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
         const systemPrompt = DOMAIN_PROMPTS[domain] || DOMAIN_PROMPTS.environment;
         const fullPrompt = `${systemPrompt}\n\nUser Question: ${message}\n\nProvide a helpful, accurate response:`;
